@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS app_db;
+
+USE app_db;
+
+
+CREATE TABLE queue (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  workflow_name VARCHAR(255) NOT NULL,
+  workflow_parameters JSON NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
