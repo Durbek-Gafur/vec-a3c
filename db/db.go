@@ -46,10 +46,17 @@ func GetQueueSize(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetQueueSize(w http.ResponseWriter, r *http.Request) {
-	var size int
-	if err := json.NewDecoder(r.Body).Decode(&size); err != nil {
+
+	var data map[string]string
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		log.Println(err)
-		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		http.Error(w, "Invalid Request couldn't decode", http.StatusBadRequest)
+		return
+	}
+
+	size, ok := data["size"]
+	if !ok {
+		http.Error(w, "Invalid Request no 'size'", http.StatusBadRequest)
 		return
 	}
 
@@ -61,14 +68,40 @@ func SetQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
+	w.Write([]byte(`{"size":` + size + `}`))
 }
 
+
+// func SetQueueSize(w http.ResponseWriter, r *http.Request) {
+// 	var size int
+// 	if err := json.NewDecoder(r.Body).Decode(&size); err != nil {
+// 		log.Println(err)
+// 		http.Error(w, "Invalid Request", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	_, err := db.Exec("INSERT INTO queue_size (id, size) VALUES (1, ?) ON DUPLICATE KEY UPDATE size = ?", size, size)
+// 	if err != nil {
+// 		log.Println(err)
+// 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
+// }
+
 func UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
-	var size int
-	if err := json.NewDecoder(r.Body).Decode(&size); err != nil {
+	var data map[string]string
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		log.Println(err)
-		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		http.Error(w, "Invalid Request couldn't decode", http.StatusBadRequest)
+		return
+	}
+	log.Println("hello 12")
+	size, ok := data["size"]
+	if !ok {
+		http.Error(w, "Invalid Request no 'size'", http.StatusBadRequest)
 		return
 	}
 
@@ -80,5 +113,5 @@ func UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
+	w.Write([]byte(`{"size":` + size + `}`))
 }
