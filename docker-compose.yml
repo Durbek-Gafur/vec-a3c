@@ -14,7 +14,7 @@ services:
       MYSQL_PORT: 3306
       MYSQL_DBNAME: app_db
     volumes:
-      - .:/app
+      - ./:/app
     restart: always
   db:
     image: mysql:8.0

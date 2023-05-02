@@ -1,7 +1,18 @@
 FROM golang:latest
 
+ENV PROJECT_DIR=/app \
+    GO111MODULE=on \
+    CGO_ENABLED=0
+
 WORKDIR /app
+RUN mkdir "/build"
 
-COPY . .
+COPY ./ /app
 
-CMD ["go", "run", "main.go"]
+RUN go mod tidy
+RUN go install -mod=mod github.com/githubnemo/CompileDaemon
+ENTRYPOINT CompileDaemon -polling=true -directory="/app" -command="./vec-node" 
+
+
+
+

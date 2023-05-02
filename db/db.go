@@ -98,7 +98,7 @@ func UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Request couldn't decode", http.StatusBadRequest)
 		return
 	}
-	log.Println("hello 12")
+	log.Println("hello 723")
 	size, ok := data["size"]
 	if !ok {
 		http.Error(w, "Invalid Request no 'size'", http.StatusBadRequest)
