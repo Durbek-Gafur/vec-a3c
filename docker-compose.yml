@@ -26,6 +26,6 @@ services:
       MYSQL_DATABASE: app_db
       MYSQL_PASSWORD: password_vec
     volumes:
-      - ./mysql:/docker-entrypoint-initdb.d
+      - ./migrations:/docker-entrypoint-initdb.d
       # - db_data:/var/lib/mysql
 

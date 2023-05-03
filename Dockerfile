@@ -11,7 +11,7 @@ COPY ./ /app
 
 RUN go mod tidy
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
-ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app" -command="/build/app"
+ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
 
 
 
