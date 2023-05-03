@@ -9,7 +9,7 @@ services:
       - db
     environment:
       MYSQL_USER: root
-      MYSQL_PASSWORD: password_vec
+      MYSQL_PASSWORD: root_password_vec
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_DBNAME: app_db

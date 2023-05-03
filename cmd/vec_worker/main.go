@@ -1,24 +1,64 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
-
-	db "vec-node/internal/store"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gorilla/mux"
+
+	"vec-node/internal/api"
+	"vec-node/internal/store"
 )
 
 func main() {
-	db.InitDB()
+	cfg, err := loadConfig()
+	if err != nil {
+		log.Fatal("Failed to load configuration:", err)
+	}
+	dsn := cfg.MySQLUser + ":" + cfg.MySQLPassword + "@tcp(" + cfg.MySQLHost + ":" + cfg.MySQLPort + ")/" + cfg.MySQLDatabase + "?parseTime=true"
+	mysqlStore, err := store.NewMySQLStore(dsn)
+	if err != nil {
+		log.Fatal("Failed to initialize MySQL store:", err)
+	}
+
+	handler := api.NewHandler(mysqlStore)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/queue-size", db.GetQueueSize).Methods("GET")
-	router.HandleFunc("/queue-size", db.SetQueueSize).Methods("POST")
-	router.HandleFunc("/queue-size", db.UpdateQueueSize).Methods("PUT")
-	log.Printf("Started the app")  
-	log.Printf("Server running at port 8080")  
-	if err := http.ListenAndServe(":8080", router); err != nil {
-		log.Fatal(err)
+	router.HandleFunc("/queue-size", handler.GetQueueSize).Methods("GET")
+	router.HandleFunc("/queue-size", handler.SetQueueSize).Methods("POST")
+	router.HandleFunc("/queue-size", handler.UpdateQueueSize).Methods("PUT")
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
 	}
+
+	// Start the server in a separate goroutine.
+	go func() {
+		log.Printf("Started the app")
+		log.Printf("Server running at port 8080")
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal("Failed to start the server:", err)
+		}
+	}()
+
+	// Set up a channel to listen for shutdown signals.
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	<-stop
+
+	// Initiate a graceful shutdown.
+	log.Println("Shutting down the server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatal("Failed to shut down the server gracefully:", err)
+	}
+	log.Println("Server stopped")
 }
