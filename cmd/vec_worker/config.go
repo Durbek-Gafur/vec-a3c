@@ -21,7 +21,7 @@ func loadConfig() (*Config, error) {
 		MySQLPort:     os.Getenv("MYSQL_PORT"),
 	}
 
-	// You can add validation logic here to check if required environment variables are set.
+	// TODO add validation logic here to check if required environment variables are set.
 
 	return cfg, nil
 }
