@@ -7,6 +7,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - migrator
     environment:
       MYSQL_USER: root
       MYSQL_PASSWORD: root_password_vec
@@ -25,7 +26,17 @@ services:
       MYSQL_ROOT_PASSWORD: root_password_vec
       MYSQL_DATABASE: app_db
       MYSQL_PASSWORD: password_vec
+  migrator:
+    image: migrate/migrate
+    command: >
+      sh -c "migrate -path /migrations -database 'mysql://$${MYSQL_USER}:$${MYSQL_PASSWORD}@tcp($${MYSQL_HOST}:$${MYSQL_PORT})/$${MYSQL_DBNAME}?queryCache=0&parseTime=true' up"
+    depends_on:
+      - db
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root_password_vec
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DBNAME: app_db
     volumes:
-      - ./migrations:/docker-entrypoint-initdb.d
-      # - db_data:/var/lib/mysql
-
+      - ./migrations:/migrations

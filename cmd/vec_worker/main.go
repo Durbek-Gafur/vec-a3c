@@ -29,9 +29,16 @@ func main() {
 	handler := api.NewHandler(mysqlStore)
 
 	router := mux.NewRouter()
+	// queue
 	router.HandleFunc("/queue-size", handler.GetQueueSize).Methods("GET")
 	router.HandleFunc("/queue-size", handler.SetQueueSize).Methods("POST")
 	router.HandleFunc("/queue-size", handler.UpdateQueueSize).Methods("PUT")
+
+	// workflow
+	// TODO pagination for workflows
+	router.HandleFunc("/workflow", handler.SaveWorkflow).Methods("POST")
+	router.HandleFunc("/workflow/{id:[0-9]+}", handler.GetWorkflowByID).Methods("GET")
+	router.HandleFunc("/workflows", handler.GetWorkflows).Methods("GET")
 
 	server := &http.Server{
 		Addr:    ":8080",
