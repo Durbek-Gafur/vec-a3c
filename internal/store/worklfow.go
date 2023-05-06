@@ -1,6 +1,7 @@
 package store
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -10,8 +11,8 @@ type Workflow struct {
 	Type                string    `json:"type"`
 	Duration            int64     `json:"duration"`
 	ReceivedAt          time.Time `json:"received_at"`
-	StartedExecutionAt  time.Time `json:"started_execution_at,omitempty"`
-	CompletedAt         time.Time `json:"completed_at,omitempty"`
+	StartedExecutionAt  sql.NullTime `json:"started_execution_at,omitempty"`
+	CompletedAt         sql.NullTime `json:"completed_at,omitempty"`
 }
 
 type WorkflowFilter struct {

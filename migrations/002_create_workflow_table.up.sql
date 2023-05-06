@@ -1,4 +1,4 @@
-USE app_db;
+-- USE app_db;
 
 CREATE TABLE IF NOT EXISTS workflow (
   id INT AUTO_INCREMENT PRIMARY KEY,
