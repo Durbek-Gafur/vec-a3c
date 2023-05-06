@@ -28,8 +28,11 @@ services:
       MYSQL_PASSWORD: password_vec
   migrator:
     image: migrate/migrate
-    command: >
-      sh -c "migrate -path /migrations -database 'mysql://$${MYSQL_USER}:$${MYSQL_PASSWORD}@tcp($${MYSQL_HOST}:$${MYSQL_PORT})/$${MYSQL_DBNAME}?queryCache=0&parseTime=true' up"
+    # command: ["-source=file:///migrations", "-database=mysql://root:root_password_vec@tcp(db:3306)/app_db", "force", "1"]
+
+    command: ["-source=file:///migrations", "-database=mysql://root:root_password_vec@tcp(db:3306)/app_db", "up"]
+    # command: >
+    #   sh -c "migrate -path /migrations -database 'mysql://$${MYSQL_USER}:$${MYSQL_PASSWORD}@tcp($${MYSQL_HOST}:$${MYSQL_PORT})/$${MYSQL_DBNAME}?queryCache=0&parseTime=true' up"
     depends_on:
       - db
     environment:
@@ -40,3 +43,4 @@ services:
       MYSQL_DBNAME: app_db
     volumes:
       - ./migrations:/migrations
+    # restart: always
