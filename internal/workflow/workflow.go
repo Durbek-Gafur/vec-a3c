@@ -1,30 +1,14 @@
 package workflow
 
 import (
+	"context"
 	"time"
+	s "vec-node/internal/store"
 )
 
-// Workflow represents a workflow with its properties
-type Workflow struct {
-	ID                  int64     `json:"id"`
-	Name                string    `json:"name"`
-	Type                string    `json:"type"`
-	Duration            int64     `json:"duration"`
-	ReceivedAt          time.Time `json:"received_at"`
-	StartedExecutionAt  time.Time `json:"started_execution_at,omitempty"`
-	CompletedAt         time.Time `json:"completed_at,omitempty"`
-}
-
-// WorkflowFilter is a struct to filter workflows during retrieval
-type WorkflowFilter struct {
-	Type      string
-	StartTime time.Time
-	EndTime   time.Time
-}
-
 // NewWorkflow returns a new Workflow instance
-func NewWorkflow(name, wType string, duration int64) *Workflow {
-	return &Workflow{
+func NewWorkflow(name, wType string, duration int64) *s.Workflow {
+	return &s.Workflow{
 		Name:       name,
 		Type:       wType,
 		Duration:   duration,
@@ -32,12 +16,24 @@ func NewWorkflow(name, wType string, duration int64) *Workflow {
 	}
 }
 
-// StartExecution sets the StartedExecutionAt field to the current time
-func (w *Workflow) StartExecution() {
-	w.StartedExecutionAt = time.Now()
+type Service struct {
+	store s.Store
 }
 
-// Complete sets the CompletedAt field to the current time
-func (w *Workflow) Complete() {
-	w.CompletedAt = time.Now()
+func NewService(store s.Store) *Service {
+	return &Service{
+		store: store,
+	}
+}
+
+func (s *Service) StartExecution(ctx context.Context, id int) error {
+	return s.store.StartWorkflow(ctx, id)
+}
+
+func (s *Service) Complete(ctx context.Context, id int) error {
+	return s.store.CompleteWorkflow(ctx, id)
+}
+
+func (s *Service) UpdateWorkflow(ctx context.Context, id int, wf *s.Workflow) error {
+	return s.store.UpdateWorkflow(ctx, wf)
 }

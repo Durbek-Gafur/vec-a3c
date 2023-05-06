@@ -2,7 +2,6 @@ CREATE DATABASE IF NOT EXISTS app_db;
 
 USE app_db;
 
-
 CREATE TABLE queue (
   id INT AUTO_INCREMENT PRIMARY KEY,
   workflow_name VARCHAR(255) NOT NULL,

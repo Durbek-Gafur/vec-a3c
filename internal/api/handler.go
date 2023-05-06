@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"vec-node/internal/store"
-	"vec-node/internal/workflow"
 
 	"github.com/gorilla/mux"
 )
@@ -126,7 +125,7 @@ func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetWorkflows(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	filter := &workflow.WorkflowFilter{
+	filter := &store.WorkflowFilter{
 		Type:      r.URL.Query().Get("type"),
 		StartTime: parseTime(r.URL.Query().Get("start_time")),
 		EndTime:   parseTime(r.URL.Query().Get("end_time")),
@@ -142,7 +141,7 @@ func (h *Handler) GetWorkflows(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
-	var wf workflow.Workflow
+	var wf store.Workflow
 	ctx := r.Context()
 	if err := json.NewDecoder(r.Body).Decode(&wf); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)

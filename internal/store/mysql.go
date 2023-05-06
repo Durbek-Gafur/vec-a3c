@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	w "vec-node/internal/workflow"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -52,10 +51,10 @@ func (s *MySQLStore) UpdateQueueSize(ctx context.Context, size int) error {
 	return nil
 }
 
-func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int64) (*w.Workflow, error) {
-	wf := &w.Workflow{}
+func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int64) (*Workflow, error) {
+	wf := &Workflow{}
 	err := s.db.QueryRowContext(ctx,
-		"SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflows WHERE id = ?",
+		"SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflow WHERE id = ?",
 		id,
 	).Scan(&wf.ID, &wf.Name, &wf.Type, &wf.Duration, &wf.ReceivedAt, &wf.StartedExecutionAt, &wf.CompletedAt)
 
@@ -66,8 +65,8 @@ func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int64) (*w.Workflow
 	return wf, nil
 }
 
-func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *w.WorkflowFilter) ([]w.Workflow, error) {
-	query := "SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflows WHERE 1"
+func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *WorkflowFilter) ([]Workflow, error) {
+	query := "SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflow WHERE 1"
 
 	if filter.Type != "" {
 		query += " AND type = ?"
@@ -85,9 +84,9 @@ func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *w.WorkflowFilter)
 	}
 	defer rows.Close()
 
-	workflows := []w.Workflow{}
+	workflows := []Workflow{}
 	for rows.Next() {
-		var wf w.Workflow
+		var wf Workflow
 		err := rows.Scan(&wf.ID, &wf.Name, &wf.Type, &wf.Duration, &wf.ReceivedAt, &wf.StartedExecutionAt, &wf.CompletedAt)
 		if err != nil {
 			return nil, err
@@ -98,9 +97,9 @@ func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *w.WorkflowFilter)
 	return workflows, nil
 }
 
-func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *w.Workflow) (*w.Workflow, error) {
+func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, error) {
 	res, err := s.db.ExecContext(ctx,
-		"INSERT INTO workflows (name, type, duration, received_at) VALUES (?, ?, ?, ?)",
+		"INSERT INTO workflow (name, type, duration, received_at) VALUES (?, ?, ?, ?)",
 		w.Name, w.Type, w.Duration, w.ReceivedAt,
 	)
 	if err != nil {
@@ -116,9 +115,9 @@ func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *w.Workflow) (*w.Workfl
 	return w, nil
 }
 
-func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *w.Workflow) (*w.Workflow, error) {
+func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow, error) {
 	_, err := s.db.ExecContext(ctx,
-		"UPDATE workflows SET name = ?, type = ?, duration = ?, received_at = ?, started_execution_at = ?, completed_at = ? WHERE id = ?",
+		"UPDATE workflow SET name = ?, type = ?, duration = ?, received_at = ?, started_execution_at = ?, completed_at = ? WHERE id = ?",
 		w.Name, w.Type, w.Duration, w.ReceivedAt, w.StartedExecutionAt, w.CompletedAt, w.ID,
 	)
 	if err != nil {
@@ -126,4 +125,17 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *w.Workflow) (*w.Work
 	}
 
 	return w,nil
+}
+
+
+func (s *MySQLStore) StartWorkflow(ctx context.Context, id int) error {
+	query := "UPDATE workflow SET started_execution_at = NOW() WHERE id = ?"
+	_, err := s.db.ExecContext(ctx, query, id)
+	return err
+}
+
+func (s *MySQLStore) CompleteWorkflow(ctx context.Context, id int) error {
+	query := "UPDATE workflow SET completed_at = NOW() WHERE id = ?"
+	_, err := s.db.ExecContext(ctx, query, id)
+	return err
 }

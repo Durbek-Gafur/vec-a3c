@@ -1,4 +1,5 @@
--- Up
+USE app_db;
+
 CREATE TABLE IF NOT EXISTS workflow (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -8,6 +9,3 @@ CREATE TABLE IF NOT EXISTS workflow (
   started_execution_at DATETIME NULL,
   completed_at DATETIME NULL
 );
-
--- Down
-DROP TABLE IF EXISTS workflow;
