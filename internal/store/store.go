@@ -19,6 +19,12 @@ type Store interface {
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error 
 
+	// Queue related methods
+	Enqueue(ctx context.Context, workflowID int64) (int64, error)
+	Dequeue(ctx context.Context) (*Queue, error)
+	GetQueueStatus(ctx context.Context) ([]Queue, error)
+	UpdateStatus(ctx context.Context, id int64, status string) error
+
 }
 
 // StoreError is a custom error type for store-related errors. It includes the original error and a status code.
