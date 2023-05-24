@@ -2,36 +2,60 @@ package workflow
 
 import (
 	"context"
-	"reflect"
 	"testing"
+	"time"
 	s "vec-node/internal/store"
+	store_mock "vec-node/internal/store/mocks"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestService_UpdateWorkflow(t *testing.T) {
-	type args struct {
-		ctx context.Context
-		id  int
-		wf  *s.Workflow
+func TestStartExecution(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStore := store_mock.NewMockStore(ctrl)
+	service := NewService(mockStore)
+
+	ctx := context.TODO()
+	mockStore.EXPECT().StartWorkflow(ctx, 123).Return(nil)
+
+	err := service.StartExecution(ctx, 123)
+	assert.NoError(t, err)
+}
+
+func TestComplete(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStore := store_mock.NewMockStore(ctrl)
+	service := NewService(mockStore)
+
+	ctx := context.TODO()
+	mockStore.EXPECT().CompleteWorkflow(ctx, 456).Return(nil)
+
+	err := service.Complete(ctx, 456)
+	assert.NoError(t, err)
+}
+
+func TestUpdateWorkflow(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStore := store_mock.NewMockStore(ctrl)
+	service := NewService(mockStore)
+
+	ctx := context.TODO()
+	wf := &s.Workflow{
+		Name:       "test",
+		Type:       "type1",
+		Duration:   1,
+		ReceivedAt: time.Now(),
 	}
-	tests := []struct {
-		name    string
-		s       *Service
-		args    args
-		want    *s.Workflow
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.UpdateWorkflow(tt.args.ctx, tt.args.id, tt.args.wf)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Service.UpdateWorkflow() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.UpdateWorkflow() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	mockStore.EXPECT().UpdateWorkflow(ctx, wf).Return(wf, nil)
+
+	updatedWf, err := service.UpdateWorkflow(ctx, wf)
+	assert.NoError(t, err)
+	assert.Equal(t, wf, updatedWf)
 }

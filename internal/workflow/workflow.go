@@ -34,6 +34,6 @@ func (s *Service) Complete(ctx context.Context, id int) error {
 	return s.store.CompleteWorkflow(ctx, id)
 }
 
-func (s *Service) UpdateWorkflow(ctx context.Context, id int, wf *s.Workflow) (*s.Workflow,error) {
+func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow,error) {
 	return s.store.UpdateWorkflow(ctx, wf)
 }
