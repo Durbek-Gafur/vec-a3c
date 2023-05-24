@@ -7,7 +7,7 @@ import (
 )
 
 // NewWorkflow returns a new Workflow instance
-func NewWorkflow(name, wType string, duration int64) *s.Workflow {
+func NewWorkflow(name, wType string, duration int) *s.Workflow {
 	return &s.Workflow{
 		Name:       name,
 		Type:       wType,

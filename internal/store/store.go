@@ -12,7 +12,7 @@ type Store interface {
 	UpdateQueueSize(ctx context.Context, size int) error
 
 	// Workflow related methods
-	GetWorkflowByID(ctx context.Context,id int64) (*Workflow, error)
+	GetWorkflowByID(ctx context.Context,id int) (*Workflow, error)
 	GetWorkflows(ctx context.Context,filter *WorkflowFilter) ([]Workflow, error)
 	SaveWorkflow(ctx context.Context,workflow *Workflow) (*Workflow, error)
 	UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow, error) 
@@ -20,11 +20,11 @@ type Store interface {
 	CompleteWorkflow(ctx context.Context, id int) error 
 
 	// Queue related methods
-	Enqueue(ctx context.Context, workflowID int64) (int64, error)
+	Enqueue(ctx context.Context, workflowID int) (int, error)
 	Dequeue(ctx context.Context) (*Queue, error)
 	GetQueueStatus(ctx context.Context) ([]Queue, error)
-	ProcessWorkflowInQueue(ctx context.Context, id int64, status string) error
-	CompleteWorkflowInQueue(ctx context.Context, id int64, status string) error
+	ProcessWorkflowInQueue(ctx context.Context, id int, status string) error
+	CompleteWorkflowInQueue(ctx context.Context, id int, status string) error
 
 }
 

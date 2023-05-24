@@ -6,10 +6,10 @@ import (
 )
 
 type Workflow struct {
-	ID                  int64     `json:"id"`
+	ID                  int     `json:"id"`
 	Name                string    `json:"name"`
 	Type                string    `json:"type"`
-	Duration            int64     `json:"duration"`
+	Duration            int     `json:"duration"`
 	ReceivedAt          time.Time `json:"received_at"`
 	StartedExecutionAt  sql.NullTime `json:"started_execution_at,omitempty"`
 	CompletedAt         sql.NullTime `json:"completed_at,omitempty"`

@@ -51,7 +51,7 @@ func (s *MySQLStore) UpdateQueueSize(ctx context.Context, size int) error {
 	return nil
 }
 
-func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int64) (*Workflow, error) {
+func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*Workflow, error) {
 	wf := &Workflow{}
 	err := s.db.QueryRowContext(ctx,
 		"SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflow WHERE id = ?",
@@ -111,7 +111,7 @@ func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, 
 		return nil, err
 	}
 
-	w.ID = id
+	w.ID = int(id)
 	return w, nil
 }
 

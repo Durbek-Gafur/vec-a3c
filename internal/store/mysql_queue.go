@@ -6,7 +6,7 @@ import (
 )
 
 
-func (s *MySQLStore) Enqueue(ctx context.Context, workflowID int64) (int64, error) {
+func (s *MySQLStore) Enqueue(ctx context.Context, workflowID int) (int, error) {
 	query := "INSERT INTO queue (workflow_id, status) VALUES (?, 'pending')"
 	res, err := s.db.ExecContext(ctx, query, workflowID)
 	if err != nil {
@@ -16,7 +16,7 @@ func (s *MySQLStore) Enqueue(ctx context.Context, workflowID int64) (int64, erro
 	if err != nil {
 		return 0, err
 	}
-	return id, nil
+	return int(id), nil
 }
 
 func (s *MySQLStore) Dequeue(ctx context.Context) (*Queue, error) {
@@ -86,16 +86,16 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	return qs, nil
 }
 
-func (s *MySQLStore) updateStatus(ctx context.Context, id int64, status string) error {
+func (s *MySQLStore) updateStatus(ctx context.Context, id int, status string) error {
 	query := "UPDATE queue SET status = ? WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, status, id)
 	return err
 }
 
-func (s *MySQLStore) ProcessWorkflowInQueue(ctx context.Context, id int64) error {
+func (s *MySQLStore) ProcessWorkflowInQueue(ctx context.Context, id int) error {
 	return s.updateStatus(ctx,id,"processing")
 }
 
-func (s *MySQLStore) CompleteWorkflowInQueue(ctx context.Context, id int64) error {
+func (s *MySQLStore) CompleteWorkflowInQueue(ctx context.Context, id int) error {
 	return s.updateStatus(ctx,id,"done")
 }
