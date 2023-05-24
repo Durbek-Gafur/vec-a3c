@@ -26,7 +26,7 @@ func main() {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
 
-	handler := api.NewHandler(mysqlStore)
+	handler := api.NewHandler(mysqlStore, mysqlStore)
 
 	router := mux.NewRouter()
 	// queue

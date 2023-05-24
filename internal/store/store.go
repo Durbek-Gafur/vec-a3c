@@ -7,7 +7,7 @@ import (
 )
 
 // Store is an interface that defines the methods for interacting with the data store.
-//go:generate mockgen -destination=mocks/store_mock.go -package=store_mock vec-node/internal/store Store
+//go:generate mockgen -destination=mocks/store_mock.go -package=store_mock vec-node/internal/store WorkflowStore,QueueStore,QueueSizeStore
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
 	GetWorkflowByID(ctx context.Context,id int) (*Workflow, error)

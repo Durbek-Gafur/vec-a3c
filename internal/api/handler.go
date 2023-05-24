@@ -13,17 +13,18 @@ import (
 )
 
 type Handler struct {
-	store store.Store
+	queueSizeStore store.QueueSizeStore
+	workflowStore store.WorkflowStore
 }
 
-func NewHandler(s store.Store) *Handler {
-	return &Handler{store: s}
+func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore) *Handler {
+	return &Handler{queueSizeStore: qs, workflowStore: wf}
 }
 
 func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log.Println("hello from GET")
-	size, err := h.store.GetQueueSize(ctx)
+	size, err := h.queueSizeStore.GetQueueSize(ctx)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error. Failed to fetch queue size", http.StatusInternalServerError)
@@ -59,7 +60,7 @@ func (h *Handler) SetQueueSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.SetQueueSize(ctx, intSize)
+	err = h.queueSizeStore.SetQueueSize(ctx, intSize)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -93,7 +94,7 @@ func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.UpdateQueueSize(ctx, intSize)
+	err = h.queueSizeStore.UpdateQueueSize(ctx, intSize)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -114,7 +115,7 @@ func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wf, err := h.store.GetWorkflowByID(ctx,int(id))
+	wf, err := h.workflowStore.GetWorkflowByID(ctx,int(id))
 	if err != nil {
 		http.Error(w, "Workflow not found", http.StatusNotFound)
 		return
@@ -131,7 +132,7 @@ func (h *Handler) GetWorkflows(w http.ResponseWriter, r *http.Request) {
 		EndTime:   parseTime(r.URL.Query().Get("end_time")),
 	}
 
-	workflows, err := h.store.GetWorkflows(ctx,filter)
+	workflows, err := h.workflowStore.GetWorkflows(ctx,filter)
 	if err != nil {
 		http.Error(w, "Failed to fetch workflows", http.StatusInternalServerError)
 		return
@@ -148,7 +149,7 @@ func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _,err := h.store.SaveWorkflow(ctx,&wf); err != nil {
+	if _,err := h.workflowStore.SaveWorkflow(ctx,&wf); err != nil {
 		http.Error(w, "Failed to save workflow", http.StatusInternalServerError)
 		return
 	}
