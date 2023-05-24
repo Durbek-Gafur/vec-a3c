@@ -13,6 +13,9 @@ RUN mkdir "/build"
 
 COPY ./ /app
 
+# Generate mocks
+RUN go generate ./...
+
 RUN go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 RUN go install github.com/golang/mock/mockgen@v1.6.0
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon

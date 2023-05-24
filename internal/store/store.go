@@ -6,6 +6,7 @@ import (
 )
 
 // Store is an interface that defines the methods for interacting with the data store.
+//go:generate mockgen -destination=mocks/store_mock.go -package=mocks vec-node/internal/store Store
 type Store interface {
 	GetQueueSize(ctx context.Context) (int, error)
 	SetQueueSize(ctx context.Context, size int) error

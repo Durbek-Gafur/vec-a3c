@@ -14,9 +14,10 @@ type Service struct {
 }
 
 
-func NewService(store s.Store) *Service {
+func NewService(store s.Store, workflow wf.Service) *Service {
 	return &Service{
 		store: store,
+		workflow: workflow,
 	}
 }
 
