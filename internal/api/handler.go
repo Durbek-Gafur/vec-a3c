@@ -114,7 +114,7 @@ func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wf, err := h.store.GetWorkflowByID(ctx,id)
+	wf, err := h.store.GetWorkflowByID(ctx,int(id))
 	if err != nil {
 		http.Error(w, "Workflow not found", http.StatusNotFound)
 		return
@@ -174,3 +174,5 @@ func parseTime(value string) time.Time {
 
 	return t
 }
+
+// TODO get sysInfo

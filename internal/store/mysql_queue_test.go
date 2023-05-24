@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
+	"github.com/stretchr/testify/assert"
 )
 
 
@@ -265,4 +266,50 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 	}
 
 
+}
+
+
+
+
+func TestIsSpaceAvailable(t *testing.T) {
+	t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
+
+	// Prepare sample queue data
+	queueData := []Queue{
+		{
+			WorkflowID: 1,
+		},
+		{
+			WorkflowID: 2,
+		},
+	}
+
+	// Enqueue queueData
+	for _, q := range queueData {
+		_, err := testStore.Enqueue(ctx, q.WorkflowID)
+		assert.NoError(t, err, "Enqueue failed")
+	}
+
+	// Call IsSpaceAvailable when space is available
+	available, err := testStore.IsSpaceAvailable(context.Background())
+	assert.NoError(t, err, "IsSpaceAvailable failed")
+	assert.True(t, available, "Expected space to be available")
+
+	// Fill up the queue to the maximum size
+	for i := len(queueData); i < 15; i++ {
+		_, err := testStore.Enqueue(ctx, i+1)
+		assert.NoError(t, err, "Enqueue failed")
+	}
+
+	// Call IsSpaceAvailable when space is not available
+	available, err = testStore.IsSpaceAvailable(context.Background())
+	assert.NoError(t, err, "IsSpaceAvailable failed")
+	assert.False(t, available, "Expected space to be unavailable")
 }

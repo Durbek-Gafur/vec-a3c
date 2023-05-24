@@ -86,6 +86,28 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	return qs, nil
 }
 
+func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
+	var queueSize int
+	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
+	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
+	if err != nil {
+		fmt.Println("Setting default value to queue size")
+		queueSize = 10
+	}
+
+	query := "SELECT COUNT(*) FROM queue WHERE status <> 'done';"
+	var currentSize int
+	err = s.db.QueryRowContext(ctx, query).Scan(&currentSize)
+	if err != nil {
+		return false, err
+	}
+
+	availableSpace := currentSize < queueSize
+
+	return availableSpace, nil
+}
+
+
 func (s *MySQLStore) updateStatus(ctx context.Context, id int, status string) error {
 	query := "UPDATE queue SET status = ? WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, status, id)

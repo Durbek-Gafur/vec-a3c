@@ -32,20 +32,20 @@ func (s *Service) GetQueueStatus(ctx context.Context) ([]s.Queue, error) {
 	return s.store.GetQueueStatus(ctx)
 }
 
-func (s *Service) ProcessWorkflowInQueue(ctx context.Context, id int, status string) error {
+func (s *Service) ProcessWorkflowInQueue(ctx context.Context, id int) error {
 	err := s.workflow.StartExecution(ctx,id)
 	if err!=nil{
 		return err
 	}
-	return s.store.ProcessWorkflowInQueue(ctx, id, status)
+	return s.store.ProcessWorkflowInQueue(ctx, id)
 }
 
-func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int, status string) error {
+func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int) error {
 	err := s.workflow.Complete(ctx,id)
 	if err!=nil{
 		return err
 	}
-	return s.store.CompleteWorkflowInQueue(ctx, id, status)
+	return s.store.CompleteWorkflowInQueue(ctx, id)
 }
 
 // TODO write unit test for these
