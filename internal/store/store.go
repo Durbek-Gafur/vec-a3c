@@ -23,7 +23,8 @@ type Store interface {
 	Enqueue(ctx context.Context, workflowID int64) (int64, error)
 	Dequeue(ctx context.Context) (*Queue, error)
 	GetQueueStatus(ctx context.Context) ([]Queue, error)
-	UpdateStatus(ctx context.Context, id int64, status string) error
+	ProcessWorkflowInQueue(ctx context.Context, id int64, status string) error
+	CompleteWorkflowInQueue(ctx context.Context, id int64, status string) error
 
 }
 

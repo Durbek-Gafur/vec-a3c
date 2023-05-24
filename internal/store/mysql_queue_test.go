@@ -163,5 +163,109 @@ func TestGetQueueStatus(t *testing.T) {
 	}
 }
 
+func TestProcessWorkflowInQueue(t *testing.T) {
+	t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
+	// Preparing test data
+	wf := &Workflow{
+		Name:       "test-workflow",
+		Type:       "type1",
+		Duration:   1,
+		ReceivedAt: time.Now(),
+	}
+	wf, err := testStore.SaveWorkflow(ctx, wf)
+	if err != nil {
+		t.Fatalf("CreateWorkflow failed: %v", err)
+	}
+
+	// Enqueue the workflow
+	_, err = testStore.Enqueue(ctx, wf.ID)
+	if err != nil {
+		t.Fatalf("Enqueue failed: %v", err)
+	}
+
+	// Test UpdateStatus
+	newStatus := "processing"
+	err = testStore.ProcessWorkflowInQueue(ctx, wf.ID)
+	if err != nil {
+		t.Fatalf("UpdateStatus failed: %v", err)
+	}
+
+	// Retrieve the updated status
+	queues, err := testStore.GetQueueStatus(ctx)
+	if err != nil {
+		t.Fatalf("GetQueueStatus failed: %v", err)
+	}
+
+	// Find the updated item in the queue
+	var found bool
+	for _, q := range queues {
+		if q.WorkflowID == wf.ID && q.Status == newStatus {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		t.Fatalf("Updated item not found in the queue")
+	}
+}
+
+
+func TestCompleteWorkflowInQueue(t *testing.T) {
+	t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
+	// Preparing test data
+	wf := &Workflow{
+		Name:       "test-workflow",
+		Type:       "type1",
+		Duration:   1,
+		ReceivedAt: time.Now(),
+	}
+	wf, err := testStore.SaveWorkflow(ctx, wf)
+	if err != nil {
+		t.Fatalf("CreateWorkflow failed: %v", err)
+	}
+
+	// Enqueue the workflow
+	_, err = testStore.Enqueue(ctx, wf.ID)
+	if err != nil {
+		t.Fatalf("Enqueue failed: %v", err)
+	}
+
+	// Test UpdateStatus
+	newStatus := "done"
+	err = testStore.ProcessWorkflowInQueue(ctx, wf.ID)
+	if err != nil {
+		t.Fatalf("UpdateStatus failed: %v", err)
+	}
+
+	// Retrieve the updated status
+	queues, err := testStore.GetQueueStatus(ctx)
+	if err != nil {
+		t.Fatalf("GetQueueStatus failed: %v", err)
+	}
+
+	// Try to find the updated item in the queue
+	for _, q := range queues {
+		if q.WorkflowID == wf.ID && q.Status == newStatus {
+			t.Fatalf("Completed item found in the queue")
+		}
+	}
+
+
+}
 
 // TODO move to in process, move to done and test again

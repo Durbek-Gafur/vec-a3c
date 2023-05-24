@@ -62,7 +62,7 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 		queueSize = 10
 	}
 
-	query := "SELECT id, workflow_id, status, enqueued_at FROM queue ORDER BY enqueued_at ASC LIMIT ?;"
+	query := "SELECT id, workflow_id, status, enqueued_at FROM queue WHERE status <> 'done' ORDER BY enqueued_at ASC LIMIT ?;"
 	rows, err := s.db.QueryContext(ctx, query, queueSize)
 	if err != nil {
 		return nil, err
@@ -86,8 +86,16 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	return qs, nil
 }
 
-func (s *MySQLStore) UpdateStatus(ctx context.Context, id int64, status string) error {
+func (s *MySQLStore) updateStatus(ctx context.Context, id int64, status string) error {
 	query := "UPDATE queue SET status = ? WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, status, id)
 	return err
+}
+
+func (s *MySQLStore) ProcessWorkflowInQueue(ctx context.Context, id int64) error {
+	return s.updateStatus(ctx,id,"processing")
+}
+
+func (s *MySQLStore) CompleteWorkflowInQueue(ctx context.Context, id int64) error {
+	return s.updateStatus(ctx,id,"done")
 }
