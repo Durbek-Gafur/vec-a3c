@@ -245,7 +245,6 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 		t.Fatalf("Enqueue failed: %v", err)
 	}
 
-	// Test UpdateStatus
 	newStatus := "done"
 	err = testStore.ProcessWorkflowInQueue(ctx, wf.ID)
 	if err != nil {
