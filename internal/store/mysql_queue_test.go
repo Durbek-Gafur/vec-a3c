@@ -267,5 +267,3 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 
 
 }
-
-// TODO move to in process, move to done and test again
