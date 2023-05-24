@@ -52,7 +52,7 @@ func (s *MySQLStore) Dequeue(ctx context.Context) (*Queue, error) {
 }
 
 func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
-	query := "SELECT id, workflow_id, status, enqueued_at FROM queue"
+	query := "SELECT id, workflow_id, status, enqueued_at FROM queue ORDER BY enqueued_at ASC;"
 	rows, err := s.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err

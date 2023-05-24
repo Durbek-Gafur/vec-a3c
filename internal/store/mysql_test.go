@@ -18,70 +18,74 @@ var testStore *MySQLStore
 var ctx context.Context
 
 func TestMain(m *testing.M) {
-    host := os.Getenv("MYSQL_HOST")
-    user := os.Getenv("MYSQL_USER")
-    password := os.Getenv("MYSQL_PASSWORD")
-    database := os.Getenv("MYSQL_DBNAME")
-    port := os.Getenv("MYSQL_PORT")
+    runTests := func() int {
+        host := os.Getenv("MYSQL_HOST")
+        user := os.Getenv("MYSQL_USER")
+        password := os.Getenv("MYSQL_PASSWORD")
+        database := os.Getenv("MYSQL_DBNAME")
+        port := os.Getenv("MYSQL_PORT")
 
-    dsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + "?parseTime=true"
-    db, err := sql.Open("mysql", dsn)
-    if err != nil {
-        log.Fatalf("Failed to connect to MySQL: %v", err)
+        dsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + "?parseTime=true"
+        db, err := sql.Open("mysql", dsn)
+        if err != nil {
+            log.Fatalf("Failed to connect to MySQL: %v", err)
+        }
+        defer db.Close()
+
+        // Create test database
+        testDBName := database + "_test"
+        _, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + testDBName)
+        if err != nil {
+            log.Fatalf("Failed to create test database: %v", err)
+        }
+
+        defer func() {
+            _, err := db.Exec("DROP DATABASE IF EXISTS " + testDBName)
+            if err != nil {
+                log.Printf("Failed to drop test database: %v", err)
+            } else {
+                log.Printf("Dropped test database: %v", testDBName)
+            }
+        }()
+
+        log.Println(database)
+        // Run migrations on the test database
+
+        newDsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + testDBName + "?multiStatements=true"
+        newDB, err := sql.Open("mysql", newDsn)
+        if err != nil {
+            log.Fatalf("Failed to connect to MySQL: %v", err)
+        }
+        defer newDB.Close()
+
+        migrationsDir := "file:///app/migrations"
+        driver, err := mysql.WithInstance(newDB, &mysql.Config{})
+        if err != nil {
+            log.Fatalf("Failed to create MySQL driver for migrations: %v", err)
+        }
+        migrationInstance, err := migrate.NewWithDatabaseInstance(migrationsDir, testDBName, driver)
+        if err != nil {
+            log.Fatalf("Failed to create migration instance: %v", err)
+        }
+        err = migrationInstance.Up()
+        if err != nil && err != migrate.ErrNoChange {
+            log.Fatalf("Failed to run migrations: %v", err)
+        }
+
+        // Create store instance for tests
+        testStore, err = NewMySQLStore(user + ":" + password + "@tcp(" + host + ":" + port + ")/" + testDBName + "?parseTime=true")
+        if err != nil {
+            log.Fatalf("Failed to create MySQL store: %v", err)
+        }
+
+        ctx = context.Background()
+        return m.Run()
     }
-    defer db.Close()
 
-    // Create test database
-    testDBName := database + "_test"
-    _, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + testDBName)
-    if err != nil {
-        log.Fatalf("Failed to create test database: %v", err)
-    }
-
-	defer func() {
-		_, err := db.Exec("DROP DATABASE IF EXISTS " + testDBName)
-		if err != nil {
-			log.Printf("Failed to drop test database: %v", err)
-		} else {
-			log.Printf("Dropped test database: %v", testDBName)
-		}
-	}()
-
-	
-	log.Println(database)
-    // Run migrations on the test database
-
-	newDsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" +testDBName+ "?multiStatements=true"
-    newDB, err := sql.Open("mysql", newDsn)
-	if err != nil {
-        log.Fatalf("Failed to connect to MySQL: %v", err)
-    }
-    defer newDB.Close()
-
-    migrationsDir := "file:///app/migrations" 
-    driver, err := mysql.WithInstance(newDB, &mysql.Config{})
-    if err != nil {
-        log.Fatalf("Failed to create MySQL driver for migrations: %v", err)
-    }
-    migrationInstance, err := migrate.NewWithDatabaseInstance(migrationsDir, testDBName, driver)
-    if err != nil {
-        log.Fatalf("Failed to create migration instance: %v", err)
-    }
-    err = migrationInstance.Up()
-    if err != nil && err != migrate.ErrNoChange {
-        log.Fatalf("Failed to run migrations: %v", err)
-    }
-
-    // Create store instance for tests
-    testStore, err = NewMySQLStore(user + ":" + password + "@tcp(" + host + ":" + port + ")/" + testDBName + "?parseTime=true")
-    if err != nil {
-        log.Fatalf("Failed to create MySQL store: %v", err)
-    }
-
-    ctx = context.Background()
-    code := m.Run()
+    code := runTests() // The deferred functions will run when this function returns.
     os.Exit(code)
 }
+
 
 
 func TestQueueSize(t *testing.T) {
