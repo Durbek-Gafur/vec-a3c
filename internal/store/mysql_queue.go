@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 )
 
 
@@ -52,8 +53,17 @@ func (s *MySQLStore) Dequeue(ctx context.Context) (*Queue, error) {
 }
 
 func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
-	query := "SELECT id, workflow_id, status, enqueued_at FROM queue ORDER BY enqueued_at ASC;"
-	rows, err := s.db.QueryContext(ctx, query)
+	// Fetch the queue size limit from the queue_size table
+	var queueSize int
+	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
+	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
+	if err != nil {
+		fmt.Println("Setting default value to queue size")
+		queueSize = 10
+	}
+
+	query := "SELECT id, workflow_id, status, enqueued_at FROM queue ORDER BY enqueued_at ASC LIMIT ?;"
+	rows, err := s.db.QueryContext(ctx, query, queueSize)
 	if err != nil {
 		return nil, err
 	}
