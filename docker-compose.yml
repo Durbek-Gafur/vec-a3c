@@ -4,17 +4,24 @@ services:
   app:
     build: .
     container_name: backend
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPUS}
+          memory: ${RAM}
     ports:
       - "8080:8080"
     depends_on:
       - db
       - migrator
     environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root_password_vec
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
-      MYSQL_DBNAME: app_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DBNAME: ${MYSQL_DBNAME}
+      CPUS: ${CPUS}
+      RAM: ${RAM}
     volumes:
       - ./:/app
     restart: always
@@ -25,25 +32,20 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root_password_vec
-      MYSQL_DATABASE: app_db
-      MYSQL_PASSWORD: password_vec
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DBNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
   migrator:
     image: migrate/migrate
     container_name: migrator
-    # command: ["-source=file:///migrations", "-database=mysql://root:root_password_vec@tcp(db:3306)/app_db", "force", "1"]
-
-    command: ["-source=file:///migrations", "-database=mysql://root:root_password_vec@tcp(db:3306)/app_db", "up"]
-    # command: >
-    #   sh -c "migrate -path /migrations -database 'mysql://$${MYSQL_USER}:$${MYSQL_PASSWORD}@tcp($${MYSQL_HOST}:$${MYSQL_PORT})/$${MYSQL_DBNAME}?queryCache=0&parseTime=true' up"
+    command: ["-source=file:///migrations", "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DBNAME}", "up"]
     depends_on:
       - db
     environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root_password_vec
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
-      MYSQL_DBNAME: app_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DBNAME: ${MYSQL_DBNAME}
     volumes:
       - ./migrations:/migrations
-    # restart: always
