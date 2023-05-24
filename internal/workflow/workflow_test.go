@@ -15,7 +15,7 @@ func TestStartExecution(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStore := store_mock.NewMockStore(ctrl)
+	mockStore := store_mock.NewMockWorkflowStore(ctrl)
 	service := NewService(mockStore)
 
 	ctx := context.TODO()
@@ -29,7 +29,7 @@ func TestComplete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStore := store_mock.NewMockStore(ctrl)
+	mockStore := store_mock.NewMockWorkflowStore(ctrl)
 	service := NewService(mockStore)
 
 	ctx := context.TODO()
@@ -43,7 +43,7 @@ func TestUpdateWorkflow(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStore := store_mock.NewMockStore(ctrl)
+	mockStore := store_mock.NewMockWorkflowStore(ctrl)
 	service := NewService(mockStore)
 
 	ctx := context.TODO()

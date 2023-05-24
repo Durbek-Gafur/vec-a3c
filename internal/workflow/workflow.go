@@ -17,23 +17,23 @@ func NewWorkflow(name, wType string, duration int) *s.Workflow {
 }
 
 type Service struct {
-	store s.Store
+	workflowStore s.WorkflowStore
 }
 
-func NewService(store s.Store) *Service {
+func NewService(store s.WorkflowStore) *Service {
 	return &Service{
-		store: store,
+		workflowStore: store,
 	}
 }
 
 func (s *Service) StartExecution(ctx context.Context, id int) error {
-	return s.store.StartWorkflow(ctx, id)
+	return s.workflowStore.StartWorkflow(ctx, id)
 }
 
 func (s *Service) Complete(ctx context.Context, id int) error {
-	return s.store.CompleteWorkflow(ctx, id)
+	return s.workflowStore.CompleteWorkflow(ctx, id)
 }
 
 func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow,error) {
-	return s.store.UpdateWorkflow(ctx, wf)
+	return s.workflowStore.UpdateWorkflow(ctx, wf)
 }
