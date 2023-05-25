@@ -21,6 +21,9 @@ func TestEnqueue(t *testing.T) {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
 	})
 
 	// Preparing a new workflow to be used for the enqueue operation
@@ -66,6 +69,9 @@ func TestGetQueueStatus(t *testing.T) {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 	})
@@ -151,8 +157,12 @@ func TestGetQueueStatus(t *testing.T) {
 	}
 
 	// Verify the results
+	queue_size_original,err := testStore.GetQueueSizeFromDBorENV(ctx)
+	if err != nil{
+		fmt.Println("Error in GetQueueSizeFromDBorENV in test")
+	}
 	actualLen := len(queues)
-	if actualLen != 10 { //actualLen != len(queueData) &&  
+	if actualLen !=  queue_size_original{ //actualLen != len(queueData) &&  
 		t.Fatalf("Expected %d queues, got %d", len(queueData), len(queues))
 	}
 
@@ -170,6 +180,9 @@ func TestProcessWorkflowInQueue(t *testing.T) {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 	})
@@ -226,6 +239,9 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
 	})
 	// Preparing test data
 	wf := &Workflow{
@@ -273,6 +289,9 @@ func TestIsSpaceAvailable(t *testing.T) {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
 	})
 
 	// Prepare sample queue data
@@ -315,6 +334,9 @@ func TestPeek(t *testing.T) {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 	})
@@ -411,8 +433,12 @@ func TestPeek(t *testing.T) {
 
 
 func TestGetAvailableSpace(t *testing.T) {
+	
 	t.Cleanup(func() {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
 			t.Fatalf("Failed to clean up test database: %v", err)
 		}
 	})
@@ -440,7 +466,11 @@ func TestGetAvailableSpace(t *testing.T) {
 	assert.True(t, availableSpace > 0, "Expected available space to be more than 0")
 
 	// Fill up the queue to the maximum size
-	for i := len(queueData); i < 10; i++ {
+	queue_size_original,err := testStore.GetQueueSizeFromDBorENV(ctx)
+	if err != nil{
+		fmt.Println("Error in GetQueueSizeFromDBorENV in test")
+	}
+	for i := len(queueData); i < queue_size_original; i++ {
 		_, err := testStore.Enqueue(ctx, i+1)
 		assert.NoError(t, err, "Enqueue failed")
 	}
@@ -451,7 +481,7 @@ func TestGetAvailableSpace(t *testing.T) {
 	assert.Equal(t, 0, availableSpace, "Expected available space to be 0")
 
 	// Check if the function correctly handles cases where the current size is greater than the queue size
-	_, err = testStore.Enqueue(ctx, 10)
+	_, err = testStore.Enqueue(ctx, queue_size_original+1)
 	assert.NoError(t, err, "Enqueue failed")
 
 	_, err = testStore.GetAvailableSpace(ctx)

@@ -47,7 +47,6 @@ func TestMain(m *testing.M) {
             }
         }()
 
-        log.Println(database)
         // Run migrations on the test database
 
         newDsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + testDBName + "?multiStatements=true"
@@ -88,6 +87,11 @@ func TestMain(m *testing.M) {
 
 
 func TestQueueSize(t *testing.T) {
+    t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue_size;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
 	// Test SetQueueSize
 	err := testStore.SetQueueSize(ctx, 5)
 	if err != nil {
@@ -103,7 +107,6 @@ func TestQueueSize(t *testing.T) {
 	if size != 5 {
 		t.Fatalf("Expected queue size 5, got %d", size)
 	}
-
 	// Test UpdateQueueSize
 	err = testStore.UpdateQueueSize(ctx, 10)
 	if err != nil {
