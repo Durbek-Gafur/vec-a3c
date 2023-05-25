@@ -122,12 +122,11 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 	service := NewService(mockStore, mockWorkflow)
 
 	ctx := context.TODO()
-	queueID := 123
 	workflowID := 456
 
 	mockWorkflow.EXPECT().Complete(ctx, workflowID).Return(nil)
-	mockStore.EXPECT().CompleteWorkflowInQueue(ctx, queueID).Return(nil)
+	mockStore.EXPECT().CompleteWorkflowInQueue(ctx, workflowID).Return(nil)
 
-	err := service.CompleteWorkflowInQueue(ctx, queueID)
+	err := service.CompleteWorkflowInQueue(ctx, workflowID)
 	assert.NoError(t, err)
 }
