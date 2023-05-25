@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -406,4 +407,54 @@ func TestPeek(t *testing.T) {
 		}
 
 	}
+}
+
+
+func TestGetAvailableSpace(t *testing.T) {
+	t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
+
+	// Prepare sample queue data
+	queueData := []Queue{
+		{
+			WorkflowID: 1,
+		},
+		{
+			WorkflowID: 2,
+		},
+	}
+
+	// Enqueue queueData
+	for _, q := range queueData {
+		_, err := testStore.Enqueue(ctx, q.WorkflowID)
+		assert.NoError(t, err, "Enqueue failed")
+	}
+
+	// Call GetAvailableSpace when space is available
+	availableSpace, err := testStore.GetAvailableSpace(ctx)
+	assert.NoError(t, err, "GetAvailableSpace failed")
+	fmt.Println(availableSpace)
+	assert.True(t, availableSpace > 0, "Expected available space to be more than 0")
+
+	// Fill up the queue to the maximum size
+	for i := len(queueData); i < 10; i++ {
+		_, err := testStore.Enqueue(ctx, i+1)
+		assert.NoError(t, err, "Enqueue failed")
+	}
+
+	// Call GetAvailableSpace when space is not available
+	availableSpace, err = testStore.GetAvailableSpace(ctx)
+	assert.NoError(t, err, "GetAvailableSpace failed")
+	assert.Equal(t, 0, availableSpace, "Expected available space to be 0")
+
+	// Check if the function correctly handles cases where the current size is greater than the queue size
+	_, err = testStore.Enqueue(ctx, 10)
+	assert.NoError(t, err, "Enqueue failed")
+
+	_, err = testStore.GetAvailableSpace(ctx)
+	assert.Error(t, err, "Expected GetAvailableSpace to return an error")
+	assert.Contains(t, err.Error(), "negative available space", "Error message should contain 'negative available space'")
 }

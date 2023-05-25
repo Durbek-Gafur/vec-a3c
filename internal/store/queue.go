@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -114,24 +115,28 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	return qs, nil
 }
 func (s *MySQLStore) getQueueSizeFromDB(ctx context.Context) (int, error) {
+	
 	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
 	var queueSize int
 	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
 	if err != nil {
 		return 0, err
 	}
+	fmt.Printf("queue_size %d from DB", queueSize)
 	return queueSize, nil
 }
 
 func (s *MySQLStore) getQueueSizeFromEnv() (int, error) {
 	queueSizeEnv := os.Getenv("QUEUE_SIZE")
 	if queueSizeEnv == "" {
-		return 10, errors.New("QUEUE_SIZE not set, using default value")
+		log.Println("QUEUE_SIZE not set, using default value 10")
+		return 10, errors.New("QUEUE_SIZE not set, using default value 10")
 	}
 	queueSize, err := strconv.Atoi(queueSizeEnv)
 	if err != nil {
 		return 0, fmt.Errorf("invalid value for QUEUE_SIZE: %s", queueSizeEnv)
 	}
+	log.Printf("QUEUE_SIZE from ENV %d", queueSize)
 	return queueSize, nil
 }
 
@@ -167,6 +172,32 @@ func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
 	return availableSpace, nil
 }
 
+func (s *MySQLStore) GetAvailableSpace(ctx context.Context) (int, error) {
+    queueSize, err := s.getQueueSize(ctx)
+    if err != nil {
+        return 0, fmt.Errorf("failed to get queue size: %w", err)
+    }
+
+    query := "SELECT COUNT(*) FROM queue WHERE status <> 'done';"
+    stmt, err := s.db.PrepareContext(ctx, query)
+    if err != nil {
+        return 0, fmt.Errorf("failed to prepare query: %w", err)
+    }
+    defer stmt.Close()
+
+    var currentSize int
+    err = stmt.QueryRowContext(ctx).Scan(&currentSize)
+    if err != nil {
+        return 0, fmt.Errorf("failed to query queue size: %w", err)
+    }
+
+    availableSpace := queueSize - currentSize
+    if availableSpace < 0 {
+        return 0, fmt.Errorf("negative available space: queueSize=%d, currentSize=%d", queueSize, currentSize)
+    }
+
+    return availableSpace, nil
+}
 
 
 func (s *MySQLStore) updateStatus(ctx context.Context, id int, status string) error {
