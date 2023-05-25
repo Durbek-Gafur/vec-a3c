@@ -2,7 +2,10 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -82,12 +85,9 @@ func (s *MySQLStore) Peek(ctx context.Context) (*Queue, error) {
 
 func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	// Fetch the queue size limit from the queue_size table
-	var queueSize int
-	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
-	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
+	queueSize, err := s.getQueueSize(ctx)
 	if err != nil {
-		fmt.Println("Setting default value to queue size")
-		queueSize = 10
+		return nil, err
 	}
 
 	query := "SELECT id, workflow_id, status, enqueued_at FROM queue WHERE status <> 'done' ORDER BY enqueued_at ASC LIMIT ?;"
@@ -113,14 +113,46 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 
 	return qs, nil
 }
-
-func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
-	var queueSize int
+func (s *MySQLStore) getQueueSizeFromDB(ctx context.Context) (int, error) {
 	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
+	var queueSize int
 	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
 	if err != nil {
-		fmt.Println("Setting default value to queue size")
-		queueSize = 10
+		return 0, err
+	}
+	return queueSize, nil
+}
+
+func (s *MySQLStore) getQueueSizeFromEnv() (int, error) {
+	queueSizeEnv := os.Getenv("QUEUE_SIZE")
+	if queueSizeEnv == "" {
+		return 10, errors.New("QUEUE_SIZE not set, using default value")
+	}
+	queueSize, err := strconv.Atoi(queueSizeEnv)
+	if err != nil {
+		return 0, fmt.Errorf("invalid value for QUEUE_SIZE: %s", queueSizeEnv)
+	}
+	return queueSize, nil
+}
+
+func (s *MySQLStore) getQueueSize(ctx context.Context) (int, error) {
+	queueSize, err := s.getQueueSizeFromDB(ctx)
+	if err == nil {
+		return queueSize, nil
+	}
+
+	queueSize, err = s.getQueueSizeFromEnv()
+	if err != nil {
+		return 0, err
+	}
+
+	return queueSize, nil
+}
+
+func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
+	queueSize, err := s.getQueueSize(ctx)
+	if err != nil {
+		return false, err
 	}
 
 	query := "SELECT COUNT(*) FROM queue WHERE status <> 'done';"
@@ -134,6 +166,7 @@ func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
 
 	return availableSpace, nil
 }
+
 
 
 func (s *MySQLStore) updateStatus(ctx context.Context, id int, status string) error {
