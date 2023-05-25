@@ -160,21 +160,6 @@ func (mr *MockQueueStoreMockRecorder) CompleteWorkflowInQueue(arg0, arg1 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteWorkflowInQueue", reflect.TypeOf((*MockQueueStore)(nil).CompleteWorkflowInQueue), arg0, arg1)
 }
 
-// Dequeue mocks base method.
-func (m *MockQueueStore) Dequeue(arg0 context.Context) (*store.Queue, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Dequeue", arg0)
-	ret0, _ := ret[0].(*store.Queue)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Dequeue indicates an expected call of Dequeue.
-func (mr *MockQueueStoreMockRecorder) Dequeue(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Dequeue", reflect.TypeOf((*MockQueueStore)(nil).Dequeue), arg0)
-}
-
 // Enqueue mocks base method.
 func (m *MockQueueStore) Enqueue(arg0 context.Context, arg1 int) (int, error) {
 	m.ctrl.T.Helper()
@@ -218,6 +203,21 @@ func (m *MockQueueStore) IsSpaceAvailable(arg0 context.Context) (bool, error) {
 func (mr *MockQueueStoreMockRecorder) IsSpaceAvailable(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSpaceAvailable", reflect.TypeOf((*MockQueueStore)(nil).IsSpaceAvailable), arg0)
+}
+
+// Peek mocks base method.
+func (m *MockQueueStore) Peek(arg0 context.Context) (*store.Queue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Peek", arg0)
+	ret0, _ := ret[0].(*store.Queue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Peek indicates an expected call of Peek.
+func (mr *MockQueueStoreMockRecorder) Peek(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Peek", reflect.TypeOf((*MockQueueStore)(nil).Peek), arg0)
 }
 
 // ProcessWorkflowInQueue mocks base method.
