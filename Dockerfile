@@ -13,13 +13,19 @@ RUN mkdir "/build"
 
 COPY ./ /app
 
-# Generate mocks
-RUN go generate ./...
+
+
 
 RUN go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 RUN go install github.com/golang/mock/mockgen@v1.6.0
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod tidy
+
+# Generate mocks
+RUN go generate ./...
+
+# Run tests
+# RUN go test ./... || exit 1
 
 ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
 
