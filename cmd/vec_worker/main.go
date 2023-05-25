@@ -40,6 +40,9 @@ func main() {
 	router.HandleFunc("/workflow/{id:[0-9]+}", handler.GetWorkflowByID).Methods("GET")
 	router.HandleFunc("/workflows", handler.GetWorkflows).Methods("GET")
 
+	// rspec
+	router.HandleFunc("/rspec", handler.GetRspec).Methods("GET")
+
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,

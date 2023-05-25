@@ -42,6 +42,4 @@ func TestParseResourcesFromEnv(t *testing.T) {
 	os.Unsetenv("RAM")
 }
 
-func GetRspec() (*Resources, error) {
-	return ParseResourcesFromEnv()
-}
+

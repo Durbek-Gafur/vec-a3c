@@ -30,3 +30,7 @@ func ParseResourcesFromEnv() (*Resources, error) {
 
 	return resources, nil
 }
+
+func GetRspec() (*Resources, error) {
+	return ParseResourcesFromEnv()
+}

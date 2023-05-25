@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"vec-node/internal/rspec"
 	"vec-node/internal/store"
 
 	"github.com/gorilla/mux"
@@ -176,4 +177,16 @@ func parseTime(value string) time.Time {
 	return t
 }
 
-// TODO get sysInfo
+
+func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
+	rspec, err := rspec.GetRspec()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error. Failed to rspec", http.StatusInternalServerError)
+		return
+	}
+
+	jsonResponse(w, map[string]float64{"RAM": float64(rspec.RAM),"CORE":float64(rspec.CPUs)}, http.StatusOK)
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
+}

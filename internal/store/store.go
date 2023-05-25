@@ -33,6 +33,7 @@ type QueueSizeStore interface {
 	GetQueueSize(ctx context.Context) (int, error)
 	SetQueueSize(ctx context.Context, size int) error
 	UpdateQueueSize(ctx context.Context, size int) error
+	// GetQueueSizeFromDBorENV(ctx context.Context) (int, error)
 }
 
 

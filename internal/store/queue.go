@@ -3,8 +3,6 @@ package store
 import (
 	"context"
 	"fmt"
-	"os"
-	"strconv"
 	"time"
 )
 
@@ -112,45 +110,7 @@ func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 
 	return qs, nil
 }
-func (s *MySQLStore) getQueueSizeFromDB(ctx context.Context) (int, error) {
-	
-	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
-	var queueSize int
-	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)
-	if err != nil {
-		return 0, err
-	}
-	// fmt.Printf("queue_size %d from DB\n", queueSize)
-	return queueSize, nil
-}
 
-func (s *MySQLStore) getQueueSizeFromEnv() (int, error) {
-	queueSizeEnv := os.Getenv("QUEUE_SIZE")
-	if queueSizeEnv == "" {
-		fmt.Println("QUEUE_SIZE not set, using default value 10")
-		return 10, nil //errors.New("QUEUE_SIZE not set, using default value 10")
-	}
-	queueSize, err := strconv.Atoi(queueSizeEnv)
-	if err != nil {
-		return 0, fmt.Errorf("invalid value for QUEUE_SIZE: %s", queueSizeEnv)
-	}
-	// fmt.Printf("QUEUE_SIZE from ENV %d", queueSize)
-	return queueSize, nil
-}
-
-func (s *MySQLStore) GetQueueSizeFromDBorENV(ctx context.Context) (int, error) {
-	queueSize, err := s.getQueueSizeFromDB(ctx)
-	if err == nil {
-		return queueSize, nil
-	}
-
-	queueSize, err = s.getQueueSizeFromEnv()
-	if err != nil {
-		return 0, err
-	}
-
-	return queueSize, nil
-}
 
 func (s *MySQLStore) IsSpaceAvailable(ctx context.Context) (bool, error) {
 	queueSize, err := s.GetQueueSizeFromDBorENV(ctx)

@@ -50,3 +50,4 @@ services:
       MYSQL_DBNAME: ${MYSQL_DBNAME}
     volumes:
       - ./migrations:/migrations
+    restart: on-failure:10
