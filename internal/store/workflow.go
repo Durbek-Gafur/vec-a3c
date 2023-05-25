@@ -100,9 +100,9 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow
 }
 
 
-func (s *MySQLStore) StartWorkflow(ctx context.Context, id int) error {
+func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {
 	query := "UPDATE workflow SET started_execution_at = NOW() WHERE id = ?"
-	_, err := s.db.ExecContext(ctx, query, id)
+	_, err := s.db.ExecContext(ctx, query, workflowID)
 	return err
 }
 

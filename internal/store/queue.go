@@ -33,8 +33,8 @@ func (s *MySQLStore) Dequeue(ctx context.Context) (*Queue, error) {
 	}
 	defer tx.Rollback()
 
-	// Select the next 'pending' job
-	query := "SELECT id, workflow_id FROM queue WHERE status = 'pending' ORDER BY enqueued_at ASC LIMIT 1 FOR UPDATE"
+	// Select the next 'pending' or 'processing' job
+	query := "SELECT id, workflow_id FROM queue WHERE status <> 'done' ORDER BY enqueued_at ASC LIMIT 1 FOR UPDATE"
 	row := tx.QueryRowContext(ctx, query)
 
 	q := &Queue{}
@@ -58,6 +58,27 @@ func (s *MySQLStore) Dequeue(ctx context.Context) (*Queue, error) {
 
 	return q, nil
 }
+
+func (s *MySQLStore) Peek(ctx context.Context) (*Queue, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	// Select the next 'pending' or 'processing' job
+	query := "SELECT id, workflow_id, status, enqueued_at FROM queue WHERE status <> 'done' ORDER BY enqueued_at ASC LIMIT 1"
+	row := tx.QueryRowContext(ctx, query)
+
+	q := &Queue{}
+	err = row.Scan(&q.ID, &q.WorkflowID, &q.Status, &q.EnqueuedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return q, nil
+}
+
 
 func (s *MySQLStore) GetQueueStatus(ctx context.Context) ([]Queue, error) {
 	// Fetch the queue size limit from the queue_size table

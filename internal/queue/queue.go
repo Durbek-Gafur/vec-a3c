@@ -9,36 +9,36 @@ import (
 
 
 type Service struct {
-	store s.Store
-	workflow wf.Service
+	queueStore s.QueueStore
+	workflow wf.Workflow
 }
 
 
-func NewService(store s.Store, workflow wf.Service) *Service {
+func NewService(store s.QueueStore, workflow wf.Workflow) *Service {
 	return &Service{
-		store: store,
+		queueStore: store,
 		workflow: workflow,
 	}
 }
 
 func (s *Service) Enqueue(ctx context.Context, workflowID int) (int, error) {
-	return s.store.Enqueue(ctx, workflowID)
+	return s.queueStore.Enqueue(ctx, workflowID)
 }
 
-func (s *Service) Dequeue(ctx context.Context) (*s.Queue, error) {
-	return s.store.Dequeue(ctx)
+func (s *Service) Peek(ctx context.Context) (*s.Queue, error) {
+	return s.queueStore.Peek(ctx)
 }
 
 func (s *Service) GetQueueStatus(ctx context.Context) ([]s.Queue, error) {
-	return s.store.GetQueueStatus(ctx)
+	return s.queueStore.GetQueueStatus(ctx)
 }
 
-func (s *Service) ProcessWorkflowInQueue(ctx context.Context, id int) error {
-	err := s.workflow.StartExecution(ctx,id)
+func (s *Service) ProcessWorkflowInQueue(ctx context.Context, workflowID int) error {
+	err := s.workflow.StartExecution(ctx,workflowID)
 	if err!=nil{
 		return err
 	}
-	return s.store.ProcessWorkflowInQueue(ctx, id)
+	return s.queueStore.ProcessWorkflowInQueue(ctx, workflowID)
 }
 
 func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int) error {
@@ -46,7 +46,6 @@ func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int) error {
 	if err!=nil{
 		return err
 	}
-	return s.store.CompleteWorkflowInQueue(ctx, id)
+	return s.queueStore.CompleteWorkflowInQueue(ctx, id)
 }
 
-// TODO write unit test for these

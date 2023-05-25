@@ -6,7 +6,6 @@ import (
 	"errors"
 )
 
-// Store is an interface that defines the methods for interacting with the data store.
 //go:generate mockgen -destination=mocks/store_mock.go -package=store_mock vec-node/internal/store WorkflowStore,QueueStore,QueueSizeStore
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
@@ -21,9 +20,10 @@ type WorkflowStore interface {
 // QueueStore handles operations on queues
 type QueueStore interface {
 	Enqueue(ctx context.Context, workflowID int) (int, error)
-	Dequeue(ctx context.Context) (*Queue, error)
+	// Dequeue(ctx context.Context) (*Queue, error)
+	Peek(ctx context.Context) (*Queue, error) 
 	GetQueueStatus(ctx context.Context) ([]Queue, error)
-	ProcessWorkflowInQueue(ctx context.Context, id int) error
+	ProcessWorkflowInQueue(ctx context.Context, workflowID int) error
 	CompleteWorkflowInQueue(ctx context.Context, id int) error
 	IsSpaceAvailable(ctx context.Context) (bool, error)
 }

@@ -59,7 +59,6 @@ func TestEnqueue(t *testing.T) {
 	}
 }
 
-
 func TestGetQueueStatus(t *testing.T) {
 	t.Cleanup(func() {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
@@ -218,7 +217,6 @@ func TestProcessWorkflowInQueue(t *testing.T) {
 	}
 }
 
-
 func TestCompleteWorkflowInQueue(t *testing.T) {
 	t.Cleanup(func() {
 		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
@@ -247,9 +245,9 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 	}
 
 	newStatus := "done"
-	err = testStore.ProcessWorkflowInQueue(ctx, wf.ID)
+	err = testStore.CompleteWorkflowInQueue(ctx, wf.ID)
 	if err != nil {
-		t.Fatalf("UpdateStatus failed: %v", err)
+		t.Fatalf("CompleteWorkflowInQueue failed: %v", err)
 	}
 
 	// Retrieve the updated status
@@ -260,16 +258,11 @@ func TestCompleteWorkflowInQueue(t *testing.T) {
 
 	// Try to find the updated item in the queue
 	for _, q := range queues {
-		if q.WorkflowID == wf.ID && q.Status == newStatus {
+		if q.WorkflowID == wf.ID || q.Status == newStatus {
 			t.Fatalf("Completed item found in the queue")
 		}
 	}
-
-
 }
-
-
-
 
 func TestIsSpaceAvailable(t *testing.T) {
 	t.Cleanup(func() {
@@ -312,4 +305,105 @@ func TestIsSpaceAvailable(t *testing.T) {
 	available, err = testStore.IsSpaceAvailable(context.Background())
 	assert.NoError(t, err, "IsSpaceAvailable failed")
 	assert.False(t, available, "Expected space to be unavailable")
+}
+
+
+func TestPeek(t *testing.T) {
+	t.Cleanup(func() {
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE workflow;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+		if _, err := testStore.db.ExecContext(ctx, "TRUNCATE TABLE queue;"); err != nil {
+			t.Fatalf("Failed to clean up test database: %v", err)
+		}
+	})
+
+	// Prepare some sample queue data
+	queueData := []Queue{
+		{
+			WorkflowID:  1,
+		},
+		{
+			WorkflowID:  2,
+		},
+		{
+			WorkflowID:  3,
+		},
+		{
+			WorkflowID:  4,
+		},
+		{
+			WorkflowID:  5,
+		},
+		{
+			WorkflowID:  6,
+		},
+		{
+			WorkflowID:  7,
+		},
+		{
+			WorkflowID:  8,
+		},
+		{
+			WorkflowID:  9,
+		},
+		{
+			WorkflowID:  10,
+		},
+		{
+			WorkflowID:  11,
+		},
+		{
+			WorkflowID:  12,
+		},
+	}
+
+
+
+	// Call Peek on Empty 
+	wf, err := testStore.Peek(context.Background())
+
+	// Verify the results
+	if wf != nil || err==nil{
+		t.Fatalf("Expected nil, got %d", wf.WorkflowID)
+	}
+
+	// Enqueue
+	for _,q := range queueData{
+		_, err := testStore.Enqueue(ctx, q.WorkflowID)
+		if err != nil {
+			t.Fatalf("Enqueue failed: %v", err)
+		}
+		time.Sleep(1*time.Second)
+	}
+
+	// Call Peek
+	wf, err = testStore.Peek(context.Background())
+	if err != nil {
+		t.Fatalf("Peek failed: %v", err)
+	}
+
+	// Verify the results
+	if wf.WorkflowID != queueData[0].WorkflowID{
+		t.Fatalf("Expected %d wf, got %d", wf.WorkflowID, queueData[0].WorkflowID)
+
+	}
+
+	for i := range queueData {
+		wf,err := testStore.Peek(context.Background())
+		expectedID := i+1
+		if err != nil {
+			t.Fatalf("Peek failed: %v", err)
+		}
+
+		if wf.WorkflowID != expectedID   { //|| q.Status != expected.Status
+			t.Errorf("Mismatch in queue data at index %d (workflowID %d != expected %d)", i,wf.WorkflowID, expectedID)
+		}
+
+		err = testStore.CompleteWorkflowInQueue(ctx, wf.WorkflowID)
+		if err != nil {
+			t.Fatalf("CompleteWorkflowInQueue failed: %v", err)
+		}
+
+	}
 }
