@@ -1,7 +1,0 @@
--- USE app_db;
-
-CREATE TABLE IF NOT EXISTS queue_size (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  size INTEGER NOT NULL
-);
-
