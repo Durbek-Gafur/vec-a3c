@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:1.20 
 
 ENV PROJECT_DIR=/app \
     GO111MODULE=on \
@@ -9,16 +9,10 @@ ENV PROJECT_DIR=/app \
     GONOSUMDB=none
 
 WORKDIR /app
-RUN mkdir "/build"
 
 COPY ./ /app
 
-
-RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod tidy
+RUN go build -o /build/app ./cmd/vec_worker
 
-
-ENTRYPOINT CompileDaemon -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
-
-
-
+ENTRYPOINT ["/build/app"]
