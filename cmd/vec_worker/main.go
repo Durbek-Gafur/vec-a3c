@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"vec-node/internal/api"
+	"vec-node/internal/rspec"
 	"vec-node/internal/store"
 )
 
@@ -25,8 +26,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
-
-	handler := api.NewHandler(mysqlStore, mysqlStore)
+	rspec_provider := rspec.NewService()
+	handler := api.NewHandler(mysqlStore, mysqlStore,rspec_provider)
 
 	router := mux.NewRouter()
 	// queue

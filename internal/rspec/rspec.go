@@ -13,13 +13,25 @@ type Rspec interface {
 	GetRspec() (*Resources, error)
 }
 
+type Service struct {
+}
 
+func NewService() *Service {
+	return &Service{
+	}
+}
+func NewResource(cpu float64, ram int)*Resources{
+	return &Resources{
+		CPUs: cpu,
+		RAM: ram,
+	}
+}
 type Resources struct {
 	CPUs float64
 	RAM  int // in MB
 }
 
-func ParseResourcesFromEnv() (*Resources, error) {
+func (s *Service)ParseResourcesFromEnv() (*Resources, error) {
 	resources := &Resources{}
 
 	cpuStr := os.Getenv("CPUS")
@@ -39,6 +51,6 @@ func ParseResourcesFromEnv() (*Resources, error) {
 	return resources, nil
 }
 
-func GetRspec() (*Resources, error) {
-	return ParseResourcesFromEnv()
+func (s *Service)GetRspec() (*Resources, error) {
+	return s.ParseResourcesFromEnv()
 }

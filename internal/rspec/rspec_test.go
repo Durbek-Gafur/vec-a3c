@@ -11,8 +11,9 @@ func TestGetRspec(t *testing.T) {
 	os.Setenv("CPUS", "0.75")
 	os.Setenv("RAM", "512M")
 
+	rspecService := NewService()
 	// Run the function
-	resources, err := GetRspec()
+	resources, err := rspecService.GetRspec()
 	assert.NoError(t, err, "GetRspec failed")
 
 	// Check the results
@@ -28,9 +29,9 @@ func TestParseResourcesFromEnv(t *testing.T) {
 	// Set up the environment
 	os.Setenv("CPUS", "0.5")
 	os.Setenv("RAM", "256M")
-
+	rspecService := NewService()
 	// Run the function
-	resources, err := ParseResourcesFromEnv()
+	resources, err := rspecService.ParseResourcesFromEnv()
 	assert.NoError(t, err, "ParseResourcesFromEnv failed")
 
 	// Check the results
