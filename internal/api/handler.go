@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -16,15 +17,15 @@ import (
 type Handler struct {
 	queueSizeStore store.QueueSizeStore
 	workflowStore store.WorkflowStore
+	rspec rspec.Rspec
 }
 
-func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore) *Handler {
-	return &Handler{queueSizeStore: qs, workflowStore: wf}
+func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore,rspec rspec.Rspec) *Handler {
+	return &Handler{queueSizeStore: qs, workflowStore: wf,rspec:rspec}
 }
 
 func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	log.Println("hello from GET")
 	size, err := h.queueSizeStore.GetQueueSize(ctx)
 	if err != nil {
 		log.Println(err)
@@ -33,7 +34,7 @@ func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, map[string]int{"size": size}, http.StatusOK)
-	// w.Header().Set("Content-Type", "application/json")
+	
 	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
 }
 
@@ -69,8 +70,8 @@ func (h *Handler) SetQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, map[string]int{"size": intSize}, http.StatusOK)
-	// w.Header().Set("Content-Type", "application/json")
-	// w.Write([]byte(`{"size":` + size + `}`))
+	
+	
 }
 
 func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
@@ -79,18 +80,22 @@ func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		log.Println(err)
+		fmt.Println("Invalid Request couldn't decode")
 		http.Error(w, "Invalid Request couldn't decode", http.StatusBadRequest)
 		return
 	}
 
 	size, ok := data["size"]
+	
 	if !ok {
+		fmt.Println("Invalid Request no 'size'")
 		http.Error(w, "Invalid Request no 'size'", http.StatusBadRequest)
 		return
 	}
 
 	intSize, err := strconv.Atoi(size)
 	if err != nil {
+		fmt.Println("Invalid Request 'size' should be an integer")
 		http.Error(w, "Invalid Request 'size' should be an integer", http.StatusBadRequest)
 		return
 	}
@@ -101,10 +106,9 @@ func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
 	jsonResponse(w, map[string]string{"size": size}, http.StatusOK)
-	// w.Header().Set("Content-Type", "application/json")
-	// w.Write([]byte(`{"size":` + size + `}`))
+	
+	
 }
 
 func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
@@ -179,7 +183,7 @@ func parseTime(value string) time.Time {
 
 
 func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
-	rspec, err := rspec.GetRspec()
+	rspec, err := h.rspec.GetRspec()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error. Failed to rspec", http.StatusInternalServerError)
@@ -187,6 +191,6 @@ func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, map[string]float64{"RAM": float64(rspec.RAM),"CORE":float64(rspec.CPUs)}, http.StatusOK)
-	// w.Header().Set("Content-Type", "application/json")
+	
 	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
 }

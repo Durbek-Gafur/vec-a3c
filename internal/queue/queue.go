@@ -6,6 +6,16 @@ import (
 	wf "vec-node/internal/workflow"
 )
 
+//go:generate mockgen -destination=mocks/queue_mock.go -package=queueu_mock vec-node/internal/queue Queue
+
+// Queue handles operations on queue
+type Queue interface {
+	Enqueue(ctx context.Context, workflowID int) (int, error)
+	Peek(ctx context.Context) (*s.Queue, error)
+	GetQueueStatus(ctx context.Context) ([]s.Queue, error)
+	ProcessWorkflowInQueue(ctx context.Context, workflowID int) error
+	CompleteWorkflowInQueue(ctx context.Context, id int) error
+}
 
 
 type Service struct {

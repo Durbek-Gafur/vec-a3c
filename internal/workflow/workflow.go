@@ -8,7 +8,7 @@ import (
 
 //go:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock vec-node/internal/workflow Workflow
 
-// QueueSizeStore handles operations on queue sizes
+// Workflow handles operations on Workflow sizes
 type Workflow interface {
 	StartExecution(ctx context.Context, id int) error
 	Complete(ctx context.Context, id int) error

@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+//go:generate mockgen -destination=mocks/rspec_mock.go -package=rspec_mock vec-node/internal/rspec Rspec
+
+// Rspec handles operations on queue
+type Rspec interface {
+	GetRspec() (*Resources, error)
+}
+
+
 type Resources struct {
 	CPUs float64
 	RAM  int // in MB
