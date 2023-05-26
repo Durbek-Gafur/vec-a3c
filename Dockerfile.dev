@@ -14,11 +14,17 @@ RUN mkdir "/build"
 COPY ./ /app
 
 
+RUN go install github.com/golang/mock/mockgen@v1.6.0
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod tidy
 
+# Generate mocks
+RUN go generate ./...
 
-ENTRYPOINT CompileDaemon -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
+# Run tests
+# RUN go test ./... || exit 1
+
+ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
 
 
 
