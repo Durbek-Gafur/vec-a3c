@@ -2,8 +2,6 @@ package rspec
 
 import (
 	"os"
-	"strconv"
-	"strings"
 )
 
 //go:generate mockgen -destination=mocks/rspec_mock.go -package=rspec_mock vec-node/internal/rspec Rspec
@@ -20,33 +18,22 @@ func NewService() *Service {
 	return &Service{
 	}
 }
-func NewResource(cpu float64, ram int)*Resources{
+func NewResource(cpu , ram string)*Resources{
 	return &Resources{
 		CPUs: cpu,
 		RAM: ram,
 	}
 }
 type Resources struct {
-	CPUs float64
-	RAM  int // in MB
+	CPUs string
+	RAM  string 
 }
 
 func (s *Service)ParseResourcesFromEnv() (*Resources, error) {
 	resources := &Resources{}
 
-	cpuStr := os.Getenv("CPUS")
-	cpus, err := strconv.ParseFloat(cpuStr, 64)
-	if err != nil {
-		return nil, err
-	}
-	resources.CPUs = cpus
-
-	ramStr := os.Getenv("RAM")
-	ram, err := strconv.Atoi(strings.TrimSuffix(ramStr, "M"))
-	if err != nil {
-		return nil, err
-	}
-	resources.RAM = ram
+	resources.CPUs = os.Getenv("CPUS")
+	resources.RAM = os.Getenv("RAM")
 
 	return resources, nil
 }

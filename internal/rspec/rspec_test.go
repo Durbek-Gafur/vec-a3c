@@ -17,8 +17,8 @@ func TestGetRspec(t *testing.T) {
 	assert.NoError(t, err, "GetRspec failed")
 
 	// Check the results
-	assert.Equal(t, 0.75, resources.CPUs, "Unexpected CPUs value")
-	assert.Equal(t, 512, resources.RAM, "Unexpected RAM value")
+	assert.Equal(t, "0.75", resources.CPUs, "Unexpected CPUs value")
+	assert.Equal(t, "512M", resources.RAM, "Unexpected RAM value")
 
 	// Clean up the environment
 	os.Unsetenv("CPUS")
@@ -35,8 +35,8 @@ func TestParseResourcesFromEnv(t *testing.T) {
 	assert.NoError(t, err, "ParseResourcesFromEnv failed")
 
 	// Check the results
-	assert.Equal(t, 0.5, resources.CPUs, "Unexpected CPUs value")
-	assert.Equal(t, 256, resources.RAM, "Unexpected RAM value")
+	assert.Equal(t, "0.5", resources.CPUs, "Unexpected CPUs value")
+	assert.Equal(t, "256M", resources.RAM, "Unexpected RAM value")
 
 	// Clean up the environment
 	os.Unsetenv("CPUS")
