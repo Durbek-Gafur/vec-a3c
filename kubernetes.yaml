@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ven1-backend
+  labels:
+    app: ven1-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ven1-backend
+  template:
+    metadata:
+      labels:
+        app: ven1-backend
+    spec:
+      containers:
+        - name: backend
+          image: 39dj29dl2d9l2/vec-ven:1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: root_password_vec
+            - name: MYSQL_HOST
+              value: ven1-db-service
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DBNAME
+              value: app_db
+            - name: QUEUE_SIZE
+              value: "7"
+            - name: CPUS
+              value: "0.5"
+            - name: RAM
+              value: "800Mi"
+          resources:
+            limits:
+              cpu: 1
+              memory: "800Mi"
+            requests:
+              cpu: 1
+              memory: "800Mi"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ven1-db
+  labels:
+    app: ven1-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ven1-db
+  template:
+    metadata:
+      labels:
+        app: ven1-db
+    spec:
+      containers:
+        - name: db
+          image: 39dj29dl2d9l2/ven-db:1.0 
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password_vec
+            - name: MYSQL_DATABASE
+              value: app_db
+          resources:
+            limits:
+              cpu: 1
+              memory: "1Gi"
+            requests:
+              cpu: 1
+              memory: "1Gi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ven1-backend-service
+spec:
+  selector:
+    app: ven1-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ven1-db-service
+spec:
+  selector:
+    app: ven1-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  name: ven1-backend-ingress
+spec:
+  rules:
+  - host: dgvkh-ven1.nrp-nautilus.io
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: /
+        
+        backend:
+          service:
+            name: ven1-backend-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - dgvkh-ven1.nrp-nautilus.io
+---
