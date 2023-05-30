@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -25,9 +26,9 @@ func main() {
 		}
 
 		newContent := strings.Replace(string(content), `ven1`,venName, -1)
-		newContent = strings.Replace(newContent, `7`, backendQueueSize, -1)
-		newContent = strings.Replace(newContent, `0.5`, backendCpu, -1)
-		newContent = strings.Replace(newContent, `800Mi`, backendRam, -1)
+		newContent = strings.Replace(newContent, `yetti`, backendQueueSize, -1)
+		newContent = strings.Replace(newContent, `yarim`, backendCpu, -1)
+		newContent = strings.Replace(newContent, `sakkizyuz`, backendRam, -1)
 
 		err = ioutil.WriteFile(venName+".cue", []byte(newContent), 0644)
 		if err != nil {
@@ -57,6 +58,16 @@ func main() {
 		err = ioutil.WriteFile(venName+".yaml", []byte(yamlContent), 0644)
 		if err != nil {
 			fmt.Printf("Error writing YAML file for %s: %v\n", venName, err)
+		}
+
+		// Run `kubectl apply -f <filename>.yaml` command
+		kubectlCmd := exec.Command("kubectl", "apply", "-f", venName+".yaml")
+		kubectlCmd.Stdout = os.Stdout
+		kubectlCmd.Stderr = os.Stderr
+
+		err = kubectlCmd.Run()
+		if err != nil {
+			fmt.Printf("Error running kubectl apply for %s: %v\n", venName, err)
 		}
 	}
 }

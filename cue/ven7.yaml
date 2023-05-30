@@ -3,22 +3,22 @@
   apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: ven5-backend
+    name: ven7-backend
     labels:
-      app: ven5-backend
+      app: ven7-backend
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: ven5-backend
+        app: ven7-backend
     template:
       metadata:
         labels:
-          app: ven5-backend
+          app: ven7-backend
       spec:
         containers:
           - name: backend
-            image: 39dj29dl2d9l2/vec-ven:2
+            image: 39dj29dl2d9l2/vec-ven:3
             ports:
               - containerPort: 8080
             env:
@@ -27,7 +27,7 @@
               - name: MYSQL_PASSWORD
                 value: root_password_vec
               - name: MYSQL_HOST
-                value: ven5-db-service
+                value: ven7-db-service
               - name: MYSQL_PORT
                 value: "3306"
               - name: MYSQL_DBNAME
@@ -50,10 +50,10 @@
   apiVersion: v1
   kind: Service
   metadata:
-    name: ven5-backend-service
+    name: ven7-backend-service
   spec:
     selector:
-      app: ven5-backend
+      app: ven7-backend
     ports:
       - protocol: TCP
         port: 8080
@@ -63,18 +63,18 @@
   apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: ven5-db
+    name: ven7-db
     labels:
-      app: ven5-db
+      app: ven7-db
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: ven5-db
+        app: ven7-db
     template:
       metadata:
         labels:
-          app: ven5-db
+          app: ven7-db
       spec:
         containers:
           - name: db
@@ -98,10 +98,10 @@
   apiVersion: v1
   kind: Service
   metadata:
-    name: ven5-db-service
+    name: ven7-db-service
   spec:
     selector:
-      app: ven5-db
+      app: ven7-db
     ports:
       - protocol: TCP
         port: 3306
@@ -113,19 +113,19 @@
   metadata:
     annotations:
       kubernetes.io/ingress.class: haproxy
-    name: ven5-backend-ingress
+    name: ven7-backend-ingress
   spec:
     rules:
-      - host: dgvkh-ven5.nrp-nautilus.io
+      - host: dgvkh-ven7.nrp-nautilus.io
         http:
           paths:
             - pathType: ImplementationSpecific
               path: /
               backend:
                 service:
-                  name: ven5-backend-service
+                  name: ven7-backend-service
                   port:
                     number: 8080
     tls:
       - hosts:
-          - dgvkh-ven5.nrp-nautilus.io
+          - dgvkh-ven7.nrp-nautilus.io
