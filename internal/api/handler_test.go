@@ -217,7 +217,7 @@ func TestHandler_GetRspec(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code)
 
-	var response map[string]float64
+	var response map[string]string
 	err = json.Unmarshal(rr.Body.Bytes(), &response)
 	assert.Nil(t, err)
 	assert.Equal(t, expectedRspec.RAM, response["RAM"])
