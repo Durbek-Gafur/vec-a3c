@@ -13,8 +13,6 @@ RUN mkdir "/build"
 
 COPY ./ /app
 
-RUN cd cue && go run create_resources.go && cd ..
-
 RUN go install github.com/golang/mock/mockgen@v1.6.0
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod tidy
