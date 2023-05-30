@@ -207,7 +207,7 @@ func TestHandler_GetRspec(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expectedRspec := rs.Resources{RAM: 16, CPUs: 4}
+	expectedRspec := rs.Resources{RAM: "16", CPUs:"4"}
 	mockRspec.EXPECT().GetRspec().Return(&expectedRspec, nil)
 
 	rr := httptest.NewRecorder()
@@ -220,8 +220,8 @@ func TestHandler_GetRspec(t *testing.T) {
 	var response map[string]float64
 	err = json.Unmarshal(rr.Body.Bytes(), &response)
 	assert.Nil(t, err)
-	assert.Equal(t, float64(expectedRspec.RAM), response["RAM"])
-	assert.Equal(t, float64(expectedRspec.CPUs), response["CORE"])
+	assert.Equal(t, expectedRspec.RAM, response["RAM"])
+	assert.Equal(t, expectedRspec.CPUs, response["CORE"])
 }
 
 
