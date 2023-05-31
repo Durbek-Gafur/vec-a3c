@@ -6,6 +6,12 @@ import (
 	"errors"
 )
 
+type Store interface {
+	GetVENInfo() ([]VENInfo, error)
+	GetWorkflowInfo() ([]WorkflowInfo, error)
+}
+
+
 //go:generate mockgen -destination=mocks/store_mock.go -package=store_mock scheduler-node/internal/store WorkflowStore,QueueStore,QueueSizeStore
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {

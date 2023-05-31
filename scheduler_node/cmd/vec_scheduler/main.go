@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"scheduler-node/internal/api"
 	"scheduler-node/internal/store"
 
 	"github.com/gorilla/mux"
@@ -24,23 +25,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
-	rspec_provider := rspec.NewService()
-	handler := api.NewHandler(mysqlStore, mysqlStore,rspec_provider)
+	handler := api.NewHandler(mysqlStore, mysqlStore, mysqlStore)
 
 	router := mux.NewRouter()
 	// queue
-	router.HandleFunc("/queue-size", handler.GetQueueSize).Methods("GET")
-	router.HandleFunc("/queue-size", handler.SetQueueSize).Methods("POST")
-	router.HandleFunc("/queue-size", handler.UpdateQueueSize).Methods("PUT")
+	router.HandleFunc("/", handler.ShowTables).Methods("GET")
+	router.HandleFunc("/index", handler.ShowTables).Methods("GET")
 
 	// workflow
-	// TODO pagination for workflows
-	router.HandleFunc("/workflow", handler.SaveWorkflow).Methods("POST")
-	router.HandleFunc("/workflow/{id:[0-9]+}", handler.GetWorkflowByID).Methods("GET")
-	router.HandleFunc("/workflows", handler.GetWorkflows).Methods("GET")
-
-	// rspec
-	router.HandleFunc("/rspec", handler.GetRspec).Methods("GET")
 
 	server := &http.Server{
 		Addr:    ":8090",

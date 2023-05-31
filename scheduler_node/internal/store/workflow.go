@@ -6,6 +6,64 @@ import (
 	"time"
 )
 
+// WorkflowInfo represents the information of a workflow
+type WorkflowInfo struct {
+	Name                  string `json:"name"`
+	RAM                   string `json:"ram"`
+	Core                  string `json:"core"`
+	Policy                string `json:"policy"`
+	ExpectedExecutionTime string `json:"expectedExecutionTime"`
+	ActualExecutionTime   string `json:"actualExecutionTime"`
+	AssignedVM            string `json:"assignedVM"`
+	AssignedAt            string `json:"assignedAt"`
+	CompletedAt           string `json:"completedAt"`
+	Type                  string `json:"type"`
+	Status                string `json:"status"`
+	LastUpdated           time.Time `json:"lastUpdated"`
+
+}
+
+// GetWorkflowInfo retrieves workflow information from the database
+func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
+	// TODO: Implement the actual retrieval of workflow info from the database
+	// For this example, let's assume the data is retrieved from the database successfully
+
+	// Simulated pseudo data in case of error
+	pseudoData := []WorkflowInfo{
+		{
+			Name:                  "WF1",
+			RAM:                   "8GB",
+			Core:                  "4",
+			Policy:                "Some Policy",
+			ExpectedExecutionTime: "2 hours",
+			ActualExecutionTime:   "1 hour",
+			AssignedVM:            "VM1",
+			AssignedAt:            "2023-05-31 10:00:00",
+			CompletedAt:           "2023-05-31 11:00:00",
+			Type:                  "DNA",
+			Status:                "Pending",
+			LastUpdated:           time.Now().Add(-time.Minute*2),
+		},
+		{
+			Name:                  "WF2",
+			RAM:                   "16GB",
+			Core:                  "8",
+			Policy:                "Another Policy",
+			ExpectedExecutionTime: "3 hours",
+			ActualExecutionTime:   "2.5 hours",
+			AssignedVM:            "VM2",
+			AssignedAt:            "2023-05-31 12:00:00",
+			CompletedAt:           "2023-05-31 14:30:00",
+			Type:                  "RNA",
+			Status:                "Completed",
+			LastUpdated:           time.Now().Add(-time.Hour),
+		},
+	}
+
+	// Return the pseudo data in case of error
+	return pseudoData, nil
+}
+
 
 type Workflow struct {
 	ID                  int     `json:"id"`
