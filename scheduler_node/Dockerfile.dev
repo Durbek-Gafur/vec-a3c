@@ -23,7 +23,7 @@ RUN go generate ./...
 # Run tests
 # RUN go test ./... || exit 1
 
-ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
+ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_scheduler" -command="/build/app"
 
 
 

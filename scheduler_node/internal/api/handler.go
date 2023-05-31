@@ -8,8 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"vec-node/internal/rspec"
-	"vec-node/internal/store"
+	"scheduler-node/internal/store"
 
 	"github.com/gorilla/mux"
 )
@@ -17,7 +16,6 @@ import (
 type Handler struct {
 	queueSizeStore store.QueueSizeStore
 	workflowStore store.WorkflowStore
-	rspec rspec.Rspec
 }
 
 func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore,rspec rspec.Rspec) *Handler {

@@ -13,11 +13,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
-	"vec-node/internal/api"
-	rs "vec-node/internal/rspec"
-	rspec_mock "vec-node/internal/rspec/mocks"
-	"vec-node/internal/store"
-	store_mock "vec-node/internal/store/mocks"
+	"scheduler-node/internal/api"
+	rs "scheduler-node/internal/rspec"
+	rspec_mock "scheduler-node/internal/rspec/mocks"
+	"scheduler-node/internal/store"
+	store_mock "scheduler-node/internal/store/mocks"
 )
 
 func TestHandler_GetQueueSize(t *testing.T) {

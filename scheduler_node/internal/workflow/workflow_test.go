@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 	"time"
-	s "vec-node/internal/store"
-	store_mock "vec-node/internal/store/mocks"
+	s "scheduler-node/internal/store"
+	store_mock "scheduler-node/internal/store/mocks"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"

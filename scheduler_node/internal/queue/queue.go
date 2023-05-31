@@ -2,11 +2,11 @@ package queue
 
 import (
 	"context"
-	s "vec-node/internal/store"
-	wf "vec-node/internal/workflow"
+	s "scheduler-node/internal/store"
+	wf "scheduler-node/internal/workflow"
 )
 
-//go:generate mockgen -destination=mocks/queue_mock.go -package=queueu_mock vec-node/internal/queue Queue
+//go:generate mockgen -destination=mocks/queue_mock.go -package=queueu_mock scheduler-node/internal/queue Queue
 
 // Queue handles operations on queue
 type Queue interface {

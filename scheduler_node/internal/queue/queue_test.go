@@ -5,9 +5,9 @@ import (
 	"errors"
 	"testing"
 	"time"
-	"vec-node/internal/store"
-	store_mock "vec-node/internal/store/mocks"
-	workflow_mock "vec-node/internal/workflow/mocks"
+	"scheduler-node/internal/store"
+	store_mock "scheduler-node/internal/store/mocks"
+	workflow_mock "scheduler-node/internal/workflow/mocks"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"

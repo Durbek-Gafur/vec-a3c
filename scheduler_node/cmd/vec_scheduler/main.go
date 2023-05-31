@@ -9,11 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
+	"scheduler-node/internal/store"
 
-	"vec-node/internal/api"
-	"vec-node/internal/rspec"
-	"vec-node/internal/store"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -45,14 +43,14 @@ func main() {
 	router.HandleFunc("/rspec", handler.GetRspec).Methods("GET")
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8090",
 		Handler: router,
 	}
 
 	// Start the server in a separate goroutine.
 	go func() {
 		log.Printf("Started the app")
-		log.Printf("Server running at port 8080")
+		log.Printf("Server running at port 8090")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal("Failed to start the server:", err)
 		}
@@ -73,3 +71,4 @@ func main() {
 	}
 	log.Println("Server stopped")
 }
+

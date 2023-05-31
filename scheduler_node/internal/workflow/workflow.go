@@ -2,11 +2,11 @@ package workflow
 
 import (
 	"context"
+	s "scheduler-node/internal/store"
 	"time"
-	s "vec-node/internal/store"
 )
 
-//go:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock vec-node/internal/workflow Workflow
+//go:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock scheduler-node/internal/workflow Workflow
 
 // Workflow handles operations on Workflow sizes
 type Workflow interface {

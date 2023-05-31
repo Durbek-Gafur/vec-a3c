@@ -5,17 +5,12 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.dev
-    container_name: backend
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: ${CPUS}
-    #       memory: ${RAM}
+    container_name: backend_scheduler
     ports:
-      - "8080:8080"
+      - "8090:8090"
     depends_on:
-      - db
-      - migrator
+      - db_scheduler
+      - migrator_scheduler
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -28,22 +23,22 @@ services:
     volumes:
       - ./:/app
     restart: always
-  db:
-    image: 39dj29dl2d9l2/ven-db:1.0
-    container_name: db
+  db_scheduler:
+    image: mysql:8.0 #39dj29dl2d9l2/ven-db_scheduler:1.0
+    container_name: db_scheduler
     command: --default-authentication-plugin=mysql_native_password
     ports:
-      - "3306:3306"
+      - "3307:3307"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DBNAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  migrator:
+  migrator_scheduler:
     image: migrate/migrate
-    container_name: migrator
+    container_name: migrator_scheduler
     command: ["-source=file:///migrations", "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DBNAME}", "up"]
     depends_on:
-      - db
+      - db_scheduler
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
