@@ -2,6 +2,9 @@
 
 This repository contains the source code for the **VEC-A3C** project.
 
+## Tools used
+Cue,migrator,kubectl,gomock,CompileDaemon
+
 ## Description
 
 The project utilizes Docker containers for development and production environments. There are two Dockerfiles included in this repository:
