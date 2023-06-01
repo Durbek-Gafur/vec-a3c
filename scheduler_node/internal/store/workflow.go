@@ -19,6 +19,7 @@ type WorkflowInfo struct {
 	CompletedAt           string `json:"completedAt"`
 	Type                  string `json:"type"`
 	Status                string `json:"status"`
+	SubmittedBy           string    `json:"submittedBy"`
 	LastUpdated           time.Time `json:"lastUpdated"`
 
 }
@@ -42,6 +43,7 @@ func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
 			CompletedAt:           "2023-05-31 11:00:00",
 			Type:                  "DNA",
 			Status:                "Pending",
+			SubmittedBy:           "User A",
 			LastUpdated:           time.Now().Add(-time.Minute*2),
 		},
 		{
@@ -56,6 +58,7 @@ func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
 			CompletedAt:           "2023-05-31 14:30:00",
 			Type:                  "RNA",
 			Status:                "Completed",
+			SubmittedBy:           "User B",
 			LastUpdated:           time.Now().Add(-time.Hour),
 		},
 	}
