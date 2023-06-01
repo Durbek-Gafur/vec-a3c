@@ -1,6 +1,4 @@
 CREATE DATABASE IF NOT EXISTS app_db;
-
--- USE app_db;
 -- Table for VEN info
 CREATE TABLE ven_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,5 +29,5 @@ CREATE TABLE workflow_info (
     assigned_at DATETIME,
     completed_at DATETIME,
     status VARCHAR(50),
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
