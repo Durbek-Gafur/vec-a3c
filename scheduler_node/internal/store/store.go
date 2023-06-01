@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Store interface {
@@ -16,7 +18,7 @@ type Store interface {
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
 	GetWorkflowByID(ctx context.Context,id int) (*WorkflowInfo, error)
-	GetWorkflows(ctx context.Context,filter *WorkflowFilter) ([]WorkflowInfo, error)
+	GetWorkflows(ctx context.Context) ([]WorkflowInfo, error)
 	SaveWorkflow(ctx context.Context,WorkflowInfo *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) 
 	StartWorkflow(ctx context.Context, id int) error

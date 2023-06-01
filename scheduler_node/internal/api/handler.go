@@ -9,18 +9,18 @@ import (
 )
 
 type Handler struct {
-	queueSizeStore store.QueueSizeStore
 	workflowStore store.WorkflowStore
 	store store.Store
 }
 
-func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore, store store.Store) *Handler {
-	return &Handler{queueSizeStore: qs, workflowStore: wf, store: store}
+func NewHandler(wf store.WorkflowStore, store store.Store) *Handler {
+	return &Handler{ workflowStore: wf, store: store}
 }
 
 func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	// Get VEN info from the store
 	venInfo, err := h.store.GetVENInfo()
+	const layout = "2006-01-02 15:04:05"
 	if err != nil {
 		http.Error(w, "Failed to fetch VEN info", http.StatusInternalServerError)
 		return
@@ -121,8 +121,8 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 				<td>` + workflow.ExpectedExecutionTime + `</td>
 				<td>` + workflow.ActualExecutionTime + `</td>
 				<td>` + workflow.AssignedVM + `</td>
-				<td>` + workflow.AssignedAt + `</td>
-				<td>` + workflow.CompletedAt + `</td>
+				<td>` + workflow.AssignedAt.Local().Format(layout) + `</td>
+				<td>` + workflow.CompletedAt.Local().Format(layout) + `</td>
 				<td>` + workflow.Status + `<br>Updated ` + formatTimeAgo(lastUpdated) + `</td>
 			</tr>
 		`
