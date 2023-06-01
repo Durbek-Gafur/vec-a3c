@@ -2,12 +2,12 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
-// WorkflowInfo represents the information of a workflow
+// WorkflowInfo represents the information of a WorkflowInfo
 type WorkflowInfo struct {
+	ID                    int    `json:"id"`
 	Name                  string `json:"name"`
 	RAM                   string `json:"ram"`
 	Core                  string `json:"core"`
@@ -24,9 +24,9 @@ type WorkflowInfo struct {
 
 }
 
-// GetWorkflowInfo retrieves workflow information from the database
+// GetWorkflowInfo retrieves WorkflowInfo information from the database
 func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
-	// TODO: Implement the actual retrieval of workflow info from the database
+	// TODO: Implement the actual retrieval of WorkflowInfo info from the database
 	// For this example, let's assume the data is retrieved from the database successfully
 
 	// Simulated pseudo data in case of error
@@ -68,15 +68,7 @@ func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
 }
 
 
-type Workflow struct {
-	ID                  int     `json:"id"`
-	Name                string    `json:"name"`
-	Type                string    `json:"type"`
-	Duration            int     `json:"duration"`
-	ReceivedAt          time.Time `json:"received_at"`
-	StartedExecutionAt  sql.NullTime `json:"started_execution_at,omitempty"`
-	CompletedAt         sql.NullTime `json:"completed_at,omitempty"`
-}
+
 
 type WorkflowFilter struct {
 	Type      string
@@ -84,12 +76,12 @@ type WorkflowFilter struct {
 	EndTime   time.Time
 }
 
-func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*Workflow, error) {
-	wf := &Workflow{}
+func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*WorkflowInfo, error) {
+	wf := &WorkflowInfo{}
 	err := s.db.QueryRowContext(ctx,
-		"SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflow WHERE id = ?",
+		"SELECT name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE id = ?",
 		id,
-	).Scan(&wf.ID, &wf.Name, &wf.Type, &wf.Duration, &wf.ReceivedAt, &wf.StartedExecutionAt, &wf.CompletedAt)
+	).Scan(&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
 
 	if err != nil {
 		return nil, err
@@ -98,29 +90,17 @@ func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*Workflow, er
 	return wf, nil
 }
 
-func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *WorkflowFilter) ([]Workflow, error) {
-	query := "SELECT id, name, type, duration, received_at, started_execution_at, completed_at FROM workflow WHERE 1"
-
-	if filter.Type != "" {
-		query += " AND type = ?"
-	}
-	if !filter.StartTime.IsZero() {
-		query += " AND received_at >= ?"
-	}
-	if !filter.EndTime.IsZero() {
-		query += " AND received_at <= ?"
-	}
-
-	rows, err := s.db.QueryContext(ctx, query, filter.Type, filter.StartTime, filter.EndTime)
+func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
+	rows, err := s.db.QueryContext(ctx, "SELECT name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	workflows := []Workflow{}
+	workflows := []WorkflowInfo{}
 	for rows.Next() {
-		var wf Workflow
-		err := rows.Scan(&wf.ID, &wf.Name, &wf.Type, &wf.Duration, &wf.ReceivedAt, &wf.StartedExecutionAt, &wf.CompletedAt)
+		var wf WorkflowInfo
+		err := rows.Scan(&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
 		if err != nil {
 			return nil, err
 		}
@@ -130,10 +110,10 @@ func (s *MySQLStore) GetWorkflows(ctx context.Context, filter *WorkflowFilter) (
 	return workflows, nil
 }
 
-func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, error) {
+func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) {
 	res, err := s.db.ExecContext(ctx,
-		"INSERT INTO workflow (name, type, duration, received_at) VALUES (?, ?, ?, ?)",
-		w.Name, w.Type, w.Duration, w.ReceivedAt,
+		"INSERT INTO workflow_info (name, type, ram, core, policy, expected_execution_time, assigned_vm, submitted_by, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		w.Name, w.Type, w.RAM, w.Core, w.Policy, w.ExpectedExecutionTime, w.AssignedVM, w.SubmittedBy, w.Status,
 	)
 	if err != nil {
 		return nil, err
@@ -148,10 +128,10 @@ func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, 
 	return w, nil
 }
 
-func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow, error) {
+func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) {
 	_, err := s.db.ExecContext(ctx,
-		"UPDATE workflow SET name = ?, type = ?, duration = ?, received_at = ?, started_execution_at = ?, completed_at = ? WHERE id = ?",
-		w.Name, w.Type, w.Duration, w.ReceivedAt, w.StartedExecutionAt, w.CompletedAt, w.ID,
+		"UPDATE workflow_info SET name = ?, type = ?, ram = ?, core = ?, policy = ?, expected_execution_time = ?, actual_execution_time = ?, assigned_vm = ?, assigned_at = ?, completed_at = ?, submitted_by = ?, status = ?, last_updated = ? WHERE id = ?",
+		w.Name, w.Type, w.RAM, w.Core, w.Policy, w.ExpectedExecutionTime, w.ActualExecutionTime, w.AssignedVM, w.AssignedAt, w.CompletedAt, w.SubmittedBy, w.Status, w.LastUpdated, w.ID,
 	)
 	if err != nil {
 		return nil,err
@@ -161,14 +141,15 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow
 }
 
 
+
 func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {
-	query := "UPDATE workflow SET started_execution_at = NOW() WHERE id = ?"
+	query := "UPDATE workflow_info SET status = 'processing', last_updated = NOW() WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, workflowID)
 	return err
 }
 
 func (s *MySQLStore) CompleteWorkflow(ctx context.Context, id int) error {
-	query := "UPDATE workflow SET completed_at = NOW() WHERE id = ?"
+	query := "UPDATE workflow_info SET status = 'done', completed_at = NOW(), last_updated = NOW() WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, id)
 	return err
 }
