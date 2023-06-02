@@ -28,6 +28,7 @@ CREATE TABLE workflow_info (
     assigned_vm VARCHAR(255),
     assigned_at DATETIME,
     completed_at DATETIME,
-    status VARCHAR(50),
+    status ENUM('pending', 'processing', 'done') DEFAULT 'pending',
+    submitted_by VARCHAR(255),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
