@@ -190,7 +190,7 @@ func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonResponse(w, map[string]string{"RAM": rspec.RAM,"CORE":rspec.CPUs}, http.StatusOK)
+	jsonResponse(w, map[string]string{"RAM": rspec.RAM,"CORE":rspec.CPUs,"MAX_QUEUE":rspec.MAX_QUEUE}, http.StatusOK)
 	
 	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
 }

@@ -18,15 +18,17 @@ func NewService() *Service {
 	return &Service{
 	}
 }
-func NewResource(cpu , ram string)*Resources{
+func NewResource(cpu , ram, queue_size string)*Resources{
 	return &Resources{
 		CPUs: cpu,
 		RAM: ram,
+		MAX_QUEUE: queue_size,
 	}
 }
 type Resources struct {
 	CPUs string
 	RAM  string 
+	MAX_QUEUE string
 }
 
 func (s *Service)ParseResourcesFromEnv() (*Resources, error) {
@@ -34,6 +36,7 @@ func (s *Service)ParseResourcesFromEnv() (*Resources, error) {
 
 	resources.CPUs = os.Getenv("CPUS")
 	resources.RAM = os.Getenv("RAM")
+	resources.RAM = os.Getenv("QUEUE_SIZE")
 
 	return resources, nil
 }
