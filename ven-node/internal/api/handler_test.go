@@ -207,7 +207,7 @@ func TestHandler_GetRspec(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expectedRspec := rs.Resources{RAM: "16", CPUs:"4"}
+	expectedRspec := rs.Resources{RAM: "16", CPUs:"4",MAX_QUEUE: "8"}
 	mockRspec.EXPECT().GetRspec().Return(&expectedRspec, nil)
 
 	rr := httptest.NewRecorder()
@@ -222,6 +222,7 @@ func TestHandler_GetRspec(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, expectedRspec.RAM, response["RAM"])
 	assert.Equal(t, expectedRspec.CPUs, response["CORE"])
+	assert.Equal(t, expectedRspec.MAX_QUEUE, response["MAX_QUEUE"])
 }
 
 
@@ -256,176 +257,3 @@ func TestHandler_GetWorkflows(t *testing.T) {
 }
 
 
-/*
-func TestHandler_SetQueueSize(t *testing.T) {
-	mockQueueStore := new(mocks.QueueSizeStore)
-	h := api.NewHandler(mockQueueStore, nil, nil)
-
-	size := map[string]string{"size": "10"}
-	sizeJSON, _ := json.Marshal(size)
-
-	req, err := http.NewRequest("POST", "/queue-size", bytes.NewBuffer(sizeJSON))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedSize := 10
-	mockQueueStore.On("SetQueueSize", mock.Anything, expectedSize).Return(nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h.SetQueueSize)
-
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-
-	var response map[string]int
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, expectedSize, response["size"])
-	mockQueueStore.AssertCalled(t, "SetQueueSize", mock.Anything, expectedSize)
-}
-
-func TestHandler_UpdateQueueSize(t *testing.T) {
-	mockQueueStore := new(mocks.QueueSizeStore)
-	h := api.NewHandler(mockQueueStore, nil, nil)
-
-	size := map[string]string{"size": "20"}
-	sizeJSON, _ := json.Marshal(size)
-
-	req, err := http.NewRequest("PUT", "/queue-size", bytes.NewBuffer(sizeJSON))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedSize := 20
-	mockQueueStore.On("UpdateQueueSize", mock.Anything, expectedSize).Return(nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h.UpdateQueueSize)
-
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-
-	var response map[string]string
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, strconv.Itoa(expectedSize), response["size"])
-	mockQueueStore.AssertCalled(t, "UpdateQueueSize", mock.Anything, expectedSize)
-}
-
-// Tests for WorkflowStore
-
-func TestHandler_GetWorkflowByID(t *testing.T) {
-	mockWorkflowStore := new(mocks.WorkflowStore)
-	h := api.NewHandler(nil, mockWorkflowStore, nil)
-
-	req, err := http.NewRequest("GET", "/workflow/1", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedWorkflow := store.Workflow{ID: 1, Name: "Workflow1"}
-	mockWorkflowStore.On("GetWorkflowByID", mock.Anything, expectedWorkflow.ID).Return(&expectedWorkflow, nil)
-
-	rr := httptest.NewRecorder()
-	r := mux.NewRouter()
-	r.HandleFunc("/workflow/{id}", h.GetWorkflowByID)
-	r.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-
-	var response store.Workflow
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, expectedWorkflow, response)
-	mockWorkflowStore.AssertCalled(t, "GetWorkflowByID", mock.Anything, expectedWorkflow.ID)
-}
-
-func TestHandler_GetWorkflows(t *testing.T) {
-	mockWorkflowStore := new(mocks.WorkflowStore)
-	h := api.NewHandler(nil, mockWorkflowStore, nil)
-
-	req, err := http.NewRequest("GET", "/workflows", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedWorkflows := []store.Workflow{
-		{ID: 1, Name: "Workflow1"},
-		{ID: 2, Name: "Workflow2"},
-	}
-	mockWorkflowStore.On("GetWorkflows", mock.Anything, mock.Anything).Return(expectedWorkflows, nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h.GetWorkflows)
-
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-
-	var response []store.Workflow
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, expectedWorkflows, response)
-	mockWorkflowStore.AssertCalled(t, "GetWorkflows", mock.Anything, mock.Anything)
-}
-
-func TestHandler_SaveWorkflow(t *testing.T) {
-	mockWorkflowStore := new(mocks.WorkflowStore)
-	h := api.NewHandler(nil, mockWorkflowStore, nil)
-
-	wf := store.Workflow{ID: 1, Name: "Workflow1"}
-	wfJSON, _ := json.Marshal(wf)
-
-	req, err := http.NewRequest("POST", "/workflow", bytes.NewBuffer(wfJSON))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	mockWorkflowStore.On("SaveWorkflow", mock.Anything, &wf).Return(&wf, nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h.SaveWorkflow)
-
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusCreated, rr.Code)
-
-	var response store.Workflow
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, wf, response)
-	mockWorkflowStore.AssertCalled(t, "SaveWorkflow", mock.Anything, &wf)
-}
-
-// Test for Rspec
-
-func TestHandler_GetRspec(t *testing.T) {
-	mockRspec := new(mocks.Rspec)
-	h := api.NewHandler(nil, nil, mockRspec)
-
-	req, err := http.NewRequest("GET", "/rspec", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedRspec := store.Rspec{RAM: 1024, CPUs: 4}
-	mockRspec.On("GetRspec").Return(&expectedRspec, nil)
-
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h.GetRspec)
-
-	handler.ServeHTTP(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code)
-
-	var response map[string]float64
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, float64(expectedRspec.RAM), response["RAM"])
-	assert.Equal(t, float64(expectedRspec.CPUs), response["CORE"])
-	mockRspec.AssertCalled(t, "GetRspec")
-}
-*/
