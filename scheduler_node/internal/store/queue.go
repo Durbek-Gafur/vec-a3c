@@ -2,16 +2,7 @@ package store
 
 import (
 	"context"
-	"time"
 )
-
-type Queue struct {
-	ID         int     `json:"id"`
-	WorkflowID int     `json:"workflow_id"`
-	Status     string    `json:"status"`
-	EnqueuedAt time.Time `json:"enqueued_at"`
-}
-
 
 // Peek gets the first workflow in the queue (that is not 'done') and does not remove it from the queue
 func (s *MySQLStore) Peek(ctx context.Context) (*WorkflowInfo, error) {

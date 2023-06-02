@@ -81,11 +81,6 @@ func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
 
 
 
-type WorkflowFilter struct {
-	Type      string
-	StartTime time.Time
-	EndTime   time.Time
-}
 
 func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*WorkflowInfo, error) {
 	wf := &WorkflowInfo{}

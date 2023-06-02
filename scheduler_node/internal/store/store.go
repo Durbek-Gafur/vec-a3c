@@ -27,8 +27,8 @@ type WorkflowStore interface {
 
 // QueueStore handles operations on queues
 type QueueStore interface {
-	Peek(ctx context.Context) (*Queue, error) 
-	GetQueue(ctx context.Context) ([]Queue, error)
+	Peek(ctx context.Context) (*WorkflowInfo, error) 
+	GetQueue(ctx context.Context) ([]WorkflowInfo, error)
 
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error 
