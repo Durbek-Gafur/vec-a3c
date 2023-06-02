@@ -1,12 +1,13 @@
 package workflow
 
+/*
 import (
 	"context"
 	s "scheduler-node/internal/store"
 	"time"
 )
 
-//go:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock scheduler-node/internal/workflow Workflow
+// ggggo:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock scheduler-node/internal/workflow Workflow
 
 // Workflow handles operations on Workflow sizes
 type Workflow interface {
@@ -48,4 +49,4 @@ func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workfl
 	return s.workflowStore.UpdateWorkflow(ctx, wf)
 }
 
-
+*/

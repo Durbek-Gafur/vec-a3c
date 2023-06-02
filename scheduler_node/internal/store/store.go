@@ -14,7 +14,7 @@ type Store interface {
 }
 
 
-//go:generate mockgen -destination=mocks/store_mock.go -package=store_mock scheduler-node/internal/store WorkflowStore,QueueStore,QueueSizeStore
+//go:generate mockgen -destination=mocks/store_mock.go -package=store_mock scheduler-node/internal/store WorkflowStore,QueueStore
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
 	GetWorkflowByID(ctx context.Context,id int) (*WorkflowInfo, error)

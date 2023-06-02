@@ -32,7 +32,7 @@ func main() {
 	router.HandleFunc("/", handler.ShowTables).Methods("GET")
 	router.HandleFunc("/index", handler.ShowTables).Methods("GET")
 
-	// workflow
+	
 
 	server := &http.Server{
 		Addr:    ":8090",
