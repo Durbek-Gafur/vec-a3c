@@ -11,7 +11,7 @@ func NewActualURLProvider(url string) *ActualURLProvider {
 }
 
 func (a *ActualURLProvider) GetURL(venName string) string {
-	return "dgvkh-" + venName + ".nrp-nautilus.io" // Your actual URL
+	return "https://dgvkh-" + venName + ".nrp-nautilus.io" // Your actual URL
 }
 
 type MockURLProvider struct {

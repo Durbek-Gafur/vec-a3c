@@ -36,7 +36,7 @@ func (s *Service)ParseResourcesFromEnv() (*Resources, error) {
 
 	resources.CPUs = os.Getenv("CPUS")
 	resources.RAM = os.Getenv("RAM")
-	resources.RAM = os.Getenv("QUEUE_SIZE")
+	resources.MAX_QUEUE = os.Getenv("QUEUE_SIZE")
 
 	return resources, nil
 }

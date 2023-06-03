@@ -21,7 +21,7 @@ type ResourceSpec struct {
 }
 
 type CurrentQueueSize struct {
-	SIZE  string `json:"size"`
+	SIZE  int `json:"size"`
 }
 
 func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
@@ -31,7 +31,7 @@ func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
 	}
 
 	stmt, err := db.Prepare(`INSERT INTO ven_info 
-    (name, url, ram, core, max_queue_size, current_queue_size, preference_list, trust_score, max_queue_size_updated, current_queue_size_updated, trust_score_updated) 
+    (name, url, ram, core, max_queue_size, current_queue_size, preference_list, trust_score, max_queue_size_last_updated, current_queue_size_last_updated, trust_score_last_updated) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return err
@@ -73,7 +73,7 @@ func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
 			return fmt.Errorf("failed to marshal preference list: %w", err)
 		}
 
-		if _, err := stmt.Exec(venInfo.Name, venInfo.URL, venInfo.RAM, venInfo.Core, venInfo.MaxQueueSize, venInfo.CurrentQueueSize, string(preferenceListStr), venInfo.TrustScore, venInfo.MaxQueueSizeUpdated, venInfo.CurrentQueueSizeUpdated, venInfo.TrustScoreUpdated); err != nil {
+		if _, err := stmt.Exec(venInfo.Name, venInfo.URL, venInfo.RAM, venInfo.Core, venInfo.MaxQueueSize, venInfo.CurrentQueueSize, string(preferenceListStr), venInfo.TrustScore, time.Now(), time.Now(), time.Now()); err != nil {
 			return err
 		}
 	}
@@ -114,6 +114,10 @@ func FetchResourceSpec(url string) (*ResourceSpec, error) {
 	}
 	defer res.Body.Close()
 
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected http status: got %v", res.StatusCode)
+	}
+
 	var resSpec ResourceSpec
 	if err := json.NewDecoder(res.Body).Decode(&resSpec); err != nil {
 		return nil, err
@@ -127,11 +131,14 @@ func FetchQueueSize(url string) (string, error) {
 		return "", err
 	}
 	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected http status: got %v", res.StatusCode)
+	}
 	var current_queue_size CurrentQueueSize
 	if err := json.NewDecoder(res.Body).Decode(&current_queue_size); err != nil {
 		return "", err
 	}
-	return current_queue_size.SIZE, nil
+	return strconv.Itoa(current_queue_size.SIZE), nil
 }
 
 func GeneratePreferenceList() string {

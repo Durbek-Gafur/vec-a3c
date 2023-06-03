@@ -19,7 +19,8 @@ func NewHandler(wf store.WorkflowStore, store store.Store) *Handler {
 
 func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	// Get VEN info from the store
-	venInfo, err := h.store.GetVENInfo()
+	// TODO remove pseudo methods
+	venInfo, err := h.store.GetVENInfos()
 	const layout = "2006-01-02 15:04:05"
 	if err != nil {
 		http.Error(w, "Failed to fetch VEN info", http.StatusInternalServerError)

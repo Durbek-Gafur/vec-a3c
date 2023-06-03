@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"scheduler-node/internal/api"
+	"scheduler-node/internal/seeder"
 	"scheduler-node/internal/store"
 
 	"github.com/gorilla/mux"
@@ -26,6 +27,11 @@ func main() {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
 	handler := api.NewHandler(mysqlStore, mysqlStore)
+
+	//populate table
+	if err := seeder.PopulateVENInfo(mysqlStore.GetDB(),&seeder.ActualURLProvider{}); err != nil {
+		log.Fatal("Failed to populate tables", err)
+	}
 
 	router := mux.NewRouter()
 	// queue

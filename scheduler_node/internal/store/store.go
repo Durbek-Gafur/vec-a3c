@@ -10,7 +10,9 @@ import (
 
 type Store interface {
 	GetVENInfo() ([]VENInfo, error)
+	GetVENInfos() ([]VENInfo, error)
 	GetWorkflowInfo() ([]WorkflowInfo, error)
+	GetWorkflows(ctx context.Context) ([]WorkflowInfo, error)
 }
 
 
@@ -58,6 +60,12 @@ var ErrNotFound = errors.New("not found")
 type MySQLStore struct {
 	db *sql.DB
 }
+
+func (m *MySQLStore) GetDB() *sql.DB {
+	return m.db 
+}
+
+
 
 func NewMySQLStore(dsn string) (*MySQLStore, error) {
 	db, err := sql.Open("mysql", dsn)
