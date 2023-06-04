@@ -5,8 +5,8 @@ func TestHandler_GetQueueSize(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStore := store_mock.NewMockQueueSizeStore(ctrl)
-	h := api.NewHandler(mockStore, nil,nil)
+	mockStore := store_mock.MockQueueStore(ctrl)
+	h := api.NewHandler(mockStore, nil, nil)
 	ctx := context.TODO()
 
 	req, err := http.NewRequest("GET", "/queue-size", nil)
@@ -15,7 +15,7 @@ func TestHandler_GetQueueSize(t *testing.T) {
 	}
 
 	expectedSize := 5
-	mockStore.EXPECT().GetQueueSize(ctx).Return(expectedSize,nil)
+	mockStore.EXPECT().GetQueueSize(ctx).Return(expectedSize, nil)
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(h.GetQueueSize)
@@ -29,6 +29,7 @@ func TestHandler_GetQueueSize(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, expectedSize, response["size"])
 }
+
 
 
 func TestHandler_SetQueueSize(t *testing.T) {

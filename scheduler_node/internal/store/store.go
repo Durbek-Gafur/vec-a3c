@@ -8,22 +8,23 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// VENStore handles operations on workflows
-type VENStore interface {
-	GetVENInfos() ([]VENInfo, error)
-}
-
-
 //go:generate mockgen -destination=mocks/store_mock.go -package=store_mock scheduler-node/internal/store WorkflowStore,QueueStore, VENStore
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
 	GetWorkflowByID(ctx context.Context,id int) (*WorkflowInfo, error)
+	PseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo, error) //to be removed
 	GetWorkflows(ctx context.Context) ([]WorkflowInfo, error)
 	SaveWorkflow(ctx context.Context,WorkflowInfo *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) 
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error 
 }
+
+// VENStore handles operations on workflows
+type VENStore interface {
+	GetVENInfos() ([]VENInfo, error)
+}
+
 
 // QueueStore handles operations on queues
 type QueueStore interface {

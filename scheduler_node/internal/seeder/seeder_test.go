@@ -97,7 +97,7 @@ func mockRspecHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func mockQueueSizeHandler(w http.ResponseWriter, r *http.Request) {
-	resp := `{"size":"3"}`
+	resp := `{"size":3}`
 	fmt.Fprintln(w, resp)
 }
 

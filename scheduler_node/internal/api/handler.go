@@ -28,7 +28,7 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get Workflow info from the store
-	workflowInfo, err := h.workflowStore.GetWorkflows(r.Context())
+	workflowInfo, err := h.workflowStore.PseudoGetWorkflowInfo(r.Context())
 	if err != nil {
 		http.Error(w, "Failed to fetch Workflow info", http.StatusInternalServerError)
 		return

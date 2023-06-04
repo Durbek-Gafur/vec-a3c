@@ -24,8 +24,28 @@ type WorkflowInfo struct {
 
 }
 
-// GetWorkflowInfo retrieves WorkflowInfo information from the database
-func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
+
+
+
+
+
+
+func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*WorkflowInfo, error) {
+	wf := &WorkflowInfo{}
+	err := s.db.QueryRowContext(ctx,
+		"SELECT id,name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE id = ?",
+		id,
+	).Scan(&wf.ID,&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wf, nil
+}
+
+// PseudoGetWorkflowInfo retrieves WorkflowInfo information from the database
+func (s *MySQLStore) PseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo, error) {
 	// TODO: Implement the actual retrieval of WorkflowInfo info from the database
 	// For this example, let's assume the data is retrieved from the database successfully
 	const layout = "2006-01-02 15:04:05"
@@ -78,23 +98,6 @@ func (s *MySQLStore) GetWorkflowInfo() ([]WorkflowInfo, error) {
 	return pseudoData, nil
 }
 
-
-
-
-
-func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*WorkflowInfo, error) {
-	wf := &WorkflowInfo{}
-	err := s.db.QueryRowContext(ctx,
-		"SELECT id,name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE id = ?",
-		id,
-	).Scan(&wf.ID,&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return wf, nil
-}
 
 func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
 	rows, err := s.db.QueryContext(ctx, "SELECT id, name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info")
