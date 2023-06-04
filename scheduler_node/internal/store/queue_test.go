@@ -1,6 +1,7 @@
 package store
 
 import (
+	"os"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -35,6 +36,13 @@ func TestPeek(t *testing.T) {
 func TestGetQueue(t *testing.T) {
 	t.Parallel()
 
+	// Set QUEUE_SIZE to 2
+	err := os.Setenv("QUEUE_SIZE", "2")
+	if err != nil {
+		t.Fatalf("Failed to set QUEUE_SIZE: %v", err)
+	}
+	defer os.Unsetenv("QUEUE_SIZE")
+
 	// Creating multiple workflows.
 	newWorkflow1 := createWorkflow()
 	defer deleteWorkflow(newWorkflow1)
@@ -45,17 +53,25 @@ func TestGetQueue(t *testing.T) {
 	newWorkflow3 := createWorkflow()
 	defer deleteWorkflow(newWorkflow3)
 
-	// Completing a workflow.
-	err := testStore.CompleteWorkflow(ctx, newWorkflow1.ID)
-	assert.NoError(t, err)
-
-	// Retrieving the queue.
+		// Retrieving the queue.
 	queue, err := testStore.GetQueue(ctx)
 
 	assert.NoError(t, err)
-	assert.NotEmpty(t, queue)
+	// Verifying that the queue size is correct.
+	assert.Len(t, queue, 2)
 
-	// Verifying that the completed workflow is not in the queue.
+	// Completing a workflow.
+	err = testStore.CompleteWorkflow(ctx, newWorkflow1.ID)
+	assert.NoError(t, err)
+
+	// Retrieving the queue.
+	queue, err = testStore.GetQueue(ctx)
+
+	assert.NoError(t, err)
+	// Verifying that the queue size is correct.
+	assert.Len(t, queue, 2)
+
+	// Verifying that the completed workflow is not in the queue and queue is not containing more than QUEUE_SIZE workflows.
 	for _, workflow := range queue {
 		assert.NotEqual(t, newWorkflow1.ID, workflow.ID)
 	}
