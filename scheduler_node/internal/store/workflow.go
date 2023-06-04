@@ -44,8 +44,8 @@ func (s *MySQLStore) GetWorkflowByID(ctx context.Context, id int) (*WorkflowInfo
 	return wf, nil
 }
 
-// PseudoGetWorkflowInfo retrieves WorkflowInfo information from the database
-func (s *MySQLStore) PseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo, error) {
+// pseudoGetWorkflowInfo retrieves WorkflowInfo information from the database
+func (s *MySQLStore) pseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo, error) {
 	// TODO: Implement the actual retrieval of WorkflowInfo info from the database
 	// For this example, let's assume the data is retrieved from the database successfully
 	const layout = "2006-01-02 15:04:05"
@@ -100,6 +100,8 @@ func (s *MySQLStore) PseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo,
 
 
 func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
+	return s.pseudoGetWorkflowInfo(ctx)
+	/*
 	rows, err := s.db.QueryContext(ctx, "SELECT id, name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info")
 	if err != nil {
 		return nil, err
@@ -117,6 +119,7 @@ func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
 	}
 
 	return workflows, nil
+	*/
 }
 
 func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) {

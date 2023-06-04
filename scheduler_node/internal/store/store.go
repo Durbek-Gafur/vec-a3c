@@ -12,7 +12,6 @@ import (
 // WorkflowStore handles operations on workflows
 type WorkflowStore interface {
 	GetWorkflowByID(ctx context.Context,id int) (*WorkflowInfo, error)
-	PseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo, error) //to be removed
 	GetWorkflows(ctx context.Context) ([]WorkflowInfo, error)
 	SaveWorkflow(ctx context.Context,WorkflowInfo *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) 

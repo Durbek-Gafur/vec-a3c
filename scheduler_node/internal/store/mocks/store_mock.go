@@ -79,21 +79,6 @@ func (mr *MockWorkflowStoreMockRecorder) GetWorkflows(arg0 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkflows", reflect.TypeOf((*MockWorkflowStore)(nil).GetWorkflows), arg0)
 }
 
-// PseudoGetWorkflowInfo mocks base method.
-func (m *MockWorkflowStore) PseudoGetWorkflowInfo(arg0 context.Context) ([]store.WorkflowInfo, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PseudoGetWorkflowInfo", arg0)
-	ret0, _ := ret[0].([]store.WorkflowInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PseudoGetWorkflowInfo indicates an expected call of PseudoGetWorkflowInfo.
-func (mr *MockWorkflowStoreMockRecorder) PseudoGetWorkflowInfo(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PseudoGetWorkflowInfo", reflect.TypeOf((*MockWorkflowStore)(nil).PseudoGetWorkflowInfo), arg0)
-}
-
 // SaveWorkflow mocks base method.
 func (m *MockWorkflowStore) SaveWorkflow(arg0 context.Context, arg1 *store.WorkflowInfo) (*store.WorkflowInfo, error) {
 	m.ctrl.T.Helper()
