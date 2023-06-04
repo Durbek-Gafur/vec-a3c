@@ -10,17 +10,17 @@ import (
 
 type Handler struct {
 	workflowStore store.WorkflowStore
-	store store.Store
+	venStore store.VENStore
 }
 
-func NewHandler(wf store.WorkflowStore, store store.Store) *Handler {
-	return &Handler{ workflowStore: wf, store: store}
+func NewHandler(wf store.WorkflowStore, store store.VENStore) *Handler {
+	return &Handler{ workflowStore: wf, venStore: store}
 }
 
 func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	// Get VEN info from the store
 	// TODO remove pseudo methods
-	venInfo, err := h.store.GetVENInfos()
+	venInfo, err := h.venStore.GetVENInfos()
 	const layout = "2006-01-02 15:04:05"
 	if err != nil {
 		http.Error(w, "Failed to fetch VEN info", http.StatusInternalServerError)
@@ -28,7 +28,7 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get Workflow info from the store
-	workflowInfo, err := h.store.GetWorkflowInfo()
+	workflowInfo, err := h.workflowStore.GetWorkflows(r.Context())
 	if err != nil {
 		http.Error(w, "Failed to fetch Workflow info", http.StatusInternalServerError)
 		return
