@@ -147,6 +147,11 @@ func TestPopulateVENInfo(t *testing.T) {
 	}
 	defer db.Close()
 
+	// Expect QueryRow statement for checking if table is empty
+	rows := sqlmock.NewRows([]string{"COUNT(*)"}).AddRow(0)
+	mock.ExpectQuery("SELECT COUNT(.*) FROM ven_info").WillReturnRows(rows)
+
+
 	// Expect Prepare statement
 	mock.ExpectPrepare("INSERT INTO ven_info")
 
@@ -156,6 +161,38 @@ func TestPopulateVENInfo(t *testing.T) {
 			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnResult(sqlmock.NewResult(int64(i), 1))
 	}
+
+	// Call function under test
+	err = PopulateVENInfo(db, mockUrlProvider)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("There were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestPopulateVENInfoWithNonEmptyDB(t *testing.T) {
+	os.Setenv("VEN_COUNT", "2")
+
+	// Mock server for HTTP calls
+	mockServer := setupMockServer()
+	defer mockServer.Close()
+
+	mockUrlProvider := NewMockURLProvider(mockServer.URL)
+
+	// Mock database using sqlmock
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Expect QueryRow statement for checking if table is empty
+	rows := sqlmock.NewRows([]string{"COUNT(*)"}).AddRow(2)
+	mock.ExpectQuery("SELECT COUNT(.*) FROM ven_info").WillReturnRows(rows)
 
 	// Call function under test
 	err = PopulateVENInfo(db, mockUrlProvider)

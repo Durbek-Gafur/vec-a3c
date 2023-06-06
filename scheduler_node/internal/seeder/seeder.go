@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -25,6 +26,19 @@ type CurrentQueueSize struct {
 }
 
 func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
+	// Check if the table is empty
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM ven_info").Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	// If table is not empty, return
+	if count > 0 {
+		log.Println("VEN info table is not empty, skipping population.")
+		return nil
+	}
+
 	venCount, err := strconv.Atoi(os.Getenv("VEN_COUNT"))
 	if err != nil {
 		return fmt.Errorf("invalid VEN_COUNT: %w", err)
