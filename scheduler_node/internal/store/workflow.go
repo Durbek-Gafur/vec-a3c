@@ -202,11 +202,17 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*Work
 	return w,nil
 }
 
-func (s *MySQLStore) AssignWorkflow(ctx context.Context, workflowID int) error {
-	query := "UPDATE workflow_info SET status = 'assigned', assigned_at = NOW(), last_updated = NOW() WHERE id = ?"
-	_, err := s.db.ExecContext(ctx, query, workflowID)
+func (s *MySQLStore) AssignWorkflow(ctx context.Context, workflowID int, venName string) error {
+	query := `UPDATE workflow_info 
+			  SET status = 'assigned', 
+			      assigned_at = NOW(), 
+			      assigned_vm = ?,
+			      last_updated = NOW() 
+			  WHERE id = ?`
+	_, err := s.db.ExecContext(ctx, query, venName, workflowID)
 	return err
 }
+
 
 
 func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {

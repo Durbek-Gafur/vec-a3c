@@ -36,17 +36,17 @@ func (m *MockWorkflowStore) EXPECT() *MockWorkflowStoreMockRecorder {
 }
 
 // AssignWorkflow mocks base method.
-func (m *MockWorkflowStore) AssignWorkflow(arg0 context.Context, arg1 int) error {
+func (m *MockWorkflowStore) AssignWorkflow(arg0 context.Context, arg1 int, arg2 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1)
+	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AssignWorkflow indicates an expected call of AssignWorkflow.
-func (mr *MockWorkflowStoreMockRecorder) AssignWorkflow(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkflowStoreMockRecorder) AssignWorkflow(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).AssignWorkflow), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).AssignWorkflow), arg0, arg1, arg2)
 }
 
 // CompleteWorkflow mocks base method.
@@ -161,17 +161,17 @@ func (m *MockQueueStore) EXPECT() *MockQueueStoreMockRecorder {
 }
 
 // AssignWorkflow mocks base method.
-func (m *MockQueueStore) AssignWorkflow(arg0 context.Context, arg1 int) error {
+func (m *MockQueueStore) AssignWorkflow(arg0 context.Context, arg1 int, arg2 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1)
+	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AssignWorkflow indicates an expected call of AssignWorkflow.
-func (mr *MockQueueStoreMockRecorder) AssignWorkflow(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockQueueStoreMockRecorder) AssignWorkflow(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockQueueStore)(nil).AssignWorkflow), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockQueueStore)(nil).AssignWorkflow), arg0, arg1, arg2)
 }
 
 // CompleteWorkflow mocks base method.
