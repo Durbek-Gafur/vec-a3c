@@ -13,6 +13,6 @@ WORKDIR /app
 COPY ./ /app
 
 RUN go mod tidy
-RUN go build -o /build/app ./cmd/vec_worker
+RUN go build -o /build/app ./cmd/vec_scheduler
 
 ENTRYPOINT ["/build/app"]

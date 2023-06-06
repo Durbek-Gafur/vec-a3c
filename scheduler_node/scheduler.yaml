@@ -1,0 +1,131 @@
+---
+#Scheduler Backend:
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: scheduler-backend
+    labels:
+      app: scheduler-backend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: scheduler-backend
+    template:
+      metadata:
+        labels:
+          app: scheduler-backend
+      spec:
+        containers:
+          - name: backend
+            image: 39dj29dl2d9l2/vec-scheduler:1 
+            ports:
+              - containerPort: 8080
+            env:
+              - name: MYSQL_USER
+                value: root
+              - name: MYSQL_PASSWORD
+                value: root_password_vec
+              - name: MYSQL_HOST
+                value: scheduler-db-service
+              - name: MYSQL_PORT
+                value: "3306"
+              - name: MYSQL_DBNAME
+                value: app_db
+              - name: QUEUE_SIZE
+                value: "50"
+              - name: MAX_WF
+                value: "60"
+              - name: VEN_COUNT
+                value: "10"
+            resources:
+              limits:
+                cpu: "0.5"
+                memory: 512Mi
+              requests:
+                cpu: "0.5"
+                memory: 512Mi
+---
+#Scheduler Backend Service:
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: scheduler-backend-service
+  spec:
+    selector:
+      app: scheduler-backend
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 8090
+---
+#Scheduler DB:
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: scheduler-db
+    labels:
+      app: scheduler-db
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: scheduler-db
+    template:
+      metadata:
+        labels:
+          app: scheduler-db
+      spec:
+        containers:
+          - name: db
+            image: 39dj29dl2d9l2/vec-scheduler-db:5
+            ports:
+              - containerPort: 3306
+            env:
+              - name: MYSQL_ROOT_PASSWORD
+                value: root_password_vec
+              - name: MYSQL_DATABASE
+                value: app_db
+            resources:
+              limits:
+                cpu: "1"
+                memory: 1Gi
+              requests:
+                cpu: "1"
+                memory: 1Gi
+---
+#Scheduler DBService:
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: scheduler-db-service
+  spec:
+    selector:
+      app: scheduler-db
+    ports:
+      - protocol: TCP
+        port: 3306
+        targetPort: 3306
+---
+#Scheduler Ingress:
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.class: haproxy
+    name: scheduler-backend-ingress
+  spec:
+    rules:
+      - host: dgvkh-scheduler.nrp-nautilus.io
+        http:
+          paths:
+            - pathType: ImplementationSpecific
+              path: /
+              backend:
+                service:
+                  name: scheduler-backend-service
+                  port:
+                    number: 80
+    tls:
+      - hosts:
+          - dgvkh-scheduler.nrp-nautilus.io
