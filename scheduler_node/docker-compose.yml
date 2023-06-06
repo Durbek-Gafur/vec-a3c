@@ -19,6 +19,7 @@ services:
       MYSQL_DBNAME: ${MYSQL_DBNAME}
       VEN_COUNT: ${VEN_COUNT}
       QUEUE_SIZE: ${QUEUE_SIZE}
+      MAX_WF: ${MAX_WF}
       CPUS: ${CPUS}
       RAM: ${RAM}
     volumes:

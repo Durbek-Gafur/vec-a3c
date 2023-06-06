@@ -165,3 +165,39 @@ func GeneratePreferenceList() string {
 }
 
 
+// PopulateWorkflows populates the workflow_info table with the provided workflows.
+func PopulateWorkflows(db *sql.DB) error {
+	rand.Seed(time.Now().UnixNano())
+
+	types := []string{"typeA", "typeB"}
+	ramList := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"} 
+	coreList := []string{"0.5", "1", "1.5", "2", "2.5", "3"} 
+	userList := []string{"UserA", "UserB", "UserC", "UserD", "UserE", "UserF", "UserG", "UserH", "UserI", "UserJ"}
+	policies := []string{"policyA", "policyB", "policyC"} 
+
+	maxWf, err := strconv.Atoi(os.Getenv("MAX_WF"))
+	if err != nil {
+		log.Printf("Failed to parse MAX_WF: %v", err)
+		return err
+	}
+
+	for i := 1; i <= maxWf; i++ {
+		_, err := db.Exec(`
+			INSERT INTO workflow_info 
+			(name, type, ram, core, policy, submitted_by) 
+			VALUES (?, ?, ?, ?, ?, ?)`,
+			"workflow" + strconv.Itoa(i), // generate name
+			types[rand.Intn(len(types))], // pick randomly from types
+			ramList[rand.Intn(len(ramList))], // pick randomly from ramList
+			coreList[rand.Intn(len(coreList))], // pick randomly from coreList
+			policies[rand.Intn(len(policies))], // pick randomly from policies
+			userList[rand.Intn(len(userList))], // pick randomly from userList
+		)
+
+		if err != nil {
+			log.Printf("Failed to populate workflow: %v", err)
+			return err
+		}
+	}
+	return nil
+}

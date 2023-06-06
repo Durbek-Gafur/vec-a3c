@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
@@ -204,4 +205,38 @@ func TestPopulateVENInfoWithNonEmptyDB(t *testing.T) {
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("There were unfulfilled expectations: %s", err)
 	}
+}
+
+
+func TestPopulateWorkflows(t *testing.T) {
+	// Setup mock database
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		log.Fatalf("An error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Set MAX_WF environment variable
+	os.Setenv("MAX_WF", "10")
+
+	// Set expectations for exec
+	for i := 1; i <= 10; i++ {
+		mock.ExpectExec("INSERT INTO workflow_info").
+			WithArgs(
+				sqlmock.AnyArg(), // name
+				sqlmock.AnyArg(), // type
+				sqlmock.AnyArg(), // ram
+				sqlmock.AnyArg(), // core
+				sqlmock.AnyArg(), // policy
+				sqlmock.AnyArg(), // submitted_by
+			).
+			WillReturnResult(sqlmock.NewResult(int64(i), 1))
+	}
+
+	// Run the function
+	err = PopulateWorkflows(db)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.Nil(t, mock.ExpectationsWereMet(), "There were unfulfilled expectations.")
 }

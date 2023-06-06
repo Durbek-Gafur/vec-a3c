@@ -99,10 +99,57 @@ func (s *MySQLStore) pseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo,
 	return pseudoData, nil
 }
 
+func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
+	query := `SELECT id, name, type, ram, core, policy, 
+                      expected_execution_time, actual_execution_time, 
+                      assigned_vm, processing_started_at, assigned_at, 
+                      completed_at, status, submitted_by, last_updated 
+               FROM workflow_info`
 
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var workflows []WorkflowInfo
+	for rows.Next() {
+		var wf WorkflowInfo
+		err := rows.Scan(
+			&wf.ID,
+			&wf.Name,
+			&wf.Type,
+			&wf.RAM,
+			&wf.Core,
+			&wf.Policy,
+			&wf.ExpectedExecutionTime,
+			&wf.ActualExecutionTime,
+			&wf.AssignedVM,
+			&wf.ProcessingStartedAt,
+			&wf.AssignedAt,
+			&wf.CompletedAt,
+			&wf.Status,
+			&wf.SubmittedBy,
+			&wf.LastUpdated,
+		)
+		if err != nil {
+			return nil, err
+		}
+		workflows = append(workflows, wf)
+	}
+
+	// Check for errors from iterating over rows.
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return workflows, nil
+}
+
+/*
 func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
 	return s.pseudoGetWorkflowInfo(ctx)
-	/*
+	
 	rows, err := s.db.QueryContext(ctx, "SELECT id, name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info")
 	if err != nil {
 		return nil, err
@@ -120,9 +167,10 @@ func (s *MySQLStore) GetWorkflows(ctx context.Context) ([]WorkflowInfo, error) {
 	}
 
 	return workflows, nil
-	*/
-}
 
+}
+	*/
+	
 func (s *MySQLStore) SaveWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error) {
 	res, err := s.db.ExecContext(ctx,
 		"INSERT INTO workflow_info (name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, submitted_by, status, assigned_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
