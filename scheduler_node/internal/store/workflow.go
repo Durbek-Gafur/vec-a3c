@@ -2,26 +2,27 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
 // WorkflowInfo represents the information of a WorkflowInfo
 type WorkflowInfo struct {
-	ID                    int    `json:"id"`
-	Name                  string `json:"name"`
-	RAM                   string `json:"ram"`
-	Core                  string `json:"core"`
-	Policy                string `json:"policy"`
-	ExpectedExecutionTime string `json:"expectedExecutionTime"`
-	ActualExecutionTime   string `json:"actualExecutionTime"`
-	AssignedVM            string `json:"assignedVM"`
-	AssignedAt            time.Time `json:"assignedAt"`
-	CompletedAt           time.Time `json:"completedAt"`
-	Type                  string `json:"type"`
-	Status                string `json:"status"`
-	SubmittedBy           string    `json:"submittedBy"`
-	LastUpdated           time.Time `json:"lastUpdated"`
-
+	ID                    int           `json:"id"`
+	Name                  string        `json:"name"`
+	RAM                   string        `json:"ram"`
+	Core                  string        `json:"core"`
+	Policy                string        `json:"policy"`
+	ExpectedExecutionTime sql.NullString  `json:"expectedExecutionTime"`
+	ActualExecutionTime   sql.NullString  `json:"actualExecutionTime"`
+	AssignedVM            sql.NullString  `json:"assignedVM"`
+	ProcessingStartedAt   sql.NullTime  `json:"processingStartedAt"`
+	AssignedAt            sql.NullTime  `json:"assignedAt"`
+	CompletedAt           sql.NullTime  `json:"completedAt"`
+	Type                  string        `json:"type"`
+	Status                string        `json:"status"`
+	SubmittedBy           sql.NullString  `json:"submittedBy"`
+	LastUpdated           time.Time     `json:"lastUpdated"`
 }
 
 
@@ -67,14 +68,14 @@ func (s *MySQLStore) pseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo,
 			RAM:                   "8GB",
 			Core:                  "4",
 			Policy:                "Some Policy",
-			ExpectedExecutionTime: "2 hours",
-			ActualExecutionTime:   "1 hour",
-			AssignedVM:            "VM1",
-			AssignedAt:            assignedAt,
-			CompletedAt:           completedAt,
+			ExpectedExecutionTime: sql.NullString{String:"2 hours", Valid: true},
+			ActualExecutionTime:   sql.NullString{String:"2 hours", Valid: true},
+			AssignedVM:            sql.NullString{String:"VM1", Valid: true},
+			AssignedAt:            sql.NullTime{Time:assignedAt, Valid: true},
+			CompletedAt:           sql.NullTime{Time:completedAt, Valid: true},
 			Type:                  "DNA",
 			Status:                "Pending",
-			SubmittedBy:           "User A",
+			SubmittedBy:           sql.NullString{String:"User A", Valid: true},
 			LastUpdated:           time.Now().Add(-time.Minute*2),
 		},
 		{
@@ -82,14 +83,14 @@ func (s *MySQLStore) pseudoGetWorkflowInfo(ctx context.Context) ([]WorkflowInfo,
 			RAM:                   "16GB",
 			Core:                  "8",
 			Policy:                "Another Policy",
-			ExpectedExecutionTime: "3 hours",
-			ActualExecutionTime:   "2.5 hours",
-			AssignedVM:            "VM2",
-			AssignedAt:            assignedAt,
-			CompletedAt:           completedAt,
+			ExpectedExecutionTime: sql.NullString{String:"3 hours", Valid: true},
+			ActualExecutionTime:   sql.NullString{String:"2.5 hours", Valid: true},
+			AssignedVM:            sql.NullString{String:"VM2", Valid: true},
+			AssignedAt:            sql.NullTime{Time:assignedAt, Valid: true},
+			CompletedAt:           sql.NullTime{Time:completedAt, Valid: true},
 			Type:                  "RNA",
 			Status:                "Completed",
-			SubmittedBy:           "User B",
+			SubmittedBy:           sql.NullString{String:"User A", Valid: true},
 			LastUpdated:           time.Now().Add(-time.Hour),
 		},
 	}
@@ -153,10 +154,15 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*Work
 	return w,nil
 }
 
+func (s *MySQLStore) AssignWorkflow(ctx context.Context, workflowID int) error {
+	query := "UPDATE workflow_info SET status = 'assigned', assigned_at = NOW(), last_updated = NOW() WHERE id = ?"
+	_, err := s.db.ExecContext(ctx, query, workflowID)
+	return err
+}
 
 
 func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {
-	query := "UPDATE workflow_info SET status = 'processing', assigned_at = NOW(), last_updated = NOW() WHERE id = ?"
+	query := "UPDATE workflow_info SET status = 'processing', processing_started_at = NOW(), last_updated = NOW() WHERE id = ?"
 	_, err := s.db.ExecContext(ctx, query, workflowID)
 	return err
 }

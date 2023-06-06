@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"scheduler-node/internal/api"
@@ -59,13 +60,13 @@ func TestShowTables(t *testing.T) {
 			RAM:                   "16GB",
 			Core:                  "4",
 			Policy:                "First-Come-First-Serve",
-			ExpectedExecutionTime: "2 hours",
-			ActualExecutionTime:   "1 hour",
-			AssignedVM:            "VM1",
-			SubmittedBy:           "TestUser",
+			ExpectedExecutionTime: sql.NullString{String: "2 hours",Valid: true},
+			ActualExecutionTime:   sql.NullString{String: "1 hours",Valid: true},
+			AssignedVM:            sql.NullString{String: "VM1" ,Valid: true},
+			SubmittedBy:           sql.NullString{String: "TestUser",Valid: true},
 			Status:                "pending",
-			AssignedAt:            assignedAt,
-			CompletedAt:           completedAt,
+			AssignedAt:            sql.NullTime{Time: assignedAt,Valid: true},
+			CompletedAt:           sql.NullTime{Time: completedAt,Valid: true},
 		},
 	}, nil)
 

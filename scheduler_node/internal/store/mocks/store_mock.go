@@ -35,6 +35,20 @@ func (m *MockWorkflowStore) EXPECT() *MockWorkflowStoreMockRecorder {
 	return m.recorder
 }
 
+// AssignWorkflow mocks base method.
+func (m *MockWorkflowStore) AssignWorkflow(arg0 context.Context, arg1 int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AssignWorkflow indicates an expected call of AssignWorkflow.
+func (mr *MockWorkflowStoreMockRecorder) AssignWorkflow(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).AssignWorkflow), arg0, arg1)
+}
+
 // CompleteWorkflow mocks base method.
 func (m *MockWorkflowStore) CompleteWorkflow(arg0 context.Context, arg1 int) error {
 	m.ctrl.T.Helper()
@@ -144,6 +158,20 @@ func NewMockQueueStore(ctrl *gomock.Controller) *MockQueueStore {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockQueueStore) EXPECT() *MockQueueStoreMockRecorder {
 	return m.recorder
+}
+
+// AssignWorkflow mocks base method.
+func (m *MockQueueStore) AssignWorkflow(arg0 context.Context, arg1 int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AssignWorkflow", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AssignWorkflow indicates an expected call of AssignWorkflow.
+func (mr *MockQueueStoreMockRecorder) AssignWorkflow(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignWorkflow", reflect.TypeOf((*MockQueueStore)(nil).AssignWorkflow), arg0, arg1)
 }
 
 // CompleteWorkflow mocks base method.

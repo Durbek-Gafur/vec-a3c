@@ -102,6 +102,7 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 					<th>Expected Execution time</th>
 					<th>Actual Execution Time</th>
 					<th>Assigned VM</th>
+					<th>Processing_started_at</th>
 					<th>Assigned_at</th>
 					<th>Completed_at</th>
 					<th>Status</th>
@@ -115,15 +116,16 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 			<tr>
 				<td>` + workflow.Name + `</td>
 				<td>` + workflow.Type + `</td>
-				<td>` + workflow.SubmittedBy + `</td>
+				<td>` + workflow.SubmittedBy.String + `</td>
 				<td>` + workflow.RAM + `</td>
 				<td>` + workflow.Core + `</td>
 				<td>` + workflow.Policy + `</td>
-				<td>` + workflow.ExpectedExecutionTime + `</td>
-				<td>` + workflow.ActualExecutionTime + `</td>
-				<td>` + workflow.AssignedVM + `</td>
-				<td>` + workflow.AssignedAt.Local().Format(layout) + `</td>
-				<td>` + workflow.CompletedAt.Local().Format(layout) + `</td>
+				<td>` + workflow.ExpectedExecutionTime.String + `</td>
+				<td>` + workflow.ActualExecutionTime.String + `</td>
+				<td>` + workflow.AssignedVM.String + `</td>
+				<td>` + workflow.ProcessingStartedAt.Time.Local().Format(layout) + `</td>
+				<td>` + workflow.AssignedAt.Time.Local().Format(layout) + `</td>
+				<td>` + workflow.CompletedAt.Time.Local().Format(layout) + `</td>
 				<td>` + workflow.Status + `<br>Updated ` + formatTimeAgo(lastUpdated) + `</td>
 			</tr>
 		`

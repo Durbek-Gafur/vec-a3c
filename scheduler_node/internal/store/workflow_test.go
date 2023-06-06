@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
@@ -90,18 +89,8 @@ func TestMain(m *testing.M) {
 
 func createWorkflow() *WorkflowInfo {
 
-	const layout = "2006-01-02 15:04:05"
-	assignedAt, err := time.Parse(layout, "2023-05-31 10:00:00")
-	if err != nil {
-		panic(err)
-	}
-	assignedAt = assignedAt.UTC()
-
-	completedAt, err := time.Parse(layout, "2023-05-31 10:00:00")
-	if err != nil {
-		panic(err)
-	}
-	completedAt = completedAt.UTC()
+	assignedAt := time.Now().UTC()
+	completedAt := time.Now().UTC()
 
 	newWorkflow := WorkflowInfo{
 		Name:                  "Test WorkflowInfo",
@@ -109,13 +98,13 @@ func createWorkflow() *WorkflowInfo {
 		RAM:                   "16GB",
 		Core:                  "4",
 		Policy:                "First-Come-First-Serve",
-		ExpectedExecutionTime: "2 hours",
-		ActualExecutionTime:   "1 hour",
-		AssignedVM:            "VM1",
-		SubmittedBy:           "TestUser",
+		ExpectedExecutionTime: sql.NullString{String: "2 hours",Valid: true},
+		ActualExecutionTime:   sql.NullString{String: "1 hour",Valid: true},
+		AssignedVM:            sql.NullString{String: "VM1",Valid: true},
+		SubmittedBy:           sql.NullString{String: "TestUser",Valid: true},
 		Status:                "pending",
-		AssignedAt:            assignedAt,
-		CompletedAt:           completedAt,
+		AssignedAt:            sql.NullTime{Time: assignedAt,Valid: true},
+		CompletedAt:           sql.NullTime{Time: completedAt,Valid: true},
 	}
 
 	createdWorkflow, err := testStore.SaveWorkflow(ctx, &newWorkflow)
@@ -182,7 +171,7 @@ func TestStartWorkflow(t *testing.T) {
 	startedWorkflow, err := testStore.GetWorkflowByID(ctx, newWorkflow.ID)
 
 	assert.NoError(t, err)
-	assert.WithinDuration(t, time.Now(), startedWorkflow.AssignedAt, time.Second)
+	assert.WithinDuration(t, time.Now(), startedWorkflow.AssignedAt.Time, time.Second)
 }
 
 func TestCompleteWorkflow(t *testing.T) {
@@ -197,5 +186,5 @@ func TestCompleteWorkflow(t *testing.T) {
 	completedWorkflow, err := testStore.GetWorkflowByID(ctx, newWorkflow.ID)
 
 	assert.NoError(t, err)
-	assert.WithinDuration(t, time.Now(), completedWorkflow.CompletedAt, time.Second)
+	assert.WithinDuration(t, time.Now(), completedWorkflow.CompletedAt.Time, time.Second)
 }
