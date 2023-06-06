@@ -188,3 +188,48 @@ func TestCompleteWorkflow(t *testing.T) {
 	assert.NoError(t, err)
 	assert.WithinDuration(t, time.Now(), completedWorkflow.CompletedAt.Time, time.Second)
 }
+
+
+// Add this function to create multiple workflows
+func createWorkflows(num int) []*WorkflowInfo {
+	workflows := make([]*WorkflowInfo, num)
+	for i := 0; i < num; i++ {
+		workflows[i] = createWorkflow()
+	}
+	return workflows
+}
+
+// Adjust this function to delete all workflows
+func deleteAllWorkflows() {
+	// Clean up all workflows from the database. This may need to be more complex in a real application.
+	_, err := testStore.db.ExecContext(ctx, "DELETE FROM workflow_info")
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Add this function to test the GetWorkflows function
+func TestGetWorkflows(t *testing.T) {
+
+	// Create 5 workflows in the database
+	workflows := createWorkflows(5)
+	defer deleteAllWorkflows()
+
+	// Get the workflows from the database
+	dbWorkflows, err := testStore.GetWorkflows(ctx)
+	if err != nil {
+		t.Fatalf("GetWorkflows failed with error: %s", err)
+	}
+
+	// Check the number of workflows returned
+	if len(dbWorkflows) != 5 {
+		t.Fatalf("expected 5 workflows, but got %d", len(dbWorkflows))
+	}
+
+	// Check the workflows returned
+	for i, wf := range dbWorkflows {
+		if wf.ID != workflows[i].ID {
+			t.Errorf("expected workflow ID %d, but got %d", workflows[i].ID, wf.ID)
+		}
+	}
+}

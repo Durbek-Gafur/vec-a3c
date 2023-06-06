@@ -167,6 +167,18 @@ func GeneratePreferenceList() string {
 
 // PopulateWorkflows populates the workflow_info table with the provided workflows.
 func PopulateWorkflows(db *sql.DB) error {
+	// Check if the table is empty
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM workflow_info").Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	// If table is not empty, return
+	if count > 0 {
+		log.Println("Workflow info table is not empty, skipping population.")
+		return nil
+	}
 	rand.Seed(time.Now().UnixNano())
 
 	types := []string{"typeA", "typeB"}

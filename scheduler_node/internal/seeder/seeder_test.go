@@ -219,6 +219,9 @@ func TestPopulateWorkflows(t *testing.T) {
 	// Set MAX_WF environment variable
 	os.Setenv("MAX_WF", "10")
 
+	// Set expectation for SELECT COUNT query
+	mock.ExpectQuery("SELECT COUNT(.*) FROM workflow_info").WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+
 	// Set expectations for exec
 	for i := 1; i <= 10; i++ {
 		mock.ExpectExec("INSERT INTO workflow_info").

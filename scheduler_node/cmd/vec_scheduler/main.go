@@ -30,7 +30,11 @@ func main() {
 
 	//populate table
 	if err := seeder.PopulateVENInfo(mysqlStore.GetDB(),&seeder.ActualURLProvider{}); err != nil {
-		log.Fatal("Failed to populate tables", err)
+		log.Fatal("Failed to populate VEN table", err)
+	}
+
+	if err := seeder.PopulateWorkflows(mysqlStore.GetDB()); err != nil {
+		log.Fatal("Failed to populate Workflow table", err)
 	}
 
 	router := mux.NewRouter()
