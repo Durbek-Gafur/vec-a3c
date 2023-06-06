@@ -17,11 +17,12 @@ import (
 type Handler struct {
 	queueSizeStore store.QueueSizeStore
 	workflowStore store.WorkflowStore
+	queuestore store.QueueStore
 	rspec rspec.Rspec
 }
 
-func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore,rspec rspec.Rspec) *Handler {
-	return &Handler{queueSizeStore: qs, workflowStore: wf,rspec:rspec}
+func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore,rspec rspec.Rspec, q store.QueueStore) *Handler {
+	return &Handler{queueSizeStore: qs, workflowStore: wf,rspec:rspec, queuestore:q}
 }
 
 func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
@@ -154,8 +155,22 @@ func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
+
+	if available, _ := h.queuestore.IsSpaceAvailable(ctx); !available {
+		http.Error(w, "No space Available", http.StatusUnavailableForLegalReasons)
+		return
+	}
+	
+
 	if _,err := h.workflowStore.SaveWorkflow(ctx,&wf); err != nil {
 		http.Error(w, "Failed to save workflow", http.StatusInternalServerError)
+		return
+	}
+
+	
+	if _,err := h.queuestore.Enqueue(ctx,wf.ID); err != nil {
+		http.Error(w, "Failed to enqueue workflow", http.StatusInternalServerError)
 		return
 	}
 

@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
 	rspec_provider := rspec.NewService()
-	handler := api.NewHandler(mysqlStore, mysqlStore,rspec_provider)
+	handler := api.NewHandler(mysqlStore, mysqlStore,rspec_provider,mysqlStore)
 
 	router := mux.NewRouter()
 	// queue
