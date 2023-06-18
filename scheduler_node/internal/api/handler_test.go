@@ -42,6 +42,12 @@ func TestShowTables(t *testing.T) {
 		},
 	}, nil)
 	const layout = "2006-01-02 15:04:05"
+	createdAt, err := time.Parse(layout, "2023-05-31 01:00:00")
+	if err != nil {
+		panic(err)
+	}
+	createdAt = createdAt.UTC()
+
 	assignedAt, err := time.Parse(layout, "2023-05-31 10:00:00")
 	if err != nil {
 		panic(err)
@@ -66,6 +72,7 @@ func TestShowTables(t *testing.T) {
 			SubmittedBy:           sql.NullString{String: "TestUser",Valid: true},
 			Status:                "pending",
 			AssignedAt:            sql.NullTime{Time: assignedAt,Valid: true},
+			CreatedAt:            sql.NullTime{Time: createdAt,Valid: true},
 			CompletedAt:           sql.NullTime{Time: completedAt,Valid: true},
 		},
 	}, nil)

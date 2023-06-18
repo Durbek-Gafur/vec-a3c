@@ -207,7 +207,6 @@ func TestPopulateVENInfoWithNonEmptyDB(t *testing.T) {
 	}
 }
 
-
 func TestPopulateWorkflows(t *testing.T) {
 	// Setup mock database
 	db, mock, err := sqlmock.New()
@@ -232,6 +231,7 @@ func TestPopulateWorkflows(t *testing.T) {
 				sqlmock.AnyArg(), // core
 				sqlmock.AnyArg(), // policy
 				sqlmock.AnyArg(), // submitted_by
+				sqlmock.AnyArg(), // created_at
 			).
 			WillReturnResult(sqlmock.NewResult(int64(i), 1))
 	}

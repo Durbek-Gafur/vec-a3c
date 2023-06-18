@@ -11,8 +11,8 @@ import (
 func (s *MySQLStore) Peek(ctx context.Context) (*WorkflowInfo, error) {
 	wf := &WorkflowInfo{}
 	err := s.db.QueryRowContext(ctx,
-		"SELECT id, name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE status <> 'done' ORDER BY id ASC LIMIT 1",
-	).Scan(&wf.ID,&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
+		"SELECT id, created_at, name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE status <> 'done' ORDER BY id ASC LIMIT 1",
+	).Scan(&wf.ID,&wf.CreatedAt,&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
 
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (s *MySQLStore) GetQueue(ctx context.Context) ([]WorkflowInfo, error) {
 	}
 	
 	// use as a limit in SQL query
-	rows, err := s.db.QueryContext(ctx, "SELECT name, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE status != 'done' ORDER BY id ASC LIMIT ?", queueSize)
+	rows, err := s.db.QueryContext(ctx, "SELECT name,created_at, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE status != 'done' ORDER BY id ASC LIMIT ?", queueSize)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (s *MySQLStore) GetQueue(ctx context.Context) ([]WorkflowInfo, error) {
 	workflows := []WorkflowInfo{}
 	for rows.Next() {
 		var wf WorkflowInfo
-		err := rows.Scan(&wf.Name, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
+		err := rows.Scan(&wf.Name,&wf.CreatedAt, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
 		if err != nil {
 			return nil, err
 		}

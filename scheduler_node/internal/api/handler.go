@@ -96,6 +96,7 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 					<th>Workflow Name</th>
 					<th>Type</th>
 					<th>Submitted by</th>
+					<th>Created at</th>
 					<th>ram</th>
 					<th>core</th>
 					<th>policy</th>
@@ -117,6 +118,7 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 				<td>` + workflow.Name + `</td>
 				<td>` + workflow.Type + `</td>
 				<td>` + workflow.SubmittedBy.String + `</td>
+				<td>` + workflow.CreatedAt.Time.Local().Format(layout) + `</td>
 				<td>` + workflow.RAM + `</td>
 				<td>` + workflow.Core + `</td>
 				<td>` + workflow.Policy + `</td>

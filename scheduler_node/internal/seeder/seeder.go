@@ -193,23 +193,59 @@ func PopulateWorkflows(db *sql.DB) error {
 		return err
 	}
 
-	for i := 1; i <= maxWf; i++ {
-		_, err := db.Exec(`
-			INSERT INTO workflow_info 
-			(name, type, ram, core, policy, submitted_by) 
-			VALUES (?, ?, ?, ?, ?, ?)`,
-			"workflow" + strconv.Itoa(i), // generate name
-			types[rand.Intn(len(types))], // pick randomly from types
-			ramList[rand.Intn(len(ramList))], // pick randomly from ramList
-			coreList[rand.Intn(len(coreList))], // pick randomly from coreList
-			policies[rand.Intn(len(policies))], // pick randomly from policies
-			userList[rand.Intn(len(userList))], // pick randomly from userList
-		)
+	// Generate arrival times
+	arrivalTimes := generateArrivalTimes(8, 17, 0.5) // start time, end time and lambda
 
-		if err != nil {
-			log.Printf("Failed to populate workflow: %v", err)
-			return err
+	for i := 1; i <= maxWf; i++ {
+		if i-1 < len(arrivalTimes) {
+			createdAt := arrivalTimes[i-1]
+
+			_, err := db.Exec(`
+				INSERT INTO workflow_info 
+				(name, type, ram, core, policy, submitted_by, created_at) 
+				VALUES (?, ?, ?, ?, ?, ?, ?)`,
+				"workflow" + strconv.Itoa(i), // generate name
+				types[rand.Intn(len(types))], // pick randomly from types
+				ramList[rand.Intn(len(ramList))], // pick randomly from ramList
+				coreList[rand.Intn(len(coreList))], // pick randomly from coreList
+				policies[rand.Intn(len(policies))], // pick randomly from policies
+				userList[rand.Intn(len(userList))], // pick randomly from userList
+				createdAt, // use generated createdAt
+			)
+
+			if err != nil {
+				log.Printf("Failed to populate workflow: %v", err)
+				return err
+			}
 		}
 	}
+
 	return nil
+}
+
+
+func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
+	rand.Seed(2023)
+	interval := 1.0 // in minutes
+
+	// Convert start and end time to minutes
+	startMinutes := startTime * 60
+	endMinutes := endTime * 60
+
+	var arrivalTimes []time.Time
+
+	// Generate sequence of inter-arrival times based on exponential distribution
+	for currentTime := startMinutes; currentTime <= endMinutes; {
+		// Generate exponentially distributed random number
+		interArrivalTime := rand.ExpFloat64() / lambda
+		currentTime += interArrivalTime * interval
+
+		if currentTime <= endMinutes {
+			// Convert to time.Time and append to arrivalTimes
+			arrivalTime := time.Unix(int64(currentTime*60), 0) // convert minutes to seconds
+			arrivalTimes = append(arrivalTimes, arrivalTime)
+		}
+	}
+
+	return arrivalTimes
 }

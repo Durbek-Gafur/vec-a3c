@@ -18,6 +18,7 @@ CREATE TABLE ven_info (
 -- Table for Workflow info
 CREATE TABLE workflow_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME,
     name VARCHAR(255),
     type VARCHAR(255),
     ram VARCHAR(50),

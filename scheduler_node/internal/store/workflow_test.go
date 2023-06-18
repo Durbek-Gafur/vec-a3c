@@ -89,6 +89,7 @@ func TestMain(m *testing.M) {
 
 func createWorkflow() *WorkflowInfo {
 
+	createdAt := time.Now().UTC()
 	assignedAt := time.Now().UTC()
 	completedAt := time.Now().UTC()
 
@@ -103,6 +104,7 @@ func createWorkflow() *WorkflowInfo {
 		AssignedVM:            sql.NullString{String: "VM1",Valid: true},
 		SubmittedBy:           sql.NullString{String: "TestUser",Valid: true},
 		Status:                "pending",
+		CreatedAt:            sql.NullTime{Time: createdAt,Valid: true},
 		AssignedAt:            sql.NullTime{Time: assignedAt,Valid: true},
 		CompletedAt:           sql.NullTime{Time: completedAt,Valid: true},
 	}
