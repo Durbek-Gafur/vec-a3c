@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -14,9 +15,34 @@ import (
 	"vec-node/internal/api"
 	"vec-node/internal/rspec"
 	"vec-node/internal/store"
+	"vec-node/internal/workflow"
 )
 
+type MultiWriter struct {
+	Writers []io.Writer
+}
+
+func (mw MultiWriter) Write(p []byte) (n int, err error) {
+	for _, writer := range mw.Writers {
+		writer.Write(p)
+	}
+	return len(p), nil
+}
+
 func main() {
+	logFile, err := os.OpenFile("output.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+	multiWriter := MultiWriter{
+		Writers: []io.Writer{
+			os.Stdout,
+			logFile,
+		},
+	}
+	log.SetOutput(multiWriter)
+
 	cfg, err := loadConfig()
 	if err != nil {
 		log.Fatal("Failed to load configuration:", err)
@@ -26,8 +52,12 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
+	wfs := workflow.NewService(mysqlStore, logFile)
+	if err != nil {
+		log.Fatal("Failed to initialize Workflow Provider:", err)
+	}
 	rspec_provider := rspec.NewService()
-	handler := api.NewHandler(mysqlStore, mysqlStore,rspec_provider,mysqlStore)
+	handler := api.NewHandler(mysqlStore, mysqlStore, rspec_provider, mysqlStore, wfs)
 
 	router := mux.NewRouter()
 	// queue
@@ -51,7 +81,7 @@ func main() {
 
 	// Start the server in a separate goroutine.
 	go func() {
-		log.Printf("Started the app")
+		log.Printf("Started the app.")
 		log.Printf("Server running at port 8080")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal("Failed to start the server:", err)

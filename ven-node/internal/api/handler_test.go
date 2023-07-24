@@ -25,16 +25,16 @@ func TestHandler_GetQueueSize(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockQueueSizeStore(ctrl)
-	h := api.NewHandler(mockStore, nil,nil,nil)
+	h := api.NewHandler(mockStore, nil, nil, nil, nil)
 	ctx := context.TODO()
-	
+
 	req, err := http.NewRequest("GET", "/queue-size", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expectedSize := 5
-	mockStore.EXPECT().GetQueueSize(ctx).Return(expectedSize,nil)
+	mockStore.EXPECT().GetQueueSize(ctx).Return(expectedSize, nil)
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(h.GetQueueSize)
@@ -49,13 +49,12 @@ func TestHandler_GetQueueSize(t *testing.T) {
 	assert.Equal(t, expectedSize, response["size"])
 }
 
-
 func TestHandler_SetQueueSize(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockQueueSizeStore(ctrl)
-	h := api.NewHandler(mockStore, nil,nil,nil)
+	h := api.NewHandler(mockStore, nil, nil, nil, nil)
 	ctx := context.TODO()
 
 	data := map[string]string{"size": "5"}
@@ -86,7 +85,7 @@ func TestHandler_SetQueueSize_InvalidSize(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockQueueSizeStore(ctrl)
-	h := api.NewHandler(mockStore, nil,nil,nil)
+	h := api.NewHandler(mockStore, nil, nil, nil, nil)
 
 	data := map[string]string{"size": "invalid"}
 	body, _ := json.Marshal(data)
@@ -103,14 +102,12 @@ func TestHandler_SetQueueSize_InvalidSize(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
-
-
 func TestHandler_GetWorkflowByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockWorkflowStore(ctrl)
-	h := api.NewHandler(nil, mockStore,nil,nil)
+	h := api.NewHandler(nil, mockStore, nil, nil, nil)
 
 	req, err := http.NewRequest("GET", "/workflow/1", nil)
 	if err != nil {
@@ -138,7 +135,7 @@ func TestHandler_UpdateQueueSize(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockQueueSizeStore(ctrl)
-	h := api.NewHandler(mockStore, nil,nil,nil)
+	h := api.NewHandler(mockStore, nil, nil, nil, nil)
 	ctx := context.TODO()
 
 	data := map[string]string{"size": "5"}
@@ -171,7 +168,7 @@ func TestHandler_SaveWorkflow(t *testing.T) {
 	mockWorkflowStore := store_mock.NewMockWorkflowStore(ctrl)
 	mockQueueStore := store_mock.NewMockQueueStore(ctrl)
 
-	h := api.NewHandler(nil, mockWorkflowStore, nil,mockQueueStore)
+	h := api.NewHandler(nil, mockWorkflowStore, nil, mockQueueStore, nil)
 	ctx := context.TODO()
 
 	wf := store.Workflow{ID: 1, Name: "TestWorkflow"}
@@ -186,7 +183,7 @@ func TestHandler_SaveWorkflow(t *testing.T) {
 	// Mock the IsSpaceAvailable and Enqueue calls
 	mockQueueStore.EXPECT().IsSpaceAvailable(ctx).Return(true, nil)
 	mockWorkflowStore.EXPECT().SaveWorkflow(ctx, &expectedWorkflow).Return(&expectedWorkflow, nil)
-	mockQueueStore.EXPECT().Enqueue(ctx, wf.ID).Return(1,nil)
+	mockQueueStore.EXPECT().Enqueue(ctx, wf.ID).Return(1, nil)
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(h.SaveWorkflow)
@@ -201,20 +198,19 @@ func TestHandler_SaveWorkflow(t *testing.T) {
 	assert.Equal(t, expectedWorkflow, response)
 }
 
-
 func TestHandler_GetRspec(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRspec := rspec_mock.NewMockRspec(ctrl)
-	h := api.NewHandler(nil, nil,mockRspec,nil)
+	h := api.NewHandler(nil, nil, mockRspec, nil, nil)
 
 	req, err := http.NewRequest("GET", "/rspec", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expectedRspec := rs.Resources{RAM: "16", CPUs:"4",MAX_QUEUE: "8"}
+	expectedRspec := rs.Resources{RAM: "16", CPUs: "4", MAX_QUEUE: "8"}
 	mockRspec.EXPECT().GetRspec().Return(&expectedRspec, nil)
 
 	rr := httptest.NewRecorder()
@@ -232,13 +228,12 @@ func TestHandler_GetRspec(t *testing.T) {
 	assert.Equal(t, expectedRspec.MAX_QUEUE, response["MAX_QUEUE"])
 }
 
-
 func TestHandler_GetWorkflows(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockWorkflowStore(ctrl)
-	h := api.NewHandler(nil, mockStore,nil,nil)
+	h := api.NewHandler(nil, mockStore, nil, nil, nil)
 	ctx := context.TODO()
 
 	req, err := http.NewRequest("GET", "/workflows?type=test", nil)
@@ -262,5 +257,3 @@ func TestHandler_GetWorkflows(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, expectedWorkflows, response)
 }
-
-

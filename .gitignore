@@ -14,3 +14,10 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+ven-node/workflow/HISAT2/*
+ven-node/workflow/data/generated/*
+ven-node/workflow/hg38/*
+ven-node/internal/workflow/veca3c/grch38_genome.tar.gz
+ven-node/internal/workflow/veca3c/Homo_sapiens.GRCh38.106.gtf.gz
+ven-node/workflow/data/demo.fastq

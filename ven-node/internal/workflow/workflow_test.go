@@ -16,7 +16,7 @@ func TestStartExecution(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockWorkflowStore(ctrl)
-	service := NewService(mockStore)
+	service := NewService(mockStore, nil)
 
 	ctx := context.TODO()
 	mockStore.EXPECT().StartWorkflow(ctx, 123).Return(nil)
@@ -30,12 +30,12 @@ func TestComplete(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockWorkflowStore(ctrl)
-	service := NewService(mockStore)
+	service := NewService(mockStore, nil)
 
 	ctx := context.TODO()
 	mockStore.EXPECT().CompleteWorkflow(ctx, 456).Return(nil)
 
-	err := service.Complete(ctx, 456)
+	err := service.Complete(ctx, 456, 4)
 	assert.NoError(t, err)
 }
 
@@ -44,7 +44,7 @@ func TestUpdateWorkflow(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockStore := store_mock.NewMockWorkflowStore(ctrl)
-	service := NewService(mockStore)
+	service := NewService(mockStore, nil)
 
 	ctx := context.TODO()
 	wf := &s.Workflow{

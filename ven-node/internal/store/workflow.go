@@ -6,15 +6,20 @@ import (
 	"time"
 )
 
-
+// type WorkflowProvider interface {
+// 	GetWorkflowByID(ctx context.Context, id int) (*Workflow, error)
+// 	GetWorkflows(ctx context.Context, filter *WorkflowFilter) ([]Workflow, error)
+// 	SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, error)
+// 	UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow, error)
+// }
 type Workflow struct {
-	ID                  int     `json:"id"`
-	Name                string    `json:"name"`
-	Type                string    `json:"type"`
-	Duration            int     `json:"duration"`
-	ReceivedAt          time.Time `json:"received_at"`
-	StartedExecutionAt  sql.NullTime `json:"started_execution_at,omitempty"`
-	CompletedAt         sql.NullTime `json:"completed_at,omitempty"`
+	ID                 int          `json:"id"`
+	Name               string       `json:"name"`
+	Type               string       `json:"type"`
+	Duration           int          `json:"duration"`
+	ReceivedAt         time.Time    `json:"received_at"`
+	StartedExecutionAt sql.NullTime `json:"started_execution_at,omitempty"`
+	CompletedAt        sql.NullTime `json:"completed_at,omitempty"`
 }
 
 type WorkflowFilter struct {
@@ -93,12 +98,11 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow
 		w.Name, w.Type, w.Duration, w.ReceivedAt, w.StartedExecutionAt, w.CompletedAt, w.ID,
 	)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return w,nil
+	return w, nil
 }
-
 
 func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {
 	query := "UPDATE workflow SET started_execution_at = NOW() WHERE id = ?"

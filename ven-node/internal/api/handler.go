@@ -10,19 +10,21 @@ import (
 
 	"vec-node/internal/rspec"
 	"vec-node/internal/store"
+	"vec-node/internal/workflow"
 
 	"github.com/gorilla/mux"
 )
 
 type Handler struct {
 	queueSizeStore store.QueueSizeStore
-	workflowStore store.WorkflowStore
-	queuestore store.QueueStore
-	rspec rspec.Rspec
+	workflowStore  store.WorkflowStore
+	queuestore     store.QueueStore
+	rspec          rspec.Rspec
+	workflow       workflow.Workflow
 }
 
-func NewHandler(qs store.QueueSizeStore,wf store.WorkflowStore,rspec rspec.Rspec, q store.QueueStore) *Handler {
-	return &Handler{queueSizeStore: qs, workflowStore: wf,rspec:rspec, queuestore:q}
+func NewHandler(qs store.QueueSizeStore, wf store.WorkflowStore, rspec rspec.Rspec, q store.QueueStore, wfs workflow.Workflow) *Handler {
+	return &Handler{queueSizeStore: qs, workflowStore: wf, rspec: rspec, queuestore: q, workflow: wfs}
 }
 
 func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
@@ -35,11 +37,9 @@ func (h *Handler) GetQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, map[string]int{"size": size}, http.StatusOK)
-	
+
 	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
 }
-
-
 
 func (h *Handler) SetQueueSize(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -71,8 +71,7 @@ func (h *Handler) SetQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, map[string]int{"size": intSize}, http.StatusOK)
-	
-	
+
 }
 
 func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +86,7 @@ func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	size, ok := data["size"]
-	
+
 	if !ok {
 		fmt.Println("Invalid Request no 'size'")
 		http.Error(w, "Invalid Request no 'size'", http.StatusBadRequest)
@@ -108,8 +107,7 @@ func (h *Handler) UpdateQueueSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	jsonResponse(w, map[string]string{"size": size}, http.StatusOK)
-	
-	
+
 }
 
 func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +119,7 @@ func (h *Handler) GetWorkflowByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wf, err := h.workflowStore.GetWorkflowByID(ctx,int(id))
+	wf, err := h.workflowStore.GetWorkflowByID(ctx, int(id))
 	if err != nil {
 		http.Error(w, "Workflow not found", http.StatusNotFound)
 		return
@@ -138,7 +136,7 @@ func (h *Handler) GetWorkflows(w http.ResponseWriter, r *http.Request) {
 		EndTime:   parseTime(r.URL.Query().Get("end_time")),
 	}
 
-	workflows, err := h.workflowStore.GetWorkflows(ctx,filter)
+	workflows, err := h.workflowStore.GetWorkflows(ctx, filter)
 	if err != nil {
 		http.Error(w, "Failed to fetch workflows", http.StatusInternalServerError)
 		return
@@ -155,21 +153,22 @@ func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
-
 	if available, _ := h.queuestore.IsSpaceAvailable(ctx); !available {
 		http.Error(w, "No space Available", http.StatusUnavailableForLegalReasons)
 		return
 	}
-	
 
-	if _,err := h.workflowStore.SaveWorkflow(ctx,&wf); err != nil {
+	if _, err := h.workflowStore.SaveWorkflow(ctx, &wf); err != nil {
 		http.Error(w, "Failed to save workflow", http.StatusInternalServerError)
 		return
 	}
 
-	
-	if _,err := h.queuestore.Enqueue(ctx,wf.ID); err != nil {
+	log.Printf("starting wf %d", int(wf.ID))
+	err := h.workflow.StartExecution(ctx, wf.ID)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	if _, err := h.queuestore.Enqueue(ctx, wf.ID); err != nil {
 		http.Error(w, "Failed to enqueue workflow", http.StatusInternalServerError)
 		return
 	}
@@ -196,7 +195,6 @@ func parseTime(value string) time.Time {
 	return t
 }
 
-
 func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
 	rspec, err := h.rspec.GetRspec()
 	if err != nil {
@@ -205,7 +203,7 @@ func (h *Handler) GetRspec(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonResponse(w, map[string]string{"RAM": rspec.RAM,"CORE":rspec.CPUs,"MAX_QUEUE":rspec.MAX_QUEUE}, http.StatusOK)
-	
+	jsonResponse(w, map[string]string{"RAM": rspec.RAM, "CORE": rspec.CPUs, "MAX_QUEUE": rspec.MAX_QUEUE}, http.StatusOK)
+
 	// w.Write([]byte(`{"size":` + strconv.Itoa(size) + `}`))
 }

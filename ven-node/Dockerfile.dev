@@ -1,29 +1,68 @@
+# Start from golang base image
 FROM golang:latest
 
+# Define environment variables
 ENV PROJECT_DIR=/app \
     GO111MODULE=on \
     CGO_ENABLED=0 \
     GOPROXY=https://proxy.golang.org,direct \
     GONOPROXY=none \
     GOSUMDB=sum.golang.org \
-    GONOSUMDB=none
+    GONOSUMDB=none \
+    PATH="/miniconda/bin:${PATH}"
 
-WORKDIR /app
+# Set the Current Working Directory inside the container
+WORKDIR ${PROJECT_DIR}
+
+# Create a directory for your application build
 RUN mkdir "/build"
 
-COPY ./ /app
+# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
+COPY ./ ${PROJECT_DIR}
 
-RUN go install github.com/golang/mock/mockgen@v1.6.0
-RUN go install -mod=mod github.com/githubnemo/CompileDaemon
-RUN go mod tidy
+# Download and install the necessary go packages, install necessary tools and miniconda
+# RUN go install github.com/golang/mock/mockgen@v1.6.0 && \
+RUN go install -mod=mod github.com/githubnemo/CompileDaemon && \
+    go mod tidy && \
+    go generate ./... && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        default-jre \
+        fastqc \
+        samtools \
+        wget \
+        gzip \
+        tar \
+        unzip \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda && \
+    rm Miniconda3-latest-Linux-x86_64.sh 
 
-# Generate mocks
-RUN go generate ./...
 
-# Run tests
-# RUN go test ./... || exit 1
+# Download and setup genome and gtf files, remove unnecessary files after extraction
+# RUN wget https://genome-idx.s3.amazonaws.com/hisat/grch38_genome.tar.gz -O grch38_genome.tar.gz && \
+#     mkdir HISAT2 && \
+#     tar -xf grch38_genome.tar.gz -C HISAT2/ && \
+#     rm grch38_genome.tar.gz && \
+#     wget http://ftp.ensembl.org/pub/release-106/gtf/homo_sapiens/Homo_sapiens.GRCh38.106.gtf.gz -O Homo_sapiens.GRCh38.106.gtf.gz && \
+#     mkdir hg38 && \
+#     gzip -d Homo_sapiens.GRCh38.106.gtf.gz && \
+#     mv Homo_sapiens.GRCh38.106.gtf hg38/
+# Copy conda environment file
+COPY workflow/environment.yml .
 
-ENTRYPOINT CompileDaemon -polling=true -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"
+# Create and activate the conda environment, make the conda environment available when the container is run
+RUN conda env create -f environment.yml && \
+    echo "source activate $(head -1 environment.yml | cut -d' ' -f2)" > ~/.bashrc && \
+    PATH="/miniconda/envs/$(head -1 environment.yml | cut -d' ' -f2)/bin:$PATH" && \
+    conda clean -a -y
 
 
+# Make the bioinformatics rna script executable 
+RUN chmod +x ${PROJECT_DIR}/workflow/rna.sh 
 
+# Set your build and application running commands
+ENTRYPOINT CompileDaemon -polling=true  -build="go build -o /build/app ./cmd/vec_worker" -command="/build/app"

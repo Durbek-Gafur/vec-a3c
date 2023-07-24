@@ -17,21 +17,20 @@ type Queue interface {
 	CompleteWorkflowInQueue(ctx context.Context, id int) error
 }
 
-
 type Service struct {
 	queueStore s.QueueStore
-	workflow wf.Workflow
+	workflow   wf.Workflow
 }
-
 
 func NewService(store s.QueueStore, workflow wf.Workflow) *Service {
 	return &Service{
 		queueStore: store,
-		workflow: workflow,
+		workflow:   workflow,
 	}
 }
 
 func (s *Service) Enqueue(ctx context.Context, workflowID int) (int, error) {
+
 	return s.queueStore.Enqueue(ctx, workflowID)
 }
 
@@ -44,18 +43,17 @@ func (s *Service) GetQueueStatus(ctx context.Context) ([]s.Queue, error) {
 }
 
 func (s *Service) ProcessWorkflowInQueue(ctx context.Context, workflowID int) error {
-	err := s.workflow.StartExecution(ctx,workflowID)
-	if err!=nil{
+	err := s.workflow.StartExecution(ctx, workflowID)
+	if err != nil {
 		return err
 	}
 	return s.queueStore.ProcessWorkflowInQueue(ctx, workflowID)
 }
 
 func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int) error {
-	err := s.workflow.Complete(ctx,id)
-	if err!=nil{
+	err := s.workflow.Complete(ctx, id, 4)
+	if err != nil {
 		return err
 	}
 	return s.queueStore.CompleteWorkflowInQueue(ctx, id)
 }
-
