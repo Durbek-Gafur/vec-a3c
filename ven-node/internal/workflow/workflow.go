@@ -44,6 +44,9 @@ func NewService(store s.WorkflowStore, logFile *os.File) *Service {
 }
 
 func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
+	// Create a new context with a 5 minute timeout
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
 	log.Println("Preparing to execute the script...")
 
 	// Prepare to execute the script
@@ -67,6 +70,15 @@ func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 	// Set up a ticker to check if the script has finished every 10 seconds
 	ticker := time.NewTicker(10 * time.Second)
 
+	go func() {
+		err := s.cmd.Wait()
+		if err != nil {
+			s.logFile.WriteString(fmt.Sprintf("script execution failed: %v", err))
+		}
+
+		// ticker.Stop() // If you want to stop the ticker here
+	}()
+
 	// Goroutine to monitor the script
 	go func() {
 		defer ticker.Stop()
@@ -74,6 +86,17 @@ func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 		for {
 			select {
 			case <-ticker.C:
+				// if err := s.cmd.Process.Signal(syscall.Signal(0)); err != nil {
+				// 	log.Println("Script has finished executing.")
+				// 	duration := s.cmd.ProcessState.UserTime()
+				// 	log.Printf("Duration %s", duration)
+				// 	err := s.Complete(ctx, workflowID, int(duration.Seconds()))
+				// 	if err != nil {
+				// 		log.Printf("Failed to complete the workflow: %v", err)
+				// 	}
+				// 	return
+				// }
+
 				if s.cmd.ProcessState != nil && s.cmd.ProcessState.Exited() {
 					log.Println("Script has finished executing.")
 					duration := s.cmd.ProcessState.UserTime()
@@ -84,11 +107,19 @@ func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 					}
 					return
 				}
+				// TODO context is cancelled and the request dies
+				// the call above doesn't work because ctx has died.
 
-			case <-ctx.Done():
-				log.Println("Context has been cancelled, stopping the ticker...")
-				ticker.Stop()
-				return
+				// GET duration by reading output_workflow_id.txt or think of smth else
+
+				// case <-ctx.Done():
+				// 	log.Println("Context has been cancelled, stopping the ticker...")
+				// 	ticker.Stop()
+				// 	return
+
+				// default:
+				// 	log.Println("waiting ... ")
+				// 	continue
 			}
 		}
 	}()
