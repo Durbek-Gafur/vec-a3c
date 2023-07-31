@@ -29,7 +29,7 @@ services:
       - ./:/app
     restart: always
   db:
-    image: 39dj29dl2d9l2/ven-db:2.0 # mysql:8.0
+    image: 39dj29dl2d9l2/ven-db:2.1 # mysql:8.0 #
     container_name: db
     command: --default-authentication-plugin=mysql_native_password
     ports:

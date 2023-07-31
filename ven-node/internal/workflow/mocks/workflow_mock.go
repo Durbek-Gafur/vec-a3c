@@ -49,6 +49,36 @@ func (mr *MockWorkflowMockRecorder) Complete(arg0, arg1, arg2 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Complete", reflect.TypeOf((*MockWorkflow)(nil).Complete), arg0, arg1, arg2)
 }
 
+// GetScriptDuration mocks base method.
+func (m *MockWorkflow) GetScriptDuration() (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetScriptDuration")
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetScriptDuration indicates an expected call of GetScriptDuration.
+func (mr *MockWorkflowMockRecorder) GetScriptDuration() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetScriptDuration", reflect.TypeOf((*MockWorkflow)(nil).GetScriptDuration))
+}
+
+// GetWorkflowByID mocks base method.
+func (m *MockWorkflow) GetWorkflowByID(arg0 context.Context, arg1 int) (*store.Workflow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWorkflowByID", arg0, arg1)
+	ret0, _ := ret[0].(*store.Workflow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWorkflowByID indicates an expected call of GetWorkflowByID.
+func (mr *MockWorkflowMockRecorder) GetWorkflowByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkflowByID", reflect.TypeOf((*MockWorkflow)(nil).GetWorkflowByID), arg0, arg1)
+}
+
 // IsComplete mocks base method.
 func (m *MockWorkflow) IsComplete(arg0 context.Context, arg1 int) (bool, error) {
 	m.ctrl.T.Helper()
@@ -62,6 +92,21 @@ func (m *MockWorkflow) IsComplete(arg0 context.Context, arg1 int) (bool, error) 
 func (mr *MockWorkflowMockRecorder) IsComplete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsComplete", reflect.TypeOf((*MockWorkflow)(nil).IsComplete), arg0, arg1)
+}
+
+// IsScriptComplete mocks base method.
+func (m *MockWorkflow) IsScriptComplete() (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsScriptComplete")
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsScriptComplete indicates an expected call of IsScriptComplete.
+func (mr *MockWorkflowMockRecorder) IsScriptComplete() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsScriptComplete", reflect.TypeOf((*MockWorkflow)(nil).IsScriptComplete))
 }
 
 // StartExecution mocks base method.

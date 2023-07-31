@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 )
@@ -170,6 +171,10 @@ func (s *MySQLStore) Peek(ctx context.Context, status WorkflowStatus) (*Queue, e
 	q := &Queue{}
 	err = row.Scan(&q.ID, &q.WorkflowID, &q.Status, &q.EnqueuedAt)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			// This means that the query returned no rows. So the table is effectively empty.
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -189,10 +194,16 @@ func (s *MySQLStore) IsEmpty(ctx context.Context) (bool, error) {
 	row := s.db.QueryRowContext(ctx, query)
 
 	var count int
-	err := row.Scan(&count)
-	if err != nil {
-		return false, err
+	if err := row.Scan(&count); err != nil {
+		if err == sql.ErrNoRows {
+			// This means that the query returned no rows. So the table is effectively empty.
+			return true, nil
+		}
+		// Some other error occurred during the execution of the query.
+		return false, fmt.Errorf("failed to count rows in queue: %w", err)
 	}
 
+	// If count == 0, it means there are no rows where status is not 'COMPLETE'.
+	// So, the queue is empty.
 	return count == 0, nil
 }

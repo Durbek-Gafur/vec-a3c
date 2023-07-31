@@ -2,12 +2,20 @@ package workflow
 
 import (
 	"context"
+	"strconv"
+
+	// "errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
+	"github.com/pkg/errors"
+
+	"vec-node/internal/store"
 	s "vec-node/internal/store"
 )
 
@@ -19,6 +27,9 @@ type Workflow interface {
 	Complete(ctx context.Context, id int, duration int) error
 	UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error)
 	IsComplete(ctx context.Context, id int) (bool, error)
+	IsScriptComplete() (bool, error)
+	GetScriptDuration() (int, error)
+	GetWorkflowByID(ctx context.Context, workflowID int) (*store.Workflow, error)
 }
 
 // NewWorkflow returns a new Workflow instance
@@ -44,10 +55,16 @@ func NewService(store s.WorkflowStore, logFile *os.File) *Service {
 	}
 }
 
+const (
+	fileName = "/app/workflow/data/generated/result.txt"
+)
+
+func (s *Service) GetWorkflowByID(ctx context.Context, workflowID int) (*store.Workflow, error) {
+	return s.workflowStore.GetWorkflowByID(ctx, workflowID)
+}
+
 func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 	// Create a new context with a 5 minute timeout
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
-	defer cancel()
 	log.Println("Preparing to execute the script...")
 
 	// Prepare to execute the script
@@ -67,65 +84,6 @@ func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 	}
 
 	log.Println("Script started successfully. Setting up a ticker to monitor the script...")
-
-	// Set up a ticker to check if the script has finished every 10 seconds
-	ticker := time.NewTicker(10 * time.Second)
-
-	go func() {
-		err := s.cmd.Wait()
-		if err != nil {
-			s.logFile.WriteString(fmt.Sprintf("script execution failed: %v", err))
-		}
-
-		// ticker.Stop() // If you want to stop the ticker here
-	}()
-
-	// Goroutine to monitor the script
-	go func() {
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ticker.C:
-				// if err := s.cmd.Process.Signal(syscall.Signal(0)); err != nil {
-				// 	log.Println("Script has finished executing.")
-				// 	duration := s.cmd.ProcessState.UserTime()
-				// 	log.Printf("Duration %s", duration)
-				// 	err := s.Complete(ctx, workflowID, int(duration.Seconds()))
-				// 	if err != nil {
-				// 		log.Printf("Failed to complete the workflow: %v", err)
-				// 	}
-				// 	return
-				// }
-
-				if s.cmd.ProcessState != nil && s.cmd.ProcessState.Exited() {
-					log.Println("Script has finished executing.")
-					duration := s.cmd.ProcessState.UserTime()
-					log.Printf("Duration %s", duration)
-					err := s.Complete(ctx, workflowID, int(duration.Seconds()))
-					if err != nil {
-						log.Printf("Failed to complete the workflow: %v", err)
-					}
-					return
-				}
-				// TODO context is cancelled and the request dies
-				// the call above doesn't work because ctx has died.
-
-				// GET duration by reading output_workflow_id.txt or think of smth else
-
-				// case <-ctx.Done():
-				// 	log.Println("Context has been cancelled, stopping the ticker...")
-				// 	ticker.Stop()
-				// 	return
-
-				// default:
-				// 	log.Println("waiting ... ")
-				// 	continue
-			}
-		}
-	}()
-
-	log.Println("Script is now being monitored. Execution continues in the background.")
 
 	return nil
 }
@@ -152,5 +110,59 @@ func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workfl
 
 func (s *Service) IsComplete(ctx context.Context, id int) (bool, error) {
 	// not implemented
+	complete, err := s.IsScriptComplete()
+	if err != nil {
+		return false, errors.Wrap(err, "IsComplete: error occurred while IsScriptComplete")
+
+	}
+
+	if complete {
+		return true, nil
+	}
 	return false, nil
+}
+
+// GetScriptDuration reads the script duration from a file
+func (s *Service) GetScriptDuration() (int, error) {
+
+	contents, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return 0, err
+	}
+
+	duration := strings.TrimSpace(string(contents))
+	if duration == "" {
+		return 0, errors.New("Script is still running")
+	}
+	durationInt, err := strconv.Atoi(duration)
+	if err != nil {
+		return 0, errors.New("duration is not a valid integer")
+	}
+	return durationInt, nil
+}
+
+// IsScriptComplete reads the script duration from a file
+func (s *Service) IsScriptComplete() (bool, error) {
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		// If the file does not exist, return false
+		return false, nil
+	}
+
+	contents, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return false, err
+	}
+
+	durationStr := strings.TrimSpace(string(contents))
+
+	if durationStr == "" {
+		log.Println("script is still running")
+		return false, nil
+	}
+
+	if strings.Contains(durationStr, "Error") {
+		return false, errors.New(durationStr)
+	}
+
+	return true, nil
 }

@@ -2,16 +2,32 @@
 source /miniconda/etc/profile.d/conda.sh && conda activate rnaseq
 
 set -e
+set -o pipefail
 
 SECONDS=0
 
 WORKFLOW_DIR="./workflow"
 DATA_DIR="${WORKFLOW_DIR}/data"
+# /app/workflow/data/generated
 GENERATED_DIR="${DATA_DIR}/generated"
 FASTQ_FILE="demo.fastq"
 TRIMMED_FILE="demo_trimmed.fastq"
 TRIMMED_BAM="demo_trimmed.bam"
 FEATURE_COUNTS="demo_featurecounts.txt"
+DURATION_FILE="result.txt"
+LOG_FILE="logs.txt"
+
+
+
+# Define error trap
+function handle_error() {
+    echo "Error occurred in the script at line $LINENO during execution of command: '$BASH_COMMAND'. Exiting with status $?. Output: 'failed'" > ${GENERATED_DIR}/$DURATION_FILE
+    echo "Error occurred in the script at line $LINENO during execution of command: '$BASH_COMMAND'. Exiting with status $?. Output: 'failed'" > ${DATA_DIR}/$LOG_FILE
+    exit 1
+}
+
+# Set the error trap
+trap handle_error ERR
 
 function clear_generated_folder() {
     rm -rf ${GENERATED_DIR}/*
@@ -40,10 +56,16 @@ function step3_featureCounts() {
 function print_duration() {
     duration=$SECONDS
     echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed."
+    echo "$duration" > ${GENERATED_DIR}/$DURATION_FILE
+    echo "$duration" >  ${DATA_DIR}/$LOG_FILE
 }
 
 # Execute functions
 clear_generated_folder
+
+# Create files if they do not exist
+touch ${GENERATED_DIR}/${DURATION_FILE}
+
 step1_fastqc_trimmomatic
 step2_hisat2
 step3_featureCounts

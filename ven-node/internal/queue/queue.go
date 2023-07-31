@@ -68,7 +68,7 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 
 	// If queue is empty, return early
 	if isEmpty {
-		fmt.Println("Queue is empty.")
+		log.Printf("Queue is empty.")
 		return nil
 	}
 
@@ -80,7 +80,7 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 
 	// If no workflow is running, peek the next workflow and start execution
 	if runningWorkflow == nil {
-		fmt.Println("No running workflow, starting a new one.")
+		log.Printf("No running workflow, starting a new one.")
 		return s.peekAndExecute(ctx)
 	}
 
@@ -92,9 +92,19 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 
 	// If the running workflow has completed, mark it as complete and start the next workflow
 	if isComplete {
-		fmt.Println("Running workflow has completed, marking as complete and starting a new one.")
+		log.Printf("Running workflow has completed, marking as complete and starting a new one.")
 		if err := s.queueStore.CompleteWorkflowInQueue(ctx, runningWorkflow.WorkflowID); err != nil {
 			return errors.Wrap(err, "runCheckAndExecute: error occurred while marking workflow as complete in queue")
+		}
+
+		duration, err := s.workflow.GetScriptDuration()
+		if err != nil {
+			return errors.Wrap(err, "runCheckAndExecute: error occurred while checking duration")
+		}
+
+		err = s.workflow.Complete(ctx, runningWorkflow.ID, duration)
+		if err != nil {
+			return errors.Wrap(err, "runCheckAndExecute: error occurred while Complete workflow")
 		}
 
 		// Informing master node about completed workflow, this part might be different based on your implementation
@@ -105,7 +115,7 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 		return s.peekAndExecute(ctx)
 	}
 
-	fmt.Println("Workflow is still running.")
+	log.Printf("Workflow is still running.")
 	return nil
 }
 
