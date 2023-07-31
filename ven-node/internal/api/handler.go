@@ -163,12 +163,8 @@ func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("starting wf %d", int(wf.ID))
-	err := h.workflow.StartExecution(ctx, wf.ID)
-	if err != nil {
-		log.Println(err.Error())
-	}
 	if _, err := h.queuestore.Enqueue(ctx, wf.ID); err != nil {
+		log.Printf(err.Error())
 		http.Error(w, "Failed to enqueue workflow", http.StatusInternalServerError)
 		return
 	}

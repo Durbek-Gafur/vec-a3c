@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS app_db;
 CREATE TABLE IF NOT EXISTS queue (
   id INT AUTO_INCREMENT PRIMARY KEY,
   workflow_id INT,
-  status ENUM('pending', 'processing', 'done') DEFAULT 'pending',
+  status ENUM('QUEUED', 'IN_PROCESS', 'COMPLETE') DEFAULT 'QUEUED',
   enqueued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

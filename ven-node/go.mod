@@ -1,6 +1,6 @@
 module vec-node
 
-go 1.19
+go 1.18
 
 require (
 	github.com/go-sql-driver/mysql v1.7.0
@@ -18,7 +18,6 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220317061510-51cd9980dadf // indirect
@@ -31,5 +30,6 @@ require (
 require (
 	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/golang/mock v1.6.0
+	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 )

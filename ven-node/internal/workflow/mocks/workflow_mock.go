@@ -49,6 +49,21 @@ func (mr *MockWorkflowMockRecorder) Complete(arg0, arg1, arg2 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Complete", reflect.TypeOf((*MockWorkflow)(nil).Complete), arg0, arg1, arg2)
 }
 
+// IsComplete mocks base method.
+func (m *MockWorkflow) IsComplete(arg0 context.Context, arg1 int) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsComplete", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsComplete indicates an expected call of IsComplete.
+func (mr *MockWorkflowMockRecorder) IsComplete(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsComplete", reflect.TypeOf((*MockWorkflow)(nil).IsComplete), arg0, arg1)
+}
+
 // StartExecution mocks base method.
 func (m *MockWorkflow) StartExecution(arg0 context.Context, arg1 int) error {
 	m.ctrl.T.Helper()

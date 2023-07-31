@@ -11,6 +11,9 @@ ENV PROJECT_DIR=/app \
     GONOSUMDB=none \
     PATH="/miniconda/bin:${PATH}"
 
+# Expose MySQL port
+# EXPOSE 3306
+
 # Set the Current Working Directory inside the container
 WORKDIR ${PROJECT_DIR}
 
@@ -21,8 +24,8 @@ RUN mkdir "/build"
 COPY ./ ${PROJECT_DIR}
 
 # Download and install the necessary go packages, install necessary tools and miniconda
-# RUN go install github.com/golang/mock/mockgen@v1.6.0 && \
-RUN go install -mod=mod github.com/githubnemo/CompileDaemon && \
+RUN go install github.com/golang/mock/mockgen@v1.6.0 && \
+    go install -mod=mod github.com/githubnemo/CompileDaemon && \
     go mod tidy && \
     go generate ./... && \
     apt-get update && \

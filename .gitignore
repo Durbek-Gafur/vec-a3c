@@ -21,3 +21,4 @@ ven-node/workflow/hg38/*
 ven-node/internal/workflow/veca3c/grch38_genome.tar.gz
 ven-node/internal/workflow/veca3c/Homo_sapiens.GRCh38.106.gtf.gz
 ven-node/workflow/data/demo.fastq
+ven-node/output.log

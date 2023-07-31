@@ -190,6 +190,21 @@ func (mr *MockQueueStoreMockRecorder) GetQueueStatus(arg0 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQueueStatus", reflect.TypeOf((*MockQueueStore)(nil).GetQueueStatus), arg0)
 }
 
+// IsEmpty mocks base method.
+func (m *MockQueueStore) IsEmpty(arg0 context.Context) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsEmpty", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsEmpty indicates an expected call of IsEmpty.
+func (mr *MockQueueStoreMockRecorder) IsEmpty(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsEmpty", reflect.TypeOf((*MockQueueStore)(nil).IsEmpty), arg0)
+}
+
 // IsSpaceAvailable mocks base method.
 func (m *MockQueueStore) IsSpaceAvailable(arg0 context.Context) (bool, error) {
 	m.ctrl.T.Helper()
@@ -205,19 +220,34 @@ func (mr *MockQueueStoreMockRecorder) IsSpaceAvailable(arg0 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSpaceAvailable", reflect.TypeOf((*MockQueueStore)(nil).IsSpaceAvailable), arg0)
 }
 
-// Peek mocks base method.
-func (m *MockQueueStore) Peek(arg0 context.Context) (*store.Queue, error) {
+// PeekInProcess mocks base method.
+func (m *MockQueueStore) PeekInProcess(arg0 context.Context) (*store.Queue, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Peek", arg0)
+	ret := m.ctrl.Call(m, "PeekInProcess", arg0)
 	ret0, _ := ret[0].(*store.Queue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Peek indicates an expected call of Peek.
-func (mr *MockQueueStoreMockRecorder) Peek(arg0 interface{}) *gomock.Call {
+// PeekInProcess indicates an expected call of PeekInProcess.
+func (mr *MockQueueStoreMockRecorder) PeekInProcess(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Peek", reflect.TypeOf((*MockQueueStore)(nil).Peek), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PeekInProcess", reflect.TypeOf((*MockQueueStore)(nil).PeekInProcess), arg0)
+}
+
+// PeekQueued mocks base method.
+func (m *MockQueueStore) PeekQueued(arg0 context.Context) (*store.Queue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PeekQueued", arg0)
+	ret0, _ := ret[0].(*store.Queue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PeekQueued indicates an expected call of PeekQueued.
+func (mr *MockQueueStoreMockRecorder) PeekQueued(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PeekQueued", reflect.TypeOf((*MockQueueStore)(nil).PeekQueued), arg0)
 }
 
 // ProcessWorkflowInQueue mocks base method.

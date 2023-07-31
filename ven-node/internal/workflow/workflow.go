@@ -18,6 +18,7 @@ type Workflow interface {
 	StartExecution(ctx context.Context, id int) error
 	Complete(ctx context.Context, id int, duration int) error
 	UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error)
+	IsComplete(ctx context.Context, id int) (bool, error)
 }
 
 // NewWorkflow returns a new Workflow instance
@@ -147,4 +148,9 @@ func (s *Service) Complete(ctx context.Context, id int, duration int) error {
 
 func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error) {
 	return s.workflowStore.UpdateWorkflow(ctx, wf)
+}
+
+func (s *Service) IsComplete(ctx context.Context, id int) (bool, error) {
+	// not implemented
+	return false, nil
 }

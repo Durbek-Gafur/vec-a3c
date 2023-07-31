@@ -7,7 +7,6 @@ package queueu_mock
 import (
 	context "context"
 	reflect "reflect"
-	store "vec-node/internal/store"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -35,75 +34,14 @@ func (m *MockQueue) EXPECT() *MockQueueMockRecorder {
 	return m.recorder
 }
 
-// CompleteWorkflowInQueue mocks base method.
-func (m *MockQueue) CompleteWorkflowInQueue(arg0 context.Context, arg1 int) error {
+// StartPeriodicCheck mocks base method.
+func (m *MockQueue) StartPeriodicCheck(arg0 context.Context) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CompleteWorkflowInQueue", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "StartPeriodicCheck", arg0)
 }
 
-// CompleteWorkflowInQueue indicates an expected call of CompleteWorkflowInQueue.
-func (mr *MockQueueMockRecorder) CompleteWorkflowInQueue(arg0, arg1 interface{}) *gomock.Call {
+// StartPeriodicCheck indicates an expected call of StartPeriodicCheck.
+func (mr *MockQueueMockRecorder) StartPeriodicCheck(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteWorkflowInQueue", reflect.TypeOf((*MockQueue)(nil).CompleteWorkflowInQueue), arg0, arg1)
-}
-
-// Enqueue mocks base method.
-func (m *MockQueue) Enqueue(arg0 context.Context, arg1 int) (int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Enqueue", arg0, arg1)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Enqueue indicates an expected call of Enqueue.
-func (mr *MockQueueMockRecorder) Enqueue(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Enqueue", reflect.TypeOf((*MockQueue)(nil).Enqueue), arg0, arg1)
-}
-
-// GetQueueStatus mocks base method.
-func (m *MockQueue) GetQueueStatus(arg0 context.Context) ([]store.Queue, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetQueueStatus", arg0)
-	ret0, _ := ret[0].([]store.Queue)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetQueueStatus indicates an expected call of GetQueueStatus.
-func (mr *MockQueueMockRecorder) GetQueueStatus(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQueueStatus", reflect.TypeOf((*MockQueue)(nil).GetQueueStatus), arg0)
-}
-
-// Peek mocks base method.
-func (m *MockQueue) Peek(arg0 context.Context) (*store.Queue, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Peek", arg0)
-	ret0, _ := ret[0].(*store.Queue)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Peek indicates an expected call of Peek.
-func (mr *MockQueueMockRecorder) Peek(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Peek", reflect.TypeOf((*MockQueue)(nil).Peek), arg0)
-}
-
-// ProcessWorkflowInQueue mocks base method.
-func (m *MockQueue) ProcessWorkflowInQueue(arg0 context.Context, arg1 int) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessWorkflowInQueue", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ProcessWorkflowInQueue indicates an expected call of ProcessWorkflowInQueue.
-func (mr *MockQueueMockRecorder) ProcessWorkflowInQueue(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessWorkflowInQueue", reflect.TypeOf((*MockQueue)(nil).ProcessWorkflowInQueue), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartPeriodicCheck", reflect.TypeOf((*MockQueue)(nil).StartPeriodicCheck), arg0)
 }

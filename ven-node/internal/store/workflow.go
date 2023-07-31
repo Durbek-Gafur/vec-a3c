@@ -12,6 +12,7 @@ import (
 // 	SaveWorkflow(ctx context.Context, w *Workflow) (*Workflow, error)
 // 	UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow, error)
 // }
+
 type Workflow struct {
 	ID                 int          `json:"id"`
 	Name               string       `json:"name"`

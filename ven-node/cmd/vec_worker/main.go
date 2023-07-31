@@ -8,11 +8,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/gorilla/mux"
 
 	"vec-node/internal/api"
+	"vec-node/internal/queue"
 	"vec-node/internal/rspec"
 	"vec-node/internal/store"
 	"vec-node/internal/workflow"
@@ -56,6 +56,13 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize Workflow Provider:", err)
 	}
+	// Initialize queue service
+	qs := queue.NewService(mysqlStore, wfs)
+
+	// Start periodic check
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	qs.StartPeriodicCheck(ctx)
 	rspec_provider := rspec.NewService()
 	handler := api.NewHandler(mysqlStore, mysqlStore, rspec_provider, mysqlStore, wfs)
 
@@ -96,8 +103,6 @@ func main() {
 
 	// Initiate a graceful shutdown.
 	log.Println("Shutting down the server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatal("Failed to shut down the server gracefully:", err)
 	}

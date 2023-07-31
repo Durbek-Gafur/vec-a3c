@@ -2,19 +2,26 @@ package queue
 
 import (
 	"context"
+	"fmt"
+	"log"
+	"time"
+
 	s "vec-node/internal/store"
 	wf "vec-node/internal/workflow"
+
+	"github.com/pkg/errors"
 )
 
 //go:generate mockgen -destination=mocks/queue_mock.go -package=queueu_mock vec-node/internal/queue Queue
 
 // Queue handles operations on queue
 type Queue interface {
-	Enqueue(ctx context.Context, workflowID int) (int, error)
-	Peek(ctx context.Context) (*s.Queue, error)
-	GetQueueStatus(ctx context.Context) ([]s.Queue, error)
-	ProcessWorkflowInQueue(ctx context.Context, workflowID int) error
-	CompleteWorkflowInQueue(ctx context.Context, id int) error
+	// Enqueue(ctx context.Context, workflowID int) (int, error)
+	// Peek(ctx context.Context) (*s.Queue, error)
+	// GetQueueStatus(ctx context.Context) ([]s.Queue, error)
+	// ProcessWorkflowInQueue(ctx context.Context, workflowID int) error
+	// CompleteWorkflowInQueue(ctx context.Context, id int) error
+	StartPeriodicCheck(ctx context.Context)
 }
 
 type Service struct {
@@ -29,31 +36,96 @@ func NewService(store s.QueueStore, workflow wf.Workflow) *Service {
 	}
 }
 
-func (s *Service) Enqueue(ctx context.Context, workflowID int) (int, error) {
+// StartPeriodicCheck starts a periodic check every 2 minutes
+func (s *Service) StartPeriodicCheck(ctx context.Context) {
+	ticker := time.NewTicker(5 * time.Second)
 
-	return s.queueStore.Enqueue(ctx, workflowID)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				err := s.runCheckAndExecute(ctx)
+				log.Printf("Starting periodic check.")
+				if err != nil {
+					fmt.Printf("An error occurred during periodic check: %v\n", err)
+					// Handle error appropriately
+				}
+			case <-ctx.Done():
+				ticker.Stop()
+				return
+			}
+		}
+	}()
 }
 
-func (s *Service) Peek(ctx context.Context) (*s.Queue, error) {
-	return s.queueStore.Peek(ctx)
-}
-
-func (s *Service) GetQueueStatus(ctx context.Context) ([]s.Queue, error) {
-	return s.queueStore.GetQueueStatus(ctx)
-}
-
-func (s *Service) ProcessWorkflowInQueue(ctx context.Context, workflowID int) error {
-	err := s.workflow.StartExecution(ctx, workflowID)
+// runCheckAndExecute checks for any running workflows, if none, it peeks a workflow and executes it
+func (s *Service) runCheckAndExecute(ctx context.Context) error {
+	// Check if queue is empty
+	isEmpty, err := s.queueStore.IsEmpty(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "runCheckAndExecute: error occurred while checking if queue is empty")
 	}
-	return s.queueStore.ProcessWorkflowInQueue(ctx, workflowID)
+
+	// If queue is empty, return early
+	if isEmpty {
+		fmt.Println("Queue is empty.")
+		return nil
+	}
+
+	// Check if any workflow is currently running
+	runningWorkflow, err := s.queueStore.PeekInProcess(ctx)
+	if err != nil {
+		return errors.Wrap(err, "runCheckAndExecute: error occurred while checking running workflow")
+	}
+
+	// If no workflow is running, peek the next workflow and start execution
+	if runningWorkflow == nil {
+		fmt.Println("No running workflow, starting a new one.")
+		return s.peekAndExecute(ctx)
+	}
+
+	// Check if the running workflow has completed its execution
+	isComplete, err := s.workflow.IsComplete(ctx, runningWorkflow.WorkflowID)
+	if err != nil {
+		return errors.Wrap(err, "runCheckAndExecute: error occurred while checking if workflow is complete")
+	}
+
+	// If the running workflow has completed, mark it as complete and start the next workflow
+	if isComplete {
+		fmt.Println("Running workflow has completed, marking as complete and starting a new one.")
+		if err := s.queueStore.CompleteWorkflowInQueue(ctx, runningWorkflow.WorkflowID); err != nil {
+			return errors.Wrap(err, "runCheckAndExecute: error occurred while marking workflow as complete in queue")
+		}
+
+		// Informing master node about completed workflow, this part might be different based on your implementation
+		// if err := s.InformMasterNode(ctx, runningWorkflow.WorkflowID); err != nil {
+		// 	return errors.Wrap(err, "runCheckAndExecute: error occurred while informing master node about completed workflow")
+		// }
+
+		return s.peekAndExecute(ctx)
+	}
+
+	fmt.Println("Workflow is still running.")
+	return nil
 }
 
-func (s *Service) CompleteWorkflowInQueue(ctx context.Context, id int) error {
-	err := s.workflow.Complete(ctx, id, 4)
+// peekAndExecute peeks the next workflow and starts execution
+func (s *Service) peekAndExecute(ctx context.Context) error {
+	nextWorkflow, err := s.queueStore.PeekQueued(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "peekAndExecute: error occurred while trying to peek next workflow")
 	}
-	return s.queueStore.CompleteWorkflowInQueue(ctx, id)
+	if nextWorkflow != nil {
+		// StartExecution
+		log.Printf("starting wf %d", int(nextWorkflow.ID))
+		err := s.workflow.StartExecution(ctx, nextWorkflow.ID)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		err = s.queueStore.ProcessWorkflowInQueue(ctx, nextWorkflow.WorkflowID)
+		if err != nil {
+			return errors.Wrap(err, "peekAndExecute: error occurred while trying to process next workflow")
+		}
+	}
+	return nil
 }
