@@ -136,6 +136,8 @@ func (s *Service) peekAndExecute(ctx context.Context) error {
 		if err != nil {
 			return errors.Wrap(err, "peekAndExecute: error occurred while trying to process next workflow")
 		}
+	} else {
+		log.Printf("no workflow in queue")
 	}
 	return nil
 }
