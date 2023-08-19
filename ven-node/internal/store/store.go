@@ -28,6 +28,7 @@ type QueueStore interface {
 	CompleteWorkflowInQueue(ctx context.Context, id int) error
 	IsSpaceAvailable(ctx context.Context) (bool, error)
 	IsEmpty(ctx context.Context) (bool, error)
+	GetCount(ctx context.Context) (int, error)
 }
 
 // QueueSizeStore handles operations on queue sizes

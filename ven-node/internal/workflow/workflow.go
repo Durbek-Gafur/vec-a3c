@@ -42,14 +42,14 @@ func NewWorkflow(name, wType string, duration int) *s.Workflow {
 	}
 }
 
-type Service struct {
+type service struct {
 	workflowStore s.WorkflowStore
 	cmd           *exec.Cmd
 	logFile       *os.File
 }
 
-func NewService(store s.WorkflowStore, logFile *os.File) *Service {
-	return &Service{
+func NewService(store s.WorkflowStore, logFile *os.File) Workflow {
+	return &service{
 		workflowStore: store,
 		logFile:       logFile,
 	}
@@ -59,16 +59,17 @@ const (
 	fileName = "/app/workflow/data/generated/result.txt"
 )
 
-func (s *Service) GetWorkflowByID(ctx context.Context, workflowID int) (*store.Workflow, error) {
+func (s *service) GetWorkflowByID(ctx context.Context, workflowID int) (*store.Workflow, error) {
 	return s.workflowStore.GetWorkflowByID(ctx, workflowID)
 }
 
-func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
+func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	// Create a new context with a 5 minute timeout
 	log.Println("Preparing to execute the script...")
 
+	filename := "demo_25per.fastq" // This should be set to whatever the desired filename is.
 	// Prepare to execute the script
-	s.cmd = exec.Command("bash", "-c", "/app/workflow/rna.sh")
+	s.cmd = exec.Command("bash", "-c", "/app/workflow/rna.sh "+filename)
 
 	// Create a pipe for stdout and stderr, and wrap it with a log writer
 	s.cmd.Stdout = s.logFile
@@ -82,13 +83,17 @@ func (s *Service) StartExecution(ctx context.Context, workflowID int) error {
 		log.Printf("Failed to start the script: %v", err)
 		return fmt.Errorf("failed to start the script: %w", err)
 	}
-
+	err = s.workflowStore.StartWorkflow(ctx, workflowID)
+	if err != nil {
+		log.Printf("Failed to save workflow start time: %v", err)
+		return fmt.Errorf("failed to save workflow start time: %w", err)
+	}
 	log.Println("Script started successfully. Setting up a ticker to monitor the script...")
 
 	return nil
 }
 
-func (s *Service) Complete(ctx context.Context, id int, duration int) error {
+func (s *service) Complete(ctx context.Context, id int, duration int) error {
 	// Update the workflow with the duration
 	wf, err := s.workflowStore.GetWorkflowByID(ctx, id)
 	if err != nil {
@@ -104,11 +109,11 @@ func (s *Service) Complete(ctx context.Context, id int, duration int) error {
 	return s.workflowStore.CompleteWorkflow(ctx, id)
 }
 
-func (s *Service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error) {
+func (s *service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error) {
 	return s.workflowStore.UpdateWorkflow(ctx, wf)
 }
 
-func (s *Service) IsComplete(ctx context.Context, id int) (bool, error) {
+func (s *service) IsComplete(ctx context.Context, id int) (bool, error) {
 	// not implemented
 	complete, err := s.IsScriptComplete()
 	if err != nil {
@@ -123,7 +128,7 @@ func (s *Service) IsComplete(ctx context.Context, id int) (bool, error) {
 }
 
 // GetScriptDuration reads the script duration from a file
-func (s *Service) GetScriptDuration() (int, error) {
+func (s *service) GetScriptDuration() (int, error) {
 
 	contents, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -142,7 +147,7 @@ func (s *Service) GetScriptDuration() (int, error) {
 }
 
 // IsScriptComplete reads the script duration from a file
-func (s *Service) IsScriptComplete() (bool, error) {
+func (s *service) IsScriptComplete() (bool, error) {
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
 		// If the file does not exist, return false
 		return false, nil

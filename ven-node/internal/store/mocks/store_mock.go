@@ -175,6 +175,21 @@ func (mr *MockQueueStoreMockRecorder) Enqueue(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Enqueue", reflect.TypeOf((*MockQueueStore)(nil).Enqueue), arg0, arg1)
 }
 
+// GetCount mocks base method.
+func (m *MockQueueStore) GetCount(arg0 context.Context) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCount", arg0)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCount indicates an expected call of GetCount.
+func (mr *MockQueueStoreMockRecorder) GetCount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCount", reflect.TypeOf((*MockQueueStore)(nil).GetCount), arg0)
+}
+
 // GetQueueStatus mocks base method.
 func (m *MockQueueStore) GetQueueStatus(arg0 context.Context) ([]store.Queue, error) {
 	m.ctrl.T.Helper()

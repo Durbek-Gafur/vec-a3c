@@ -9,19 +9,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-
-
 func (s *MySQLStore) GetQueueSize(ctx context.Context) (int, error) {
-	// var size int
-	// err := s.db.QueryRowContext(ctx, "SELECT size FROM queue_size WHERE id = 1").Scan(&size)
-	// if err != nil {
-	// 	if errors.Is(err, sql.ErrNoRows) {
-	// 		return 0, &StoreError{Err: ErrNotFound, StatusCode: http.StatusNotFound}
-	// 	}
-	// 	return 0, err
-	// }
-
-	return s.GetQueueSizeFromDBorENV(ctx)
+	count, err := s.GetCount(ctx)
+	if err != nil {
+		return 0, err
+	}
+	size, err := s.GetQueueSizeFromDBorENV(ctx)
+	if err != nil {
+		return 0, err
+	}
+	return size - count, nil
 }
 
 func (s *MySQLStore) SetQueueSize(ctx context.Context, size int) error {
@@ -41,7 +38,7 @@ func (s *MySQLStore) UpdateQueueSize(ctx context.Context, size int) error {
 }
 
 func (s *MySQLStore) getQueueSizeFromDB(ctx context.Context) (int, error) {
-	
+
 	queueSizeQuery := "SELECT size FROM queue_size LIMIT 1;"
 	var queueSize int
 	err := s.db.QueryRowContext(ctx, queueSizeQuery).Scan(&queueSize)

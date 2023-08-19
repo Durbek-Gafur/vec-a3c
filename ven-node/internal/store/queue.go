@@ -188,8 +188,7 @@ func (s *MySQLStore) PeekInProcess(ctx context.Context) (*Queue, error) {
 func (s *MySQLStore) PeekQueued(ctx context.Context) (*Queue, error) {
 	return s.Peek(ctx, WorkflowStatusQueued)
 }
-
-func (s *MySQLStore) IsEmpty(ctx context.Context) (bool, error) {
+func (s *MySQLStore) GetCount(ctx context.Context) (int, error) {
 	query := "SELECT COUNT(*) FROM queue WHERE status <> 'COMPLETE'"
 	row := s.db.QueryRowContext(ctx, query)
 
@@ -197,10 +196,18 @@ func (s *MySQLStore) IsEmpty(ctx context.Context) (bool, error) {
 	if err := row.Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
 			// This means that the query returned no rows. So the table is effectively empty.
-			return true, nil
+			return 0, nil
 		}
 		// Some other error occurred during the execution of the query.
-		return false, fmt.Errorf("failed to count rows in queue: %w", err)
+		return -1, fmt.Errorf("failed to count rows in queue: %w", err)
+	}
+	return count, nil
+}
+func (s *MySQLStore) IsEmpty(ctx context.Context) (bool, error) {
+	count, err := s.GetCount(ctx)
+	if err != nil {
+		// Some other error occurred during the execution of the query.
+		return false, fmt.Errorf("failed to check if empty: %w", err)
 	}
 
 	// If count == 0, it means there are no rows where status is not 'COMPLETE'.
