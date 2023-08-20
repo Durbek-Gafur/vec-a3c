@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"log"
 	"time"
 )
 
@@ -106,8 +108,27 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *Workflow) (*Workflow
 }
 
 func (s *MySQLStore) StartWorkflow(ctx context.Context, workflowID int) error {
+	// Check if started_execution_at is already set
+	var startedAt sql.NullTime
+	checkQuery := "SELECT started_execution_at FROM workflow WHERE id = ?"
+	err := s.db.QueryRowContext(ctx, checkQuery, workflowID).Scan(&startedAt)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("no workflow found with ID: %d", workflowID)
+		}
+		return err
+	}
+
+	if startedAt.Valid {
+		// Log that the value for started_execution_at already exists
+		log.Printf("The workflow with ID %d already has a started_execution_at value of %s", workflowID, startedAt.Time)
+		return nil // Exit without making any update
+	}
+
+	// If started_execution_at is not set, then update it
 	query := "UPDATE workflow SET started_execution_at = NOW() WHERE id = ?"
-	_, err := s.db.ExecContext(ctx, query, workflowID)
+	_, err = s.db.ExecContext(ctx, query, workflowID)
 	return err
 }
 

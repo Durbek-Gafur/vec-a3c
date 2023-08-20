@@ -87,6 +87,10 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 	// Check if the running workflow has completed its execution
 	isComplete, err := s.workflow.IsComplete(ctx, runningWorkflow.WorkflowID)
 	if err != nil {
+		if err.Error() == "The workflow failed" {
+			log.Print("Restarting failed workflow")
+			return s.workflow.StartExecution(ctx, runningWorkflow.ID)
+		}
 		return errors.Wrap(err, "runCheckAndExecute: error occurred while checking if workflow is complete")
 	}
 
@@ -101,7 +105,7 @@ func (s *Service) runCheckAndExecute(ctx context.Context) error {
 		if err != nil {
 			return errors.Wrap(err, "runCheckAndExecute: error occurred while checking duration")
 		}
-
+		log.Printf("Duration: %v", duration)
 		err = s.workflow.Complete(ctx, runningWorkflow.ID, duration)
 		if err != nil {
 			return errors.Wrap(err, "runCheckAndExecute: error occurred while Complete workflow")

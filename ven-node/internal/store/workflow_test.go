@@ -9,7 +9,6 @@ import (
 	_ "github.com/golang-migrate/migrate/source/file"
 )
 
-
 func TestWorkflow(t *testing.T) {
 	// Test CreateWorkflow
 	newWorkflow := Workflow{
@@ -60,5 +59,39 @@ func TestWorkflow(t *testing.T) {
 
 	if updatedWorkflow.Duration != 20 {
 		t.Fatalf("Expected workflow duration 20, got %d", updatedWorkflow.Duration)
+	}
+
+	// Test StartWorkflow when started_execution_at is NULL
+	err = testStore.StartWorkflow(ctx, createdWorkflow.ID)
+	if err != nil {
+		t.Fatalf("StartWorkflow failed: %v", err)
+	}
+
+	// Test GetWorkflowByID after StartWorkflow
+	workflowAfterStart, err := testStore.GetWorkflowByID(ctx, createdWorkflow.ID)
+	if err != nil {
+		t.Fatalf("GetWorkflowByID after StartWorkflow failed: %v", err)
+	}
+
+	if !workflowAfterStart.StartedExecutionAt.Valid {
+		t.Fatalf("Expected started_execution_at to be set after StartWorkflow")
+	}
+
+	initialStartTime := workflowAfterStart.StartedExecutionAt.Time
+
+	// Test StartWorkflow again, expecting started_execution_at to remain unchanged
+	err = testStore.StartWorkflow(ctx, createdWorkflow.ID)
+	if err != nil {
+		t.Fatalf("StartWorkflow failed on the second call: %v", err)
+	}
+
+	// Fetch again to check
+	workflowAfterSecondStart, err := testStore.GetWorkflowByID(ctx, createdWorkflow.ID)
+	if err != nil {
+		t.Fatalf("GetWorkflowByID after second StartWorkflow failed: %v", err)
+	}
+
+	if workflowAfterSecondStart.StartedExecutionAt.Time != initialStartTime {
+		t.Fatalf("Expected started_execution_at to remain unchanged after the second StartWorkflow")
 	}
 }

@@ -67,7 +67,7 @@ func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	// Create a new context with a 5 minute timeout
 	log.Println("Preparing to execute the script...")
 
-	filename := "demo_25per.fastq" // This should be set to whatever the desired filename is.
+	filename := "demo.fastq" // This should be set to whatever the desired filename is.
 	// Prepare to execute the script
 	s.cmd = exec.Command("bash", "-c", "/app/workflow/rna.sh "+filename)
 
@@ -117,7 +117,7 @@ func (s *service) IsComplete(ctx context.Context, id int) (bool, error) {
 	// not implemented
 	complete, err := s.IsScriptComplete()
 	if err != nil {
-		return false, errors.Wrap(err, "IsComplete: error occurred while IsScriptComplete")
+		return false, err
 
 	}
 
@@ -165,8 +165,9 @@ func (s *service) IsScriptComplete() (bool, error) {
 		return false, nil
 	}
 
-	if strings.Contains(durationStr, "Error") {
-		return false, errors.New(durationStr)
+	if strings.Contains(durationStr, "Error") || strings.Contains(durationStr, "Killed") {
+		log.Print("The workflow failed")
+		return false, errors.New("The workflow failed")
 	}
 
 	return true, nil

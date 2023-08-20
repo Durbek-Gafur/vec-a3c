@@ -58,7 +58,7 @@ function step2_hisat2() {
     mkdir -p ${GENERATED_DIR}/HISAT2
 
     # Run hisat2 and capture both stdout and stderr
-    hisat2 -q --rna-strandness R -x ${WORKFLOW_DIR}/HISAT2/grch38/genome -U ${GENERATED_DIR}/${TRIMMED_FILE} 2>> ${DATA_DIR}/$LOG_FILE | samtools sort -o ${GENERATED_DIR}/HISAT2/${TRIMMED_BAM}
+    hisat2 -q --rna-strandness R -x ${WORKFLOW_DIR}/HISAT2/grch38/genome -U ${GENERATED_DIR}/${TRIMMED_FILE} 2> >(tee -a ${DATA_DIR}/$LOG_FILE >> ${GENERATED_DIR}/$DURATION_FILE) | samtools sort -o ${GENERATED_DIR}/HISAT2/${TRIMMED_BAM}
 
     echo "$(date) - HISAT2 finished running!" >> ${DATA_DIR}/$LOG_FILE
 }
