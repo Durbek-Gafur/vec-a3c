@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize MySQL store:", err)
 	}
-	wfs := workflow.NewService(mysqlStore, logFile)
+	wfs := workflow.NewService(mysqlStore, mysqlStore, logFile)
 	if err != nil {
 		log.Fatal("Failed to initialize Workflow Provider:", err)
 	}

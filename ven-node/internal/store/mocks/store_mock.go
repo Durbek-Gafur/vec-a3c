@@ -190,6 +190,21 @@ func (mr *MockQueueStoreMockRecorder) GetCount(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCount", reflect.TypeOf((*MockQueueStore)(nil).GetCount), arg0)
 }
 
+// GetQueueByID mocks base method.
+func (m *MockQueueStore) GetQueueByID(arg0 context.Context, arg1 int) (*store.Queue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetQueueByID", arg0, arg1)
+	ret0, _ := ret[0].(*store.Queue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetQueueByID indicates an expected call of GetQueueByID.
+func (mr *MockQueueStoreMockRecorder) GetQueueByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetQueueByID", reflect.TypeOf((*MockQueueStore)(nil).GetQueueByID), arg0, arg1)
+}
+
 // GetQueueStatus mocks base method.
 func (m *MockQueueStore) GetQueueStatus(arg0 context.Context) ([]store.Queue, error) {
 	m.ctrl.T.Helper()

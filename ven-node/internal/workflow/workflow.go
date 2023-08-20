@@ -16,7 +16,6 @@ import (
 	"github.com/pkg/errors"
 
 	"vec-node/internal/store"
-	s "vec-node/internal/store"
 )
 
 //go:generate mockgen -destination=mocks/workflow_mock.go -package=workflow_mock vec-node/internal/workflow Workflow
@@ -25,7 +24,7 @@ import (
 type Workflow interface {
 	StartExecution(ctx context.Context, id int) error
 	Complete(ctx context.Context, id int, duration int) error
-	UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error)
+	UpdateWorkflow(ctx context.Context, wf *store.Workflow) (*store.Workflow, error)
 	IsComplete(ctx context.Context, id int) (bool, error)
 	IsScriptComplete() (bool, error)
 	GetScriptDuration() (int, error)
@@ -33,8 +32,8 @@ type Workflow interface {
 }
 
 // NewWorkflow returns a new Workflow instance
-func NewWorkflow(name, wType string, duration int) *s.Workflow {
-	return &s.Workflow{
+func NewWorkflow(name, wType string, duration int) *store.Workflow {
+	return &store.Workflow{
 		Name:       name,
 		Type:       wType,
 		Duration:   duration,
@@ -43,14 +42,16 @@ func NewWorkflow(name, wType string, duration int) *s.Workflow {
 }
 
 type service struct {
-	workflowStore s.WorkflowStore
+	workflowStore store.WorkflowStore
+	queueStore    store.QueueStore
 	cmd           *exec.Cmd
 	logFile       *os.File
 }
 
-func NewService(store s.WorkflowStore, logFile *os.File) Workflow {
+func NewService(store store.WorkflowStore, qstore store.QueueStore, logFile *os.File) Workflow {
 	return &service{
 		workflowStore: store,
+		queueStore:    qstore,
 		logFile:       logFile,
 	}
 }
@@ -63,11 +64,42 @@ func (s *service) GetWorkflowByID(ctx context.Context, workflowID int) (*store.W
 	return s.workflowStore.GetWorkflowByID(ctx, workflowID)
 }
 
+func (s *service) getWorkflowByQueueID(ctx context.Context, workflowID int) (*store.Workflow, error) {
+	queue, err := s.queueStore.GetQueueByID(ctx, workflowID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to getWorkflowByQueueID: %w", err)
+	}
+	workflow, err := s.workflowStore.GetWorkflowByID(ctx, queue.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to getWorkflowByQueueID: %w", err)
+	}
+	return workflow, nil
+}
+
 func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	// Create a new context with a 5 minute timeout
 	log.Println("Preparing to execute the script...")
+	workflow, err := s.getWorkflowByQueueID(ctx, workflowID)
+	if err != nil {
+		return fmt.Errorf("failed to StartExecution: %w", err)
+	}
 
-	filename := "demo.fastq" // This should be set to whatever the desired filename is.
+	// TODO add this check before enqueu , if file doesn't exist do not enqueue
+	// Otherwisie this workflow will block all other wfs
+	// filename will be incldued in type
+	filename := workflow.Type
+	// Check if the file with the name workflow.Type exists
+	filePath := "/app/workflow/data/" + filename
+	if _, err := os.Stat(filePath); os.IsNotExist(err) || filename == "" {
+		log.Printf("file does not exist: %s", filePath)
+		// TODO we need to fail workflow here
+		// create FAILED type in db and create FailWorklfowInQueue
+		// _, err = s.queueStore.CompleteWorkflowInQueue()
+		return fmt.Errorf("file does not exist: %s", filePath)
+	} else if err != nil {
+		return fmt.Errorf("error checking file: %w", err)
+	}
+
 	// Prepare to execute the script
 	s.cmd = exec.Command("bash", "-c", "/app/workflow/rna.sh "+filename)
 
@@ -78,7 +110,7 @@ func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	log.Println("Starting the script in the background...")
 
 	// Run the script in the background
-	err := s.cmd.Start()
+	err = s.cmd.Start()
 	if err != nil {
 		log.Printf("Failed to start the script: %v", err)
 		return fmt.Errorf("failed to start the script: %w", err)
@@ -105,11 +137,11 @@ func (s *service) Complete(ctx context.Context, id int, duration int) error {
 	if err != nil {
 		return err
 	}
-
+	// TODO
 	return s.workflowStore.CompleteWorkflow(ctx, id)
 }
 
-func (s *service) UpdateWorkflow(ctx context.Context, wf *s.Workflow) (*s.Workflow, error) {
+func (s *service) UpdateWorkflow(ctx context.Context, wf *store.Workflow) (*store.Workflow, error) {
 	return s.workflowStore.UpdateWorkflow(ctx, wf)
 }
 
@@ -164,7 +196,11 @@ func (s *service) IsScriptComplete() (bool, error) {
 		log.Println("script is still running")
 		return false, nil
 	}
-
+	_, err = strconv.Atoi(durationStr)
+	if err != nil {
+		log.Printf("The workflow failed. Duration %s is not convertible", durationStr)
+		return false, errors.New("The workflow failed")
+	}
 	if strings.Contains(durationStr, "Error") || strings.Contains(durationStr, "Killed") {
 		log.Print("The workflow failed")
 		return false, errors.New("The workflow failed")

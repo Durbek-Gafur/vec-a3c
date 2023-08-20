@@ -214,3 +214,26 @@ func (s *MySQLStore) IsEmpty(ctx context.Context) (bool, error) {
 	// So, the queue is empty.
 	return count == 0, nil
 }
+
+func (s *MySQLStore) GetQueueByID(ctx context.Context, id int) (*Queue, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	query := "SELECT id, workflow_id, status, enqueued_at FROM queue WHERE id = ?"
+	row := tx.QueryRowContext(ctx, query, id)
+
+	q := &Queue{}
+	err = row.Scan(&q.ID, &q.WorkflowID, &q.Status, &q.EnqueuedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// This means that the query returned no rows. So the table is effectively empty.
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return q, nil
+}

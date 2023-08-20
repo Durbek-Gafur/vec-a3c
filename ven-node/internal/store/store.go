@@ -29,6 +29,7 @@ type QueueStore interface {
 	IsSpaceAvailable(ctx context.Context) (bool, error)
 	IsEmpty(ctx context.Context) (bool, error)
 	GetCount(ctx context.Context) (int, error)
+	GetQueueByID(ctx context.Context, id int) (*Queue, error)
 }
 
 // QueueSizeStore handles operations on queue sizes
