@@ -1,7 +1,10 @@
 package workflow
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"net/http"
 	"strconv"
 
 	// "errors"
@@ -125,6 +128,29 @@ func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	return nil
 }
 
+func (s *service) sendCompletionRequest(wf *store.Workflow) error {
+	// Marshal the workflow into a JSON format
+	jsonData, err := json.Marshal(wf)
+	if err != nil {
+		return err
+	}
+	// add to config and read from env variable
+	resp, err := http.Post("http://localhost:8090/workflow", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Printf("Failed to send completed wf to server: %s", bytes.NewBuffer(jsonData))
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Failed to send completed wf to server: %s", bytes.NewBuffer(jsonData))
+		return fmt.Errorf("server returned non-200 status code: %d", resp.StatusCode)
+	}
+
+	log.Printf("Sent completed wf to server: %s", bytes.NewBuffer(jsonData))
+	return nil
+}
+
 func (s *service) Complete(ctx context.Context, id int, duration int) error {
 	// Update the workflow with the duration
 	wf, err := s.workflowStore.GetWorkflowByID(ctx, id)
@@ -137,8 +163,12 @@ func (s *service) Complete(ctx context.Context, id int, duration int) error {
 	if err != nil {
 		return err
 	}
-	// TODO
-	return s.workflowStore.CompleteWorkflow(ctx, id)
+	// TODO update server
+	if err = s.workflowStore.CompleteWorkflow(ctx, id); err != nil {
+		return err
+	}
+
+	return s.sendCompletionRequest(wf)
 }
 
 func (s *service) UpdateWorkflow(ctx context.Context, wf *store.Workflow) (*store.Workflow, error) {
@@ -192,7 +222,7 @@ func (s *service) IsScriptComplete() (bool, error) {
 
 	durationStr := strings.TrimSpace(string(contents))
 
-	if durationStr == "" {
+	if durationStr == "" || strings.Contains(durationStr, "were unpaired; of these") {
 		log.Println("script is still running")
 		return false, nil
 	}
