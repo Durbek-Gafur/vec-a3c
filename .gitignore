@@ -17,6 +17,7 @@
 
 ven-node/workflow/HISAT2/*
 ven-node/workflow/data/generated/*
+!ven-node/workflow/data/generated/result.txt
 ven-node/workflow/hg38/*
 ven-node/internal/workflow/veca3c/grch38_genome.tar.gz
 ven-node/internal/workflow/veca3c/Homo_sapiens.GRCh38.106.gtf.gz
