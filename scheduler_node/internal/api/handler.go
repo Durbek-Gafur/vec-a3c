@@ -1,7 +1,10 @@
 package api
 
 import (
+	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -10,11 +13,11 @@ import (
 
 type Handler struct {
 	workflowStore store.WorkflowStore
-	venStore store.VENStore
+	venStore      store.VENStore
 }
 
 func NewHandler(wf store.WorkflowStore, store store.VENStore) *Handler {
-	return &Handler{ workflowStore: wf, venStore: store}
+	return &Handler{workflowStore: wf, venStore: store}
 }
 
 func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +90,6 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 		`
 	}
 
-
 	html += `
 			</table>
 			<h1>Workflow info</h1>
@@ -145,23 +147,89 @@ func (h *Handler) ShowTables(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(html))
 }
 
+func stringToNullTime(s string) (sql.NullTime, error) {
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return sql.NullTime{}, err
+	}
+	return sql.NullTime{Time: t, Valid: true}, nil
+}
 
 // formatTimeAgo formats the time duration as "n times ago"
 func formatTimeAgo(duration time.Duration) string {
-    seconds := int(duration.Seconds())
+	seconds := int(duration.Seconds())
 
-    if seconds == 0 {
-        return "just now"
-    } else if seconds < 60 {
-        return fmt.Sprintf("%d seconds ago", seconds)
-    } else if seconds < 3600 {
-        minutes := seconds / 60
-        return fmt.Sprintf("%d minutes ago", minutes)
-    } else if seconds < 86400 {
-        hours := seconds / 3600
-        return fmt.Sprintf("%d hours ago", hours)
-    } else {
-        days := seconds / 86400
-        return fmt.Sprintf("%d days ago", days)
-    }
+	if seconds == 0 {
+		return "just now"
+	} else if seconds < 60 {
+		return fmt.Sprintf("%d seconds ago", seconds)
+	} else if seconds < 3600 {
+		minutes := seconds / 60
+		return fmt.Sprintf("%d minutes ago", minutes)
+	} else if seconds < 86400 {
+		hours := seconds / 3600
+		return fmt.Sprintf("%d hours ago", hours)
+	} else {
+		days := seconds / 86400
+		return fmt.Sprintf("%d days ago", days)
+	}
+}
+
+// ...
+
+type UpdateWorkflowInfo struct {
+	Name               string `json:"Name"`
+	Duration           string `json:"Duration"` // You might want to map this to a field in WorkflowInfo
+	StartedExecutionAt string `json:"StartedExecutionAt"`
+	CompletedAt        string `json:"CompletedAt"`
+}
+
+func stringToNullString(s string) sql.NullString {
+	return sql.NullString{String: s, Valid: s != ""}
+}
+
+func (h *Handler) UpdateWorkflowByName(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("UpdateWorkflowByName: Received request")
+	// Decode the received JSON into the UpdateWorkflowInfo struct
+	var updateInfo UpdateWorkflowInfo
+	err := json.NewDecoder(r.Body).Decode(&updateInfo)
+	if err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+	log.Printf("UpdateWorkflowByName: Decoded JSON - %+v", updateInfo)
+	startedExecutionAt, err := stringToNullTime(updateInfo.StartedExecutionAt)
+	if err != nil {
+		log.Printf("UpdateWorkflowByName: Error parsing StartedExecutionAt - %v", err)
+		http.Error(w, "Invalid StartedExecutionAt format", http.StatusBadRequest)
+		return
+	}
+
+	completedAt, err := stringToNullTime(updateInfo.CompletedAt)
+	if err != nil {
+		log.Printf("UpdateWorkflowByName: Error parsing CompletedAt - %v", err)
+		http.Error(w, "Invalid CompletedAt format", http.StatusBadRequest)
+		return
+	}
+	// Map the UpdateWorkflowInfo to WorkflowInfo and use the workflowStore
+	// to update the workflow (assuming an UpdateWorkflow method exists)
+	workflow := store.WorkflowInfo{
+		Name:                updateInfo.Name,
+		ActualExecutionTime: stringToNullString(updateInfo.Duration),
+		// Map Duration to the appropriate field in WorkflowInfo if needed
+		ProcessingStartedAt: startedExecutionAt,
+		CompletedAt:         completedAt,
+	}
+
+	err = h.workflowStore.UpdateWorkflowByName(r.Context(), &workflow)
+	if err != nil {
+		log.Printf(err.Error())
+		http.Error(w, "Failed to update workflow", http.StatusInternalServerError)
+		return
+	}
+
+	// Send a response back to the client
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Workflow updated successfully"))
 }

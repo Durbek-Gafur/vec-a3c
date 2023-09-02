@@ -29,7 +29,7 @@ func main() {
 	handler := api.NewHandler(mysqlStore, mysqlStore)
 
 	//populate table
-	if err := seeder.PopulateVENInfo(mysqlStore.GetDB(),&seeder.ActualURLProvider{}); err != nil {
+	if err := seeder.PopulateVENInfo(mysqlStore.GetDB(), &seeder.ActualURLProvider{}); err != nil {
 		log.Fatal("Failed to populate VEN table", err)
 	}
 
@@ -41,8 +41,7 @@ func main() {
 	// queue
 	router.HandleFunc("/", handler.ShowTables).Methods("GET")
 	router.HandleFunc("/index", handler.ShowTables).Methods("GET")
-
-	
+	router.HandleFunc("/workflow", handler.UpdateWorkflowByName).Methods("POST")
 
 	server := &http.Server{
 		Addr:    ":8090",
@@ -73,4 +72,3 @@ func main() {
 	}
 	log.Println("Server stopped")
 }
-
