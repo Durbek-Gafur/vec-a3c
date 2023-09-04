@@ -128,14 +128,45 @@ func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 	return nil
 }
 
+type WorkflowInfoSend struct {
+	Name                string `json:"name"`
+	ActualExecutionTime string `json:"actualExecutionTime"`
+	ProcessingStartedAt string `json:"processingStartedAt"`
+	CompletedAt         string `json:"completedAt"`
+}
+
+func ConvertToWorkflowInfoSend(wfInfo *store.Workflow) WorkflowInfoSend {
+	var processingStartedAt, completedAt, actualExecutionTime string
+
+	// Convert sql.NullTime fields to string
+	if wfInfo.StartedExecutionAt.Valid {
+		processingStartedAt = wfInfo.StartedExecutionAt.Time.Format(time.RFC3339)
+	}
+	if wfInfo.CompletedAt.Valid {
+		completedAt = wfInfo.CompletedAt.Time.Format(time.RFC3339)
+	}
+
+	// Convert sql.NullString fields to string
+	actualExecutionTime = string(wfInfo.Duration)
+
+	return WorkflowInfoSend{
+		Name:                wfInfo.Name,
+		ActualExecutionTime: actualExecutionTime,
+		ProcessingStartedAt: processingStartedAt,
+		CompletedAt:         completedAt,
+	}
+}
+
 func (s *service) sendCompletionRequest(wf *store.Workflow) error {
+	log.Println(wf)
+	res := ConvertToWorkflowInfoSend(wf)
 	// Marshal the workflow into a JSON format
-	jsonData, err := json.Marshal(wf)
+	jsonData, err := json.Marshal(res)
 	if err != nil {
 		return err
 	}
 	// add to config and read from env variable
-	resp, err := http.Post("http://localhost:8090/workflow", "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post("https://dgvkh-scheduler.nrp-nautilus.io:8090/workflow", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Printf("Failed to send completed wf to server: %s", bytes.NewBuffer(jsonData))
 		return err
@@ -163,8 +194,12 @@ func (s *service) Complete(ctx context.Context, id int, duration int) error {
 	if err != nil {
 		return err
 	}
-	// TODO update server
 	if err = s.workflowStore.CompleteWorkflow(ctx, id); err != nil {
+		return err
+	}
+
+	wf, err = s.workflowStore.GetWorkflowByID(ctx, id)
+	if err != nil {
 		return err
 	}
 
@@ -222,7 +257,7 @@ func (s *service) IsScriptComplete() (bool, error) {
 
 	durationStr := strings.TrimSpace(string(contents))
 
-	if durationStr == "" || strings.Contains(durationStr, "were unpaired; of these") {
+	if durationStr == "" || strings.Contains(durationStr, "unpaired") {
 		log.Println("script is still running")
 		return false, nil
 	}

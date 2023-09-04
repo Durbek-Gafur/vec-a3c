@@ -8,24 +8,47 @@ import (
 	"strings"
 )
 
+type config struct {
+	queue string
+	cpu   string
+	ram   string
+}
+
 func main() {
 	// Define lists of possible values
-	backendQueueSizes := []string{"5", "6", "7", "8", "9", "10"}
-	backendCpus := []string{"0.5", "1", "1.5", "2", "2.5", "3"}
-	backendRams := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"}
+	// backendQueueSizes := []string{"5", "6", "7", "8", "9", "10"}
+	// backendCpus := []string{"0.5", "1", "1.5", "2", "2.5", "3"}
+	// backendRams := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"}
+	config := []config{
+		{
+			queue: "5",
+			cpu:   "1",
+			ram:   "1Gi",
+		},
+		{
+			queue: "10",
+			cpu:   "2",
+			ram:   "2Gi",
+		},
+		{
+			queue: "15",
+			cpu:   "3",
+			ram:   "3Gi",
+		},
+	}
 
 	for i := 1; i <= 10; i++ { // assuming we want 10 VENs
 		venName := fmt.Sprintf("ven%d", i)
-		backendQueueSize := backendQueueSizes[(i-1)%len(backendQueueSizes)]
-		backendCpu := backendCpus[(i-1)%len(backendCpus)]
-		backendRam := backendRams[(i-1)%len(backendRams)]
+		backendQueueSize := config[(i-1)%len(config)].queue
+		backendCpu := config[(i-1)%len(config)].cpu
+		backendRam := config[(i-1)%len(config)].ram
 
 		content, err := ioutil.ReadFile("ven_template.cue") // your CUE template
 		if err != nil {
 			panic(err)
 		}
 
-		newContent := strings.Replace(string(content), `ven1`,venName, -1)
+		newContent := strings.Replace(string(content), `ven1`, venName, -1)
 		newContent = strings.Replace(newContent, `yetti`, backendQueueSize, -1)
 		newContent = strings.Replace(newContent, `yarim`, backendCpu, -1)
 		newContent = strings.Replace(newContent, `sakkizyuz`, backendRam, -1)

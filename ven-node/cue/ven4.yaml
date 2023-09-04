@@ -18,7 +18,7 @@
       spec:
         containers:
           - name: backend
-            image: 39dj29dl2d9l2/vec-ven:6
+            image: 39dj29dl2d9l2/vec-ven:8
             ports:
               - containerPort: 8080
             env:
@@ -33,18 +33,18 @@
               - name: MYSQL_DBNAME
                 value: app_db
               - name: QUEUE_SIZE
-                value: "8"
+                value: "5"
               - name: CPUS
-                value: "2"
+                value: "1"
               - name: RAM
-                value: 2Gi
+                value: 1Gi
             resources:
               limits:
-                cpu: "2"
-                memory: 2Gi
+                cpu: "1"
+                memory: 1Gi
               requests:
-                cpu: "2"
-                memory: 2Gi
+                cpu: "1"
+                memory: 1Gi
 ---
 #EdgeBackendService:
   apiVersion: v1

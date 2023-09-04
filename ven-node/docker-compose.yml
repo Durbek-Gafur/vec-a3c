@@ -1,7 +1,10 @@
 version: "3.9"
 
 services:
-  app:
+  
+  node_app:
+    networks:
+    - vec
     build: 
       context: .
       dockerfile: Dockerfile.dev
@@ -14,8 +17,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
-      - migrator
+      - node_db
+      - node_migrator
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -28,7 +31,9 @@ services:
     volumes:
       - ./:/app
     restart: always
-  db:
+  node_db:
+    networks:
+      - vec
     image: 39dj29dl2d9l2/ven-db:2.1 # mysql:8.0 #
     container_name: db
     command: --default-authentication-plugin=mysql_native_password
@@ -38,12 +43,14 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DBNAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  migrator:
+  node_migrator:
+    networks:
+    - vec
     image: migrate/migrate
     container_name: migrator
     command: ["-source=file:///migrations", "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DBNAME}", "up"]
     depends_on:
-      - db
+      - node_db
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -53,3 +60,5 @@ services:
     volumes:
       - ./migrations:/migrations
     restart: on-failure:10
+networks:
+  vec:

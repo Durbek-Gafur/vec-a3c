@@ -1,7 +1,7 @@
 ven_name : "ven3"
-backend_queue_size: "7"
-backend_cpus: "1.5"
-backend_ram: "1.5Gi"
+backend_queue_size: "15"
+backend_cpus: "3"
+backend_ram: "3Gi"
 
 db_name_label: ven_name + "-db"
 backend_name_label: ven_name + "-backend"
@@ -10,7 +10,7 @@ db_service_name: ven_name + "-db-service"
 ingress_name: ven_name + "-backend-ingress"
 ingress_host: "dgvkh-"+ven_name+".nrp-nautilus.io"
 
-backend_image: "39dj29dl2d9l2/vec-ven:6"
+backend_image: "39dj29dl2d9l2/vec-ven:8"
 db_image: "39dj29dl2d9l2/ven-db:1.0"
 
 container_port: 8080

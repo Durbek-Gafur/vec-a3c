@@ -1,7 +1,9 @@
 version: "3.9"
 
 services:
-  app:
+  scheduler_app:
+    networks:
+    - vec
     build: 
       context: .
       dockerfile: Dockerfile.dev
@@ -26,6 +28,8 @@ services:
       - ./:/app
     restart: always
   db_scheduler:
+    networks:
+    - vec
     image: mysql:8.0 #39dj29dl2d9l2/ven-db_scheduler:1.0
     container_name: db_scheduler
     command: --default-authentication-plugin=mysql_native_password
@@ -36,6 +40,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DBNAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
   migrator_scheduler:
+    networks:
+      - vec
     image: migrate/migrate
     container_name: migrator_scheduler
     command: ["-source=file:///migrations", "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DBNAME}", "up"]
@@ -50,3 +56,5 @@ services:
     volumes:
       - ./migrations:/migrations
     restart: on-failure:10
+networks:
+  vec:

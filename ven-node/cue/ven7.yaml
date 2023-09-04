@@ -18,7 +18,7 @@
       spec:
         containers:
           - name: backend
-            image: 39dj29dl2d9l2/vec-ven:6
+            image: 39dj29dl2d9l2/vec-ven:8
             ports:
               - containerPort: 8080
             env:
@@ -35,16 +35,16 @@
               - name: QUEUE_SIZE
                 value: "5"
               - name: CPUS
-                value: "0.5"
+                value: "1"
               - name: RAM
-                value: 512Mi
+                value: 1Gi
             resources:
               limits:
-                cpu: "0.5"
-                memory: 512Mi
+                cpu: "1"
+                memory: 1Gi
               requests:
-                cpu: "0.5"
-                memory: 512Mi
+                cpu: "1"
+                memory: 1Gi
 ---
 #EdgeBackendService:
   apiVersion: v1
