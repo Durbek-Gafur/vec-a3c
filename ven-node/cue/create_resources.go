@@ -22,18 +22,18 @@ func main() {
 	config := []config{
 		{
 			queue: "5",
-			cpu:   "1",
-			ram:   "1Gi",
+			cpu:   "4",
+			ram:   "8Gi",
 		},
 		{
 			queue: "10",
-			cpu:   "2",
-			ram:   "2Gi",
+			cpu:   "6",
+			ram:   "16Gi",
 		},
 		{
 			queue: "15",
-			cpu:   "3",
-			ram:   "3Gi",
+			cpu:   "8",
+			ram:   "32Gi",
 		},
 	}
 

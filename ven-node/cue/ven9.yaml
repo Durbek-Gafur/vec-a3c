@@ -35,16 +35,16 @@
               - name: QUEUE_SIZE
                 value: "15"
               - name: CPUS
-                value: "3"
+                value: "8"
               - name: RAM
-                value: 3Gi
+                value: 32Gi
             resources:
               limits:
-                cpu: "3"
-                memory: 3Gi
+                cpu: "8"
+                memory: 32Gi
               requests:
-                cpu: "3"
-                memory: 3Gi
+                cpu: "8"
+                memory: 32Gi
 ---
 #EdgeBackendService:
   apiVersion: v1

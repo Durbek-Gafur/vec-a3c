@@ -1,7 +1,7 @@
 ven_name : "ven7"
 backend_queue_size: "5"
-backend_cpus: "1"
-backend_ram: "1Gi"
+backend_cpus: "4"
+backend_ram: "8Gi"
 
 db_name_label: ven_name + "-db"
 backend_name_label: ven_name + "-backend"
