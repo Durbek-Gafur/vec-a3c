@@ -37,6 +37,11 @@ func main() {
 		log.Fatal("Failed to populate Workflow table", err)
 	}
 
+	// Start the UpdateQueueSizePeriodically function in a separate goroutine.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go seeder.UpdateQueueSizePeriodically(ctx, mysqlStore.GetDB(), &seeder.ActualURLProvider{})
+
 	router := mux.NewRouter()
 	// queue
 	router.HandleFunc("/", handler.ShowTables).Methods("GET")
@@ -65,7 +70,7 @@ func main() {
 
 	// Initiate a graceful shutdown.
 	log.Println("Shutting down the server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatal("Failed to shut down the server gracefully:", err)

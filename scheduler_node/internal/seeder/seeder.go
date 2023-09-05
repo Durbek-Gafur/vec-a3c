@@ -1,6 +1,7 @@
 package seeder
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -16,16 +17,16 @@ import (
 )
 
 type ResourceSpec struct {
-	RAM        string `json:"RAM"`
-	CORE       string `json:"CORE"`
-	MAX_QUEUE  string `json:"MAX_QUEUE"`
+	RAM       string `json:"RAM"`
+	CORE      string `json:"CORE"`
+	MAX_QUEUE string `json:"MAX_QUEUE"`
 }
 
 type CurrentQueueSize struct {
-	SIZE  int `json:"size"`
+	SIZE int `json:"size"`
 }
 
-func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
+func PopulateVENInfo(db *sql.DB, urlProvider URLProvider) error {
 	// Check if the table is empty
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM ven_info").Scan(&count)
@@ -93,7 +94,6 @@ func PopulateVENInfo(db *sql.DB,urlProvider URLProvider) error {
 	}
 	return nil
 }
-
 
 func FetchAndPopulateData(venInfo *store.VENInfo) error {
 	// Fetching RAM, CORE and MAX_QUEUE from url/rspec
@@ -164,7 +164,6 @@ func GeneratePreferenceList() string {
 	return strings.Join(selected, ", ")
 }
 
-
 // PopulateWorkflows populates the workflow_info table with the provided workflows.
 func PopulateWorkflows(db *sql.DB) error {
 	// Check if the table is empty
@@ -182,10 +181,10 @@ func PopulateWorkflows(db *sql.DB) error {
 	rand.Seed(time.Now().UnixNano())
 
 	types := []string{"typeA", "typeB"}
-	ramList := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"} 
-	coreList := []string{"0.5", "1", "1.5", "2", "2.5", "3"} 
+	ramList := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"}
+	coreList := []string{"0.5", "1", "1.5", "2", "2.5", "3"}
 	userList := []string{"UserA", "UserB", "UserC", "UserD", "UserE", "UserF", "UserG", "UserH", "UserI", "UserJ"}
-	policies := []string{"policyA", "policyB", "policyC"} 
+	policies := []string{"policyA", "policyB", "policyC"}
 
 	maxWf, err := strconv.Atoi(os.Getenv("MAX_WF"))
 	if err != nil {
@@ -204,13 +203,13 @@ func PopulateWorkflows(db *sql.DB) error {
 				INSERT INTO workflow_info 
 				(name, type, ram, core, policy, submitted_by, created_at) 
 				VALUES (?, ?, ?, ?, ?, ?, ?)`,
-				"workflow" + strconv.Itoa(i), // generate name
-				types[rand.Intn(len(types))], // pick randomly from types
-				ramList[rand.Intn(len(ramList))], // pick randomly from ramList
+				"workflow"+strconv.Itoa(i),         // generate name
+				types[rand.Intn(len(types))],       // pick randomly from types
+				ramList[rand.Intn(len(ramList))],   // pick randomly from ramList
 				coreList[rand.Intn(len(coreList))], // pick randomly from coreList
 				policies[rand.Intn(len(policies))], // pick randomly from policies
 				userList[rand.Intn(len(userList))], // pick randomly from userList
-				createdAt, // use generated createdAt
+				createdAt,                          // use generated createdAt
 			)
 
 			if err != nil {
@@ -222,7 +221,6 @@ func PopulateWorkflows(db *sql.DB) error {
 
 	return nil
 }
-
 
 func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
 	rand.Seed(2023)
@@ -248,4 +246,79 @@ func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
 	}
 
 	return arrivalTimes
+}
+
+func UpdateQueueSizePeriodically(ctx context.Context, db *sql.DB, urlProvider URLProvider) {
+	log.Println("Starting UpdateQueueSizePeriodically...")
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	// Generate or fetch VENs
+	venInfos := fetchOrDefineVENs(urlProvider)
+
+	for {
+		select {
+		case <-ticker.C:
+			start := time.Now()
+
+			for _, venInfo := range venInfos {
+				var retryCount int
+				var queueSize string
+				var err error
+
+				// Retry fetching the queue size up to 3 times with 1-second intervals.
+				for retryCount < 3 {
+					queueSize, err = FetchQueueSize(venInfo.URL + "/queue-size")
+					if err == nil {
+						break
+					}
+					retryCount++
+					time.Sleep(1 * time.Second)
+				}
+
+				if err != nil {
+					log.Printf("Failed to fetch queue size for %s after retries: %v", venInfo.URL, err)
+					continue
+				}
+
+				_, err = db.Exec(`UPDATE ven_info SET current_queue_size = ? WHERE name = ?`, queueSize, venInfo.Name)
+				if err != nil {
+					log.Printf("Failed to update queue size in DB for %s: %v", venInfo.Name, err)
+				}
+			}
+
+			// Check elapsed time to avoid overlapping ticks.
+			elapsed := time.Since(start)
+			if elapsed >= 5*time.Second {
+				log.Println("Skipped tick due to overlap")
+			}
+
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+// fetchOrDefineVENs generates a list of VENInfo based on the VEN_COUNT environment variable.
+func fetchOrDefineVENs(urlProvider URLProvider) []store.VENInfo {
+	venCount, err := strconv.Atoi(os.Getenv("VEN_COUNT"))
+	if err != nil {
+		log.Fatalf("Failed to fetch VEN_COUNT: %v", err)
+	}
+
+	var venInfos []store.VENInfo
+
+	for i := 1; i <= venCount; i++ {
+		venName := "ven" + strconv.Itoa(i)
+		url := urlProvider.GetURL(venName)
+
+		var venInfo store.VENInfo
+		venInfo.Name = venName
+		venInfo.URL = url
+
+		venInfos = append(venInfos, venInfo)
+	}
+
+	return venInfos
 }
