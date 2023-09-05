@@ -37,3 +37,8 @@ If you need to update the database, you can do so by writing alter table SQL com
 Build and push a new image of the database to Dockerhub.
 
 Update the /cue/ven_template.cue file with the link to the latest database image.
+
+
+## Building images
+docker build -t 39dj29dl2d9l2/vec-ven:11 .
+docker push 39dj29dl2d9l2/vec-ven:11

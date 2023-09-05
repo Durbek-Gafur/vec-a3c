@@ -43,12 +43,13 @@ Update the /cue/ven_template.cue file with the link to the latest database image
 
 
 ## Building images
-docker build -t 39dj29dl2d9l2/vec-ven:6 .
-docker push 39dj29dl2d9l2/vec-ven:6
+
 
 docker build -t 39dj29dl2d9l2/vec-scheduler:6 .
 docker push 39dj29dl2d9l2/vec-scheduler:6
 
+docker build -t 39dj29dl2d9l2/vec-scheduler-db:11 .
+docker push 39dj29dl2d9l2/vec-scheduler-db:11
 
 or if image already exists:
 docker tag my_app:latest john/myrepo:v1
