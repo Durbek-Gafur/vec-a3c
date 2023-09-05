@@ -1,0 +1,728 @@
+Sat Aug 19 16:57:16 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 16:57:23 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Aug 19 16:57:24 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 16:57:29 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sat Aug 19 17:05:49 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:05:54 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Aug 19 17:05:55 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:06:03 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Aug 19 17:06:30 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:06:38 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:06:38 UTC 2023 - 0 minutes and 49 seconds elapsed.
+Sat Aug 19 17:09:30 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:09:35 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Aug 19 17:09:36 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:09:42 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Aug 19 17:10:10 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:10:19 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:10:19 UTC 2023 - 0 minutes and 50 seconds elapsed.
+Sat Aug 19 17:10:37 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:10:45 UTC 2023 - Finished running fastqc for demo_50per.fastq
+Sat Aug 19 17:10:46 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:10:54 UTC 2023 - Finished running fastqc for trimmed file demo_50per_trimmed.fastq
+624968 reads; of these:
+  624968 (100.00%) were unpaired; of these:
+    42841 (6.85%) aligned 0 times
+    541869 (86.70%) aligned exactly 1 time
+    40258 (6.44%) aligned >1 times
+93.15% overall alignment rate
+Sat Aug 19 17:11:34 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:11:42 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:11:42 UTC 2023 - 1 minutes and 6 seconds elapsed.
+Sat Aug 19 17:11:51 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:12:02 UTC 2023 - Finished running fastqc for demo_75per.fastq
+Sat Aug 19 17:12:04 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:12:13 UTC 2023 - Finished running fastqc for trimmed file demo_75per_trimmed.fastq
+937318 reads; of these:
+  937318 (100.00%) were unpaired; of these:
+    65310 (6.97%) aligned 0 times
+    811388 (86.56%) aligned exactly 1 time
+    60620 (6.47%) aligned >1 times
+93.03% overall alignment rate
+Sat Aug 19 17:13:08 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:13:17 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:13:17 UTC 2023 - 1 minutes and 26 seconds elapsed.
+Sat Aug 19 17:13:37 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:13:47 UTC 2023 - Finished running fastqc for demo_75per.fastq
+Sat Aug 19 17:13:49 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:13:58 UTC 2023 - Finished running fastqc for trimmed file demo_75per_trimmed.fastq
+937318 reads; of these:
+  937318 (100.00%) were unpaired; of these:
+    65310 (6.97%) aligned 0 times
+    811388 (86.56%) aligned exactly 1 time
+    60620 (6.47%) aligned >1 times
+93.03% overall alignment rate
+Sat Aug 19 17:14:52 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:15:01 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:15:01 UTC 2023 - 1 minutes and 24 seconds elapsed.
+Sat Aug 19 17:29:00 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:29:06 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Aug 19 17:29:06 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:29:11 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Aug 19 17:29:40 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:29:48 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:29:48 UTC 2023 - 0 minutes and 48 seconds elapsed.
+Sat Aug 19 17:30:57 UTC 2023 - Cleared the generated folder for new execution!
+Sat Aug 19 17:31:01 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Aug 19 17:31:02 UTC 2023 - Trimmomatic finished running!
+Sat Aug 19 17:31:06 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Aug 19 17:31:36 UTC 2023 - HISAT2 finished running!
+Sat Aug 19 17:31:44 UTC 2023 - featureCounts finished running!
+Sat Aug 19 17:31:44 UTC 2023 - 0 minutes and 47 seconds elapsed.
+Sun Aug 20 13:42:17 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 13:42:24 UTC 2023 - Finished running fastqc for demo_75per.fastq
+Sun Aug 20 13:42:26 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 13:42:34 UTC 2023 - Finished running fastqc for trimmed file demo_75per_trimmed.fastq
+Sun Aug 20 14:00:47 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:00:55 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:00:58 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:01:06 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Sun Aug 20 14:09:37 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:09:46 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:09:48 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:09:57 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Sun Aug 20 14:23:05 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:23:13 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:23:15 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:23:24 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Sun Aug 20 14:23:55 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:23:55 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:23:55 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:24:07 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:24:07 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:24:07 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:24:13 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:24:13 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:24:13 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:24:27 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Sun Aug 20 14:24:27 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Sun Aug 20 14:24:27 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Sun Aug 20 14:50:12 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:50:20 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:50:22 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:50:31 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Sun Aug 20 14:50:31 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:50:42 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:50:49 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:51:01 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+1249800 reads; of these:
+  1249800 (100.00%) were unpaired; of these:
+    86563 (6.93%) aligned 0 times
+    1082380 (86.60%) aligned exactly 1 time
+    80857 (6.47%) aligned >1 times
+93.07% overall alignment rate
+Sun Aug 20 14:52:24 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 14:52:27 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:52:36 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:52:38 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:52:47 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+1249800 reads; of these:
+  1249800 (100.00%) were unpaired; of these:
+    86563 (6.93%) aligned 0 times
+    1082380 (86.60%) aligned exactly 1 time
+    80857 (6.47%) aligned >1 times
+93.07% overall alignment rate
+Sun Aug 20 14:54:09 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 14:54:18 UTC 2023 - featureCounts finished running!
+Sun Aug 20 14:54:18 UTC 2023 - 1 minutes and 51 seconds elapsed.
+Sun Aug 20 14:56:39 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 14:56:49 UTC 2023 - Finished running fastqc for demo.fastq
+Sun Aug 20 14:56:51 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 14:57:02 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+Sun Aug 20 15:46:24 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 15:46:54 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 15:47:00 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 15:47:32 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sun Aug 20 16:35:27 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:35:33 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:35:34 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:35:40 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:36:12 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:36:13 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:36:19 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:36:20 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:36:26 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:36:52 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:36:55 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:36:58 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:36:59 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:37:04 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:37:33 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:37:34 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:37:38 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:37:39 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:37:44 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:38:13 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:38:13 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:38:18 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:38:20 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:38:25 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:38:55 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:38:58 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:39:04 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:39:05 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:39:10 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:39:38 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:39:39 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:39:43 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:39:44 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:39:49 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:40:17 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:40:18 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:40:23 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:40:24 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:40:29 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:40:59 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:41:09 UTC 2023 - featureCounts finished running!
+Sun Aug 20 16:41:09 UTC 2023 - 0 minutes and 52 seconds elapsed.
+Sun Aug 20 16:51:44 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:51:49 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:51:51 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:51:56 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Sun Aug 20 16:52:39 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:52:39 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:52:39 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:52:48 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:52:48 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:52:48 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:52:51 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:52:51 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:52:51 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:53:00 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sun Aug 20 16:53:00 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sun Aug 20 16:53:00 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sun Aug 20 16:58:51 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 16:58:57 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 16:58:58 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 16:59:03 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 16:59:34 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 16:59:43 UTC 2023 - featureCounts finished running!
+Sun Aug 20 16:59:43 UTC 2023 - 0 minutes and 52 seconds elapsed.
+Sun Aug 20 17:00:08 UTC 2023 - Cleared the generated folder for new execution!
+Sun Aug 20 17:00:13 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Aug 20 17:00:14 UTC 2023 - Trimmomatic finished running!
+Sun Aug 20 17:00:20 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sun Aug 20 17:00:49 UTC 2023 - HISAT2 finished running!
+Sun Aug 20 17:01:15 UTC 2023 - featureCounts finished running!
+Sun Aug 20 17:01:15 UTC 2023 - 1 minutes and 7 seconds elapsed.
+Wed Aug 23 22:42:33 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:42:38 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:42:39 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:42:43 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:43:10 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:43:13 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:43:18 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:43:19 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:43:23 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:43:51 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:43:53 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:43:59 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:44:00 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:44:04 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:44:31 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:44:33 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:44:38 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:44:39 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:44:43 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:45:08 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:45:09 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:45:13 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:45:14 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:45:18 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:45:43 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:45:44 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:45:48 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:45:49 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:45:53 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:46:21 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:46:23 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:46:29 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:46:30 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:46:34 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:47:01 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:47:03 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:47:09 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:47:10 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:47:14 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:47:38 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:47:41 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:47:43 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:47:43 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:47:48 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:48:13 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:48:16 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:48:18 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:48:18 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:48:23 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:48:48 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:48:50 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:48:53 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:48:54 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:48:58 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:49:27 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:49:28 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:49:35 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:49:36 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:49:43 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:50:13 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:50:21 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:50:21 UTC 2023 - 0 minutes and 53 seconds elapsed.
+Wed Aug 23 22:50:50 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:50:55 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:50:56 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:51:03 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:51:30 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:51:38 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:51:38 UTC 2023 - 0 minutes and 48 seconds elapsed.
+Wed Aug 23 22:54:09 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:54:13 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:54:14 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:54:18 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:54:47 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:54:54 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:54:54 UTC 2023 - 0 minutes and 45 seconds elapsed.
+Wed Aug 23 22:55:19 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:55:22 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Wed Aug 23 22:55:23 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:55:27 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Wed Aug 23 22:55:55 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:56:02 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:56:02 UTC 2023 - 0 minutes and 43 seconds elapsed.
+Wed Aug 23 22:56:09 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:56:15 UTC 2023 - Finished running fastqc for demo_50per.fastq
+Wed Aug 23 22:56:16 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:56:23 UTC 2023 - Finished running fastqc for trimmed file demo_50per_trimmed.fastq
+624968 reads; of these:
+  624968 (100.00%) were unpaired; of these:
+    42841 (6.85%) aligned 0 times
+    541869 (86.70%) aligned exactly 1 time
+    40258 (6.44%) aligned >1 times
+93.15% overall alignment rate
+Wed Aug 23 22:57:05 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:57:12 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:57:12 UTC 2023 - 1 minutes and 3 seconds elapsed.
+Wed Aug 23 22:57:19 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:57:25 UTC 2023 - Finished running fastqc for demo_50per.fastq
+Wed Aug 23 22:57:27 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:57:32 UTC 2023 - Finished running fastqc for trimmed file demo_50per_trimmed.fastq
+624968 reads; of these:
+  624968 (100.00%) were unpaired; of these:
+    42841 (6.85%) aligned 0 times
+    541869 (86.70%) aligned exactly 1 time
+    40258 (6.44%) aligned >1 times
+93.15% overall alignment rate
+Wed Aug 23 22:58:13 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:58:20 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:58:20 UTC 2023 - 1 minutes and 1 seconds elapsed.
+Wed Aug 23 22:58:29 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 22:58:36 UTC 2023 - Finished running fastqc for demo_75per.fastq
+Wed Aug 23 22:58:38 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 22:58:45 UTC 2023 - Finished running fastqc for trimmed file demo_75per_trimmed.fastq
+937318 reads; of these:
+  937318 (100.00%) were unpaired; of these:
+    65310 (6.97%) aligned 0 times
+    811388 (86.56%) aligned exactly 1 time
+    60620 (6.47%) aligned >1 times
+93.03% overall alignment rate
+Wed Aug 23 22:59:40 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 22:59:48 UTC 2023 - featureCounts finished running!
+Wed Aug 23 22:59:48 UTC 2023 - 1 minutes and 19 seconds elapsed.
+Wed Aug 23 22:59:54 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 23:00:01 UTC 2023 - Finished running fastqc for demo_75per.fastq
+Wed Aug 23 23:00:03 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 23:00:09 UTC 2023 - Finished running fastqc for trimmed file demo_75per_trimmed.fastq
+937318 reads; of these:
+  937318 (100.00%) were unpaired; of these:
+    65310 (6.97%) aligned 0 times
+    811388 (86.56%) aligned exactly 1 time
+    60620 (6.47%) aligned >1 times
+93.03% overall alignment rate
+Wed Aug 23 23:01:04 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 23:01:12 UTC 2023 - featureCounts finished running!
+Wed Aug 23 23:01:12 UTC 2023 - 1 minutes and 18 seconds elapsed.
+Wed Aug 23 23:01:19 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 23:01:27 UTC 2023 - Finished running fastqc for demo.fastq
+Wed Aug 23 23:01:29 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 23:01:38 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+1249800 reads; of these:
+  1249800 (100.00%) were unpaired; of these:
+    86563 (6.93%) aligned 0 times
+    1082380 (86.60%) aligned exactly 1 time
+    80857 (6.47%) aligned >1 times
+93.07% overall alignment rate
+Wed Aug 23 23:02:45 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 23:02:54 UTC 2023 - featureCounts finished running!
+Wed Aug 23 23:02:54 UTC 2023 - 1 minutes and 35 seconds elapsed.
+Wed Aug 23 23:03:04 UTC 2023 - Cleared the generated folder for new execution!
+Wed Aug 23 23:03:12 UTC 2023 - Finished running fastqc for demo.fastq
+Wed Aug 23 23:03:14 UTC 2023 - Trimmomatic finished running!
+Wed Aug 23 23:03:23 UTC 2023 - Finished running fastqc for trimmed file demo_trimmed.fastq
+1249800 reads; of these:
+  1249800 (100.00%) were unpaired; of these:
+    86563 (6.93%) aligned 0 times
+    1082380 (86.60%) aligned exactly 1 time
+    80857 (6.47%) aligned >1 times
+93.07% overall alignment rate
+Wed Aug 23 23:04:31 UTC 2023 - HISAT2 finished running!
+Wed Aug 23 23:04:40 UTC 2023 - featureCounts finished running!
+Wed Aug 23 23:04:40 UTC 2023 - 1 minutes and 36 seconds elapsed.
+Sat Sep  2 17:12:14 UTC 2023 - Cleared the generated folder for new execution!
+Sat Sep  2 17:12:19 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Sep  2 17:12:20 UTC 2023 - Trimmomatic finished running!
+Sat Sep  2 17:12:23 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sat Sep  2 17:17:54 UTC 2023 - Cleared the generated folder for new execution!
+Sat Sep  2 17:18:01 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Sep  2 17:18:02 UTC 2023 - Trimmomatic finished running!
+Sat Sep  2 17:18:08 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Sep  2 17:18:45 UTC 2023 - Cleared the generated folder for new execution!
+Sat Sep  2 17:18:47 UTC 2023 - HISAT2 finished running!
+Sat Sep  2 17:18:51 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Sep  2 17:18:53 UTC 2023 - Trimmomatic finished running!
+Sat Sep  2 17:18:58 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Sat Sep  2 17:19:35 UTC 2023 - HISAT2 finished running!
+Sat Sep  2 17:19:46 UTC 2023 - featureCounts finished running!
+Sat Sep  2 17:19:46 UTC 2023 - 1 minutes and 1 seconds elapsed.
+Sat Sep  2 17:22:10 UTC 2023 - Cleared the generated folder for new execution!
+Sat Sep  2 17:22:15 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sat Sep  2 17:22:16 UTC 2023 - Trimmomatic finished running!
+Sat Sep  2 17:22:20 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Mon Sep  4 15:21:57 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 15:22:00 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 15:22:01 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 15:22:04 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 15:22:32 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 15:22:33 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 15:22:36 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 15:22:37 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 15:22:41 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 15:23:09 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 15:23:12 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 15:23:17 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 15:23:18 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 15:23:24 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Mon Sep  4 15:32:13 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 15:32:17 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 15:32:18 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 15:32:21 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 15:32:48 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 15:32:55 UTC 2023 - featureCounts finished running!
+Mon Sep  4 15:32:55 UTC 2023 - 0 minutes and 42 seconds elapsed.
+Mon Sep  4 16:14:49 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 16:14:54 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 16:14:55 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 16:14:59 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 16:15:29 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 16:15:36 UTC 2023 - featureCounts finished running!
+Mon Sep  4 16:15:36 UTC 2023 - 0 minutes and 47 seconds elapsed.
+Mon Sep  4 16:17:54 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 16:17:59 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 16:18:00 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 16:18:04 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 16:18:33 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 16:18:41 UTC 2023 - featureCounts finished running!
+Mon Sep  4 16:18:41 UTC 2023 - 0 minutes and 47 seconds elapsed.
+Mon Sep  4 16:27:25 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 16:27:31 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 16:27:32 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 16:27:36 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Mon Sep  4 16:36:17 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 16:36:22 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 16:36:23 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 16:36:28 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 16:36:56 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 16:37:03 UTC 2023 - featureCounts finished running!
+Mon Sep  4 16:37:03 UTC 2023 - 0 minutes and 46 seconds elapsed.
+Mon Sep  4 17:16:34 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:16:39 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:16:39 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:16:44 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 17:17:11 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 17:17:18 UTC 2023 - featureCounts finished running!
+Mon Sep  4 17:17:18 UTC 2023 - 0 minutes and 44 seconds elapsed.
+Mon Sep  4 17:22:29 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:22:33 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:22:34 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:22:37 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+312482 reads; of these:
+  312482 (100.00%) were unpaired; of these:
+    21302 (6.82%) aligned 0 times
+    271100 (86.76%) aligned exactly 1 time
+    20080 (6.43%) aligned >1 times
+93.18% overall alignment rate
+Mon Sep  4 17:23:06 UTC 2023 - HISAT2 finished running!
+Mon Sep  4 17:23:14 UTC 2023 - featureCounts finished running!
+Mon Sep  4 17:23:14 UTC 2023 - 0 minutes and 45 seconds elapsed.
+Mon Sep  4 17:28:11 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:28:15 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:28:16 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:28:19 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Mon Sep  4 17:28:40 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:28:44 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:28:45 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:28:51 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Mon Sep  4 17:29:07 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:29:12 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:29:13 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:29:17 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Mon Sep  4 17:29:35 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:29:40 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:29:41 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:29:47 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Killed
+(ERR): hisat2-align exited with value 137
+Mon Sep  4 17:30:06 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:30:06 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 17:30:12 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:30:12 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 17:30:13 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:30:13 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 17:30:19 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Mon Sep  4 17:30:19 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Mon Sep  4 22:19:32 UTC 2023 - Cleared the generated folder for new execution!
+Mon Sep  4 22:19:37 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Mon Sep  4 22:19:38 UTC 2023 - Trimmomatic finished running!
+Mon Sep  4 22:19:42 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
