@@ -157,7 +157,7 @@ func (h *Handler) SaveWorkflow(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "No space Available", http.StatusUnavailableForLegalReasons)
 		return
 	}
-
+	wf.ReceivedAt = time.Now()
 	if _, err := h.workflowStore.SaveWorkflow(ctx, &wf); err != nil {
 		http.Error(w, "Failed to save workflow", http.StatusInternalServerError)
 		return

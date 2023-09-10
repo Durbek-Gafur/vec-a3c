@@ -166,7 +166,7 @@ func (s *service) sendCompletionRequest(wf *store.Workflow) error {
 		return err
 	}
 	// add to config and read from env variable
-	resp, err := http.Post("https://dgvkh-scheduler.nrp-nautilus.io:8090/workflow", "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post("https://dgvkh-scheduler.nrp-nautilus.io/workflow", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Printf("Failed to send completed wf to server: %s", bytes.NewBuffer(jsonData))
 		return err

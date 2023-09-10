@@ -10,7 +10,7 @@ db_service_name: ven_name + "-db-service"
 ingress_name: ven_name + "-backend-ingress"
 ingress_host: "dgvkh-"+ven_name+".nrp-nautilus.io"
 
-backend_image: "39dj29dl2d9l2/vec-ven:11"
+backend_image: "39dj29dl2d9l2/vec-ven:12"
 db_image: "39dj29dl2d9l2/ven-db:2.1"
 
 container_port: 8080
