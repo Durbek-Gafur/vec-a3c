@@ -121,7 +121,7 @@ func FetchAndPopulateData(venInfo *store.VENInfo) error {
 	venInfo.PreferenceList = GeneratePreferenceList()
 
 	// Generating random Trust Score
-	venInfo.TrustScore = strconv.FormatFloat(rand.Float64(), 'e', -1, 64)
+	venInfo.TrustScore = fmt.Sprintf("%.2f", rand.Float64())
 
 	return nil
 }
