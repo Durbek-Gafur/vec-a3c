@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"scheduler-node/internal/api"
+	"scheduler-node/internal/scheduler"
 	"scheduler-node/internal/seeder"
 	"scheduler-node/internal/store"
 
@@ -33,10 +34,19 @@ func main() {
 		log.Fatalf("Failed to populate database: %v", err)
 	}
 
+	if err := startScheduler(ctx, mysqlStore); err != nil {
+		log.Fatalf("Failed to start scheduler: %v", err)
+	}
+
 	server := startServer(mysqlStore)
 	waitForShutdown(server)
 }
 
+func startScheduler(ctx context.Context, store *store.MySQLStore) error {
+	schedulerService := scheduler.NewSchedulerService(store, store, store)
+	go schedulerService.StartScheduling(ctx)
+	return nil
+}
 func initMySQLStore(cfg *Config) (*store.MySQLStore, error) {
 	dsn := cfg.MySQLUser + ":" + cfg.MySQLPassword + "@tcp(" + cfg.MySQLHost + ":" + cfg.MySQLPort + ")/" + cfg.MySQLDatabase + "?parseTime=true"
 	return store.NewMySQLStore(dsn)

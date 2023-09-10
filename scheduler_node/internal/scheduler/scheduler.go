@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"scheduler-node/internal/store"
+	"strings"
 	"time"
 )
 
@@ -21,12 +22,14 @@ type Scheduler interface {
 type SchedulerService struct {
 	queueStore store.QueueStore
 	venStore   store.VENStore
+	wfStore    store.WorkflowStore
 }
 
-func NewSchedulerService(queueStore store.QueueStore, venStore store.VENStore) *SchedulerService {
+func NewSchedulerService(queueStore store.QueueStore, venStore store.VENStore, wfStore store.WorkflowStore) *SchedulerService {
 	return &SchedulerService{
 		queueStore: queueStore,
 		venStore:   venStore,
+		wfStore:    wfStore,
 	}
 }
 
@@ -43,14 +46,6 @@ func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo
 		Type: workflow.Type,
 	}
 
-	// If ExpectedExecutionTime is a valid time string, convert it to seconds as duration
-	if workflow.ExpectedExecutionTime.Valid {
-		duration, err := time.ParseDuration(workflow.ExpectedExecutionTime.String)
-		if err == nil {
-			submitWorkflow.Duration = int(duration.Seconds())
-		}
-	}
-
 	// Marshal the workflow into JSON
 	body, err := json.Marshal(submitWorkflow)
 	if err != nil {
@@ -65,13 +60,19 @@ func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo
 	defer resp.Body.Close()
 
 	// Check the response status
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode == http.StatusUnavailableForLegalReasons {
+		return fmt.Errorf("unexpected status code: %v", resp.StatusCode)
+	}
+
+	// Check the response status
+	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("unexpected status code: %v", resp.StatusCode)
 	}
 
 	// If the response is OK, enqueue the workflow
-	err = s.queueStore.AssignWorkflow(ctx, workflow.ID, ven.Name)
+	err = s.wfStore.AssignWorkflow(ctx, workflow.Name, ven.Name)
 	if err != nil {
+		log.Printf("Failed to AssignWorkflow: %v", err)
 		return err
 	}
 
@@ -113,14 +114,27 @@ func (s *SchedulerService) processUnscheduledWorkflows(ctx context.Context) erro
 	}
 
 	for _, wf := range workflows {
-		for _, ven := range vens {
+		for i, ven := range vens {
+			// TODO add logic if queue size is not 0 or less than 1
+			if ven.CurrentQueueSize == "0" {
+				break
+			}
 			if err := s.SubmitWorkflow(ctx, ven, wf); err != nil {
 				// log error and perhaps continue or break based on logic
+				if strings.Contains(err.Error(), fmt.Sprint(http.StatusUnavailableForLegalReasons)) {
+					log.Printf("Queue is full for ven %s", ven.Name)
+					vens[i].CurrentQueueSize = "0"
+					break
+				}
+				log.Printf("Failed to submit wf %s with ven %s: %v", wf.Name, ven.Name, err)
+				continue
 			} else {
 				// Successfully scheduled, move to next workflow
+				log.Printf("Successfully scheduled wf %s with ven %s", wf.Name, ven.Name)
 				break
 			}
 		}
 	}
+	log.Printf("Successfully completed schedule cycle")
 	return nil
 }

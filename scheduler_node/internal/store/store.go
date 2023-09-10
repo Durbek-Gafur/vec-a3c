@@ -16,7 +16,7 @@ type WorkflowStore interface {
 	SaveWorkflow(ctx context.Context, WorkflowInfo *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflowByName(ctx context.Context, w *WorkflowInfo) error
-	AssignWorkflow(ctx context.Context, workflowID int, venName string) error
+	AssignWorkflow(ctx context.Context, workflowName string, venName string) error
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error
 	CountWorkflows() (int, error)
@@ -39,7 +39,6 @@ type QueueStore interface {
 	Peek(ctx context.Context) (*WorkflowInfo, error)
 	GetQueue(ctx context.Context) ([]WorkflowInfo, error)
 	GetPendingQueue(ctx context.Context) ([]WorkflowInfo, error)
-	AssignWorkflow(ctx context.Context, workflowID int, venName string) error
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error
 }

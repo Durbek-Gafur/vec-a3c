@@ -271,7 +271,7 @@ func (ds *dbSeeder) UpdateQueueSizePeriodically(ctx context.Context) {
 			var wg sync.WaitGroup
 			for _, venInfo := range venInfos {
 				wg.Add(1) // Increment the counter before starting the goroutine
-				log.Printf("Initiating fetch for %s", venInfo.URL)
+				// log.Printf("Initiating fetch for %s", venInfo.URL)
 
 				go func(venInfo store.VENInfo) { // Note: Passing `venInfo` as a parameter to avoid data race
 					defer wg.Done() // Decrement the counter once the goroutine finishes
@@ -304,7 +304,7 @@ func (ds *dbSeeder) UpdateQueueSizePeriodically(ctx context.Context) {
 			}
 
 			wg.Wait() // Wait until all goroutines are finished
-			log.Println("All goroutines completed for this tick")
+			log.Println("VEN queue-size is updated")
 
 			// Check elapsed time to avoid overlapping ticks.
 			elapsed := time.Since(start)

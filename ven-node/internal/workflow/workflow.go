@@ -129,10 +129,10 @@ func (s *service) StartExecution(ctx context.Context, workflowID int) error {
 }
 
 type WorkflowInfoSend struct {
-	Name                string `json:"name"`
-	ActualExecutionTime string `json:"actualExecutionTime"`
-	ProcessingStartedAt string `json:"processingStartedAt"`
-	CompletedAt         string `json:"completedAt"`
+	Name               string `json:"Name"`
+	Duration           string `json:"Duration"`
+	StartedExecutionAt string `json:"StartedExecutionAt"`
+	CompletedAt        string `json:"CompletedAt"`
 }
 
 func ConvertToWorkflowInfoSend(wfInfo *store.Workflow) WorkflowInfoSend {
@@ -147,13 +147,13 @@ func ConvertToWorkflowInfoSend(wfInfo *store.Workflow) WorkflowInfoSend {
 	}
 
 	// Convert sql.NullString fields to string
-	actualExecutionTime = string(wfInfo.Duration)
+	actualExecutionTime = fmt.Sprint(wfInfo.Duration)
 
 	return WorkflowInfoSend{
-		Name:                wfInfo.Name,
-		ActualExecutionTime: actualExecutionTime,
-		ProcessingStartedAt: processingStartedAt,
-		CompletedAt:         completedAt,
+		Name:               wfInfo.Name,
+		Duration:           actualExecutionTime,
+		StartedExecutionAt: processingStartedAt,
+		CompletedAt:        completedAt,
 	}
 }
 
