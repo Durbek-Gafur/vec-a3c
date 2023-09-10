@@ -45,11 +45,24 @@ Update the /cue/ven_template.cue file with the link to the latest database image
 ## Building images
 
 
-docker build -t 39dj29dl2d9l2/vec-scheduler:6 .
-docker push 39dj29dl2d9l2/vec-scheduler:6
+docker build -t 39dj29dl2d9l2/vec-scheduler:9 .
+docker push 39dj29dl2d9l2/vec-scheduler:9
 
 docker build -t 39dj29dl2d9l2/vec-scheduler-db:11 .
 docker push 39dj29dl2d9l2/vec-scheduler-db:11
 
 or if image already exists:
 docker tag my_app:latest john/myrepo:v1
+
+## Test command
+```
+curl -X POST http://localhost:8090/workflow \
+                                                       -H "Content-Type: application/json" \
+                                                       -d '{
+                                                       "Name": "workflow1",
+                                                       "Duration": "5m30s",
+                                                       "StartedExecutionAt": "2023-07-23T12:34:56Z",
+                                                       "CompletedAt": "2023-07-23T12:40:26Z"
+                                                   }'
+
+```

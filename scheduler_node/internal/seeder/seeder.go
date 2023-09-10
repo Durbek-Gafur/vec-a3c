@@ -17,6 +17,21 @@ import (
 	"scheduler-node/internal/store"
 )
 
+type Seeder interface {
+	PopulateVENInfo() error
+	PopulateWorkflows() error
+	UpdateQueueSizePeriodically(ctx context.Context)
+}
+type dbSeeder struct {
+	venStore    store.VENStore
+	wfStore     store.WorkflowStore
+	urlProvider URLProvider
+}
+
+func NewDBSeeder(venStore store.VENStore, wfStore store.WorkflowStore, urlProvider URLProvider) *dbSeeder {
+	return &dbSeeder{venStore: venStore, wfStore: wfStore, urlProvider: urlProvider}
+}
+
 type ResourceSpec struct {
 	RAM       string `json:"RAM"`
 	CORE      string `json:"CORE"`
@@ -27,10 +42,9 @@ type CurrentQueueSize struct {
 	SIZE int `json:"size"`
 }
 
-func PopulateVENInfo(db *sql.DB, urlProvider URLProvider) error {
+func (ds *dbSeeder) PopulateVENInfo() error {
 	// Check if the table is empty
-	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM ven_info").Scan(&count)
+	count, err := ds.venStore.CountVENInfo()
 	if err != nil {
 		return err
 	}
@@ -46,21 +60,16 @@ func PopulateVENInfo(db *sql.DB, urlProvider URLProvider) error {
 		return fmt.Errorf("invalid VEN_COUNT: %w", err)
 	}
 
-	stmt, err := db.Prepare(`INSERT INTO ven_info 
-    (name, url, ram, core, max_queue_size, current_queue_size, preference_list, trust_score, max_queue_size_last_updated, current_queue_size_last_updated, trust_score_last_updated) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
 	for i := 1; i <= venCount; i++ {
 		venName := "ven" + strconv.Itoa(i)
-		url := urlProvider.GetURL(venName)
+		url := ds.urlProvider.GetURL(venName)
 
 		var venInfo store.VENInfo
 		venInfo.Name = venName
 		venInfo.URL = url
+		venInfo.CurrentQueueSizeUpdated = time.Now()
+		venInfo.MaxQueueSizeUpdated = time.Now()
+		venInfo.TrustScoreUpdated = time.Now()
 
 		venInfoChan := make(chan store.VENInfo)
 		errChan := make(chan error)
@@ -84,12 +93,7 @@ func PopulateVENInfo(db *sql.DB, urlProvider URLProvider) error {
 			return err
 		}
 
-		preferenceListStr, err := json.Marshal(venInfo.PreferenceList)
-		if err != nil {
-			return fmt.Errorf("failed to marshal preference list: %w", err)
-		}
-
-		if _, err := stmt.Exec(venInfo.Name, venInfo.URL, venInfo.RAM, venInfo.Core, venInfo.MaxQueueSize, venInfo.CurrentQueueSize, string(preferenceListStr), venInfo.TrustScore, time.Now(), time.Now(), time.Now()); err != nil {
+		if err := ds.venStore.InsertVENInfo(venInfo); err != nil {
 			return err
 		}
 	}
@@ -166,10 +170,9 @@ func GeneratePreferenceList() string {
 }
 
 // PopulateWorkflows populates the workflow_info table with the provided workflows.
-func PopulateWorkflows(db *sql.DB) error {
+func (ds *dbSeeder) PopulateWorkflows() error {
 	// Check if the table is empty
-	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM workflow_info").Scan(&count)
+	count, err := ds.wfStore.CountWorkflows()
 	if err != nil {
 		return err
 	}
@@ -198,20 +201,16 @@ func PopulateWorkflows(db *sql.DB) error {
 
 	for i := 1; i <= maxWf; i++ {
 		if i-1 < len(arrivalTimes) {
-			createdAt := arrivalTimes[i-1]
-
-			_, err := db.Exec(`
-				INSERT INTO workflow_info 
-				(name, type, ram, core, policy, submitted_by, created_at) 
-				VALUES (?, ?, ?, ?, ?, ?, ?)`,
-				"workflow"+strconv.Itoa(i),         // generate name
-				types[rand.Intn(len(types))],       // pick randomly from types
-				ramList[rand.Intn(len(ramList))],   // pick randomly from ramList
-				coreList[rand.Intn(len(coreList))], // pick randomly from coreList
-				policies[rand.Intn(len(policies))], // pick randomly from policies
-				userList[rand.Intn(len(userList))], // pick randomly from userList
-				createdAt,                          // use generated createdAt
-			)
+			wf := &store.WorkflowInfo{
+				Name:        "workflow" + strconv.Itoa(i),
+				Type:        types[rand.Intn(len(types))],
+				RAM:         ramList[rand.Intn(len(ramList))],
+				Core:        coreList[rand.Intn(len(coreList))],
+				Policy:      policies[rand.Intn(len(policies))],
+				SubmittedBy: sql.NullString{String: userList[rand.Intn(len(userList))], Valid: true},
+				CreatedAt:   arrivalTimes[i-1],
+			}
+			err := ds.wfStore.InsertWorkflow(wf)
 
 			if err != nil {
 				log.Printf("Failed to populate workflow: %v", err)
@@ -223,7 +222,7 @@ func PopulateWorkflows(db *sql.DB) error {
 	return nil
 }
 
-func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
+func generateArrivalTimes(startTime, endTime, lambda float64) []sql.NullTime {
 	rand.Seed(2023)
 	interval := 1.0 // in minutes
 
@@ -231,7 +230,7 @@ func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
 	startMinutes := startTime * 60
 	endMinutes := endTime * 60
 
-	var arrivalTimes []time.Time
+	var arrivalTimes []sql.NullTime
 
 	// Generate sequence of inter-arrival times based on exponential distribution
 	for currentTime := startMinutes; currentTime <= endMinutes; {
@@ -240,8 +239,11 @@ func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
 		currentTime += interArrivalTime * interval
 
 		if currentTime <= endMinutes {
-			// Convert to time.Time and append to arrivalTimes
-			arrivalTime := time.Unix(int64(currentTime*60), 0) // convert minutes to seconds
+			// Convert to sql.NullTime and append to arrivalTimes
+			arrivalTime := sql.NullTime{
+				Time:  time.Unix(int64(currentTime*60), 0), // convert minutes to seconds
+				Valid: true,
+			}
 			arrivalTimes = append(arrivalTimes, arrivalTime)
 		}
 	}
@@ -249,14 +251,14 @@ func generateArrivalTimes(startTime, endTime, lambda float64) []time.Time {
 	return arrivalTimes
 }
 
-func UpdateQueueSizePeriodically(ctx context.Context, db *sql.DB, urlProvider URLProvider) {
+func (ds *dbSeeder) UpdateQueueSizePeriodically(ctx context.Context) {
 	log.Println("Starting UpdateQueueSizePeriodically...")
 
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
 	// Generate or fetch VENs
-	venInfos := fetchOrDefineVENs(urlProvider)
+	venInfos := ds.fetchOrDefineVENs()
 	log.Printf("Fetched or defined %d VENs", len(venInfos))
 
 	for {
@@ -294,11 +296,9 @@ func UpdateQueueSizePeriodically(ctx context.Context, db *sql.DB, urlProvider UR
 						return
 					}
 
-					_, err = db.Exec(`UPDATE ven_info SET current_queue_size = ? WHERE name = ?`, queueSize, venInfo.Name)
+					err = ds.venStore.UpdateCurrentQueueSize(venInfo.Name, queueSize)
 					if err != nil {
 						log.Printf("Failed to update queue size in DB for %s: %v", venInfo.Name, err)
-					} else {
-						log.Printf("Successfully updated queue size in DB for %s", venInfo.Name)
 					}
 				}(venInfo) // Passing current `venInfo` as argument
 			}
@@ -322,7 +322,7 @@ func UpdateQueueSizePeriodically(ctx context.Context, db *sql.DB, urlProvider UR
 }
 
 // fetchOrDefineVENs generates a list of VENInfo based on the VEN_COUNT environment variable.
-func fetchOrDefineVENs(urlProvider URLProvider) []store.VENInfo {
+func (ds *dbSeeder) fetchOrDefineVENs() []store.VENInfo {
 	venCount, err := strconv.Atoi(os.Getenv("VEN_COUNT"))
 	if err != nil {
 		log.Fatalf("Failed to fetch VEN_COUNT: %v", err)
@@ -332,7 +332,7 @@ func fetchOrDefineVENs(urlProvider URLProvider) []store.VENInfo {
 
 	for i := 1; i <= venCount; i++ {
 		venName := "ven" + strconv.Itoa(i)
-		url := urlProvider.GetURL(venName)
+		url := ds.urlProvider.GetURL(venName)
 
 		var venInfo store.VENInfo
 		venInfo.Name = venName

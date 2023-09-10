@@ -151,3 +151,28 @@ func (s *MySQLStore) CompleteWorkflow(ctx context.Context, id int) error {
 	_, err := s.db.ExecContext(ctx, query, id)
 	return err
 }
+
+func (store *MySQLStore) CountWorkflows() (int, error) {
+	var count int
+	err := store.db.QueryRow("SELECT COUNT(*) FROM ven_info").Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (store *MySQLStore) InsertWorkflow(wf *WorkflowInfo) error {
+	_, err := store.db.Exec(`
+		INSERT INTO workflow_info 
+		(name, type, ram, core, policy, submitted_by, created_at) 
+		VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		wf.Name,
+		wf.Type,
+		wf.RAM,
+		wf.Core,
+		wf.Policy,
+		wf.SubmittedBy,
+		wf.CreatedAt,
+	)
+	return err
+}
