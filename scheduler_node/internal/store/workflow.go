@@ -154,7 +154,7 @@ func (s *MySQLStore) CompleteWorkflow(ctx context.Context, id int) error {
 
 func (store *MySQLStore) CountWorkflows() (int, error) {
 	var count int
-	err := store.db.QueryRow("SELECT COUNT(*) FROM ven_info").Scan(&count)
+	err := store.db.QueryRow("SELECT COUNT(*) FROM workflow_info").Scan(&count)
 	if err != nil {
 		return 0, err
 	}
