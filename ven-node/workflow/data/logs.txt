@@ -726,3 +726,7 @@ Mon Sep  4 22:19:32 UTC 2023 - Cleared the generated folder for new execution!
 Mon Sep  4 22:19:37 UTC 2023 - Finished running fastqc for demo_25per.fastq
 Mon Sep  4 22:19:38 UTC 2023 - Trimmomatic finished running!
 Mon Sep  4 22:19:42 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq
+Sun Sep 10 14:32:14 UTC 2023 - Cleared the generated folder for new execution!
+Sun Sep 10 14:32:20 UTC 2023 - Finished running fastqc for demo_25per.fastq
+Sun Sep 10 14:32:21 UTC 2023 - Trimmomatic finished running!
+Sun Sep 10 14:32:25 UTC 2023 - Finished running fastqc for trimmed file demo_25per_trimmed.fastq

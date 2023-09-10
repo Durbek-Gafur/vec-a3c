@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"scheduler-node/internal/store"
@@ -256,45 +257,65 @@ func UpdateQueueSizePeriodically(ctx context.Context, db *sql.DB, urlProvider UR
 
 	// Generate or fetch VENs
 	venInfos := fetchOrDefineVENs(urlProvider)
+	log.Printf("Fetched or defined %d VENs", len(venInfos))
 
 	for {
 		select {
 		case <-ticker.C:
 			start := time.Now()
+			log.Println("New tick started")
 
+			// Using a WaitGroup to ensure all parallel tasks are completed
+			var wg sync.WaitGroup
 			for _, venInfo := range venInfos {
-				var retryCount int
-				var queueSize string
-				var err error
+				wg.Add(1) // Increment the counter before starting the goroutine
+				log.Printf("Initiating fetch for %s", venInfo.URL)
 
-				// Retry fetching the queue size up to 3 times with 1-second intervals.
-				for retryCount < 3 {
-					queueSize, err = FetchQueueSize(venInfo.URL + "/queue-size")
-					if err == nil {
-						break
+				go func(venInfo store.VENInfo) { // Note: Passing `venInfo` as a parameter to avoid data race
+					defer wg.Done() // Decrement the counter once the goroutine finishes
+
+					var retryCount int
+					var queueSize string
+					var err error
+
+					// Retry fetching the queue size up to 3 times with 1-second intervals.
+					for retryCount < 3 {
+						queueSize, err = FetchQueueSize(venInfo.URL + "/queue-size")
+						if err == nil {
+							break
+						}
+						log.Printf("Retry %d failed for %s: %v", retryCount+1, venInfo.URL, err)
+						retryCount++
+						time.Sleep(1 * time.Second)
 					}
-					retryCount++
-					time.Sleep(1 * time.Second)
-				}
 
-				if err != nil {
-					log.Printf("Failed to fetch queue size for %s after retries: %v", venInfo.URL, err)
-					continue
-				}
+					if err != nil {
+						log.Printf("Failed to fetch queue size for %s after retries: %v", venInfo.URL, err)
+						return
+					}
 
-				_, err = db.Exec(`UPDATE ven_info SET current_queue_size = ? WHERE name = ?`, queueSize, venInfo.Name)
-				if err != nil {
-					log.Printf("Failed to update queue size in DB for %s: %v", venInfo.Name, err)
-				}
+					_, err = db.Exec(`UPDATE ven_info SET current_queue_size = ? WHERE name = ?`, queueSize, venInfo.Name)
+					if err != nil {
+						log.Printf("Failed to update queue size in DB for %s: %v", venInfo.Name, err)
+					} else {
+						log.Printf("Successfully updated queue size in DB for %s", venInfo.Name)
+					}
+				}(venInfo) // Passing current `venInfo` as argument
 			}
+
+			wg.Wait() // Wait until all goroutines are finished
+			log.Println("All goroutines completed for this tick")
 
 			// Check elapsed time to avoid overlapping ticks.
 			elapsed := time.Since(start)
 			if elapsed >= 5*time.Second {
 				log.Println("Skipped tick due to overlap")
+			} else {
+				log.Printf("Tick completed in %v", elapsed)
 			}
 
 		case <-ctx.Done():
+			log.Println("Context is done. Exiting UpdateQueueSizePeriodically...")
 			return
 		}
 	}
