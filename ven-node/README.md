@@ -56,16 +56,15 @@ n" -d '{
 
 
 
-curl -X POST --http1.1 https://dgvkh-ven1.nrp-nautilus.io/workflow -H "Content-Type: application/json" -d '{
-    "name": "workflow5",
+curl -X POST --http1.1 https://dgvkh-ven7.nrp-nautilus.io/workflow -H "Content-Type: application/json" -d '{
+    "name": "workflow15",
     "type": "demo_50per.fastq",
-    "received_at": "2023-07-23T12:34:56Z"
 }'
 
 curl -X POST https://dgvkh-scheduler.nrp-nautilus.io/workflow \
                                                        -H "Content-Type: application/json" \
                                                        -d '{
-                                                       "Name": "workflow1",
+                                                       "Name": "workflow11",
                                                        "Duration": "5m30s",
                                                        "StartedExecutionAt": "2023-07-23T12:34:56Z",
                                                        "CompletedAt": "2023-07-23T12:40:26Z"

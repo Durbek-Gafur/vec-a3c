@@ -61,3 +61,37 @@ func (s *MySQLStore) GetQueue(ctx context.Context) ([]WorkflowInfo, error) {
 
 	return workflows, nil
 }
+
+// GetQueue gets all workflows that are 'pending' (not assigned)
+func (s *MySQLStore) GetPendingQueue(ctx context.Context) ([]WorkflowInfo, error) {
+	// get QUEUE_SIZE from environment variable
+	queueSizeStr := os.Getenv("QUEUE_SIZE")
+	if queueSizeStr == "" {
+		return nil, fmt.Errorf("QUEUE_SIZE environment variable not set")
+	}
+
+	// convert it to integer
+	queueSize, err := strconv.Atoi(queueSizeStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid QUEUE_SIZE value: %v", err)
+	}
+
+	// use as a limit in SQL query
+	rows, err := s.db.QueryContext(ctx, "SELECT name,created_at, type, ram, core, policy, expected_execution_time, actual_execution_time, assigned_vm, assigned_at, completed_at, submitted_by, status, last_updated FROM workflow_info WHERE status = 'pending' ORDER BY id ASC LIMIT ?", queueSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	workflows := []WorkflowInfo{}
+	for rows.Next() {
+		var wf WorkflowInfo
+		err := rows.Scan(&wf.Name, &wf.CreatedAt, &wf.Type, &wf.RAM, &wf.Core, &wf.Policy, &wf.ExpectedExecutionTime, &wf.ActualExecutionTime, &wf.AssignedVM, &wf.AssignedAt, &wf.CompletedAt, &wf.SubmittedBy, &wf.Status, &wf.LastUpdated)
+		if err != nil {
+			return nil, err
+		}
+		workflows = append(workflows, wf)
+	}
+
+	return workflows, nil
+}

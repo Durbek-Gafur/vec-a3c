@@ -22,7 +22,7 @@ func TestSchedulerService_SubmitWorkflow(t *testing.T) {
 	mockQueueStore := store_mock.NewMockQueueStore(ctrl)
 
 	// Create SchedulerService with the mocked QueueStore
-	s := NewSchedulerService(mockQueueStore)
+	s := NewSchedulerService(mockQueueStore, nil)
 
 	ctx := context.TODO()
 	ven := store.VENInfo{URL: "http://durbek.ga"}

@@ -231,6 +231,21 @@ func (mr *MockQueueStoreMockRecorder) CompleteWorkflow(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteWorkflow", reflect.TypeOf((*MockQueueStore)(nil).CompleteWorkflow), arg0, arg1)
 }
 
+// GetPendingQueue mocks base method.
+func (m *MockQueueStore) GetPendingQueue(arg0 context.Context) ([]store.WorkflowInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPendingQueue", arg0)
+	ret0, _ := ret[0].([]store.WorkflowInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPendingQueue indicates an expected call of GetPendingQueue.
+func (mr *MockQueueStoreMockRecorder) GetPendingQueue(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPendingQueue", reflect.TypeOf((*MockQueueStore)(nil).GetPendingQueue), arg0)
+}
+
 // GetQueue mocks base method.
 func (m *MockQueueStore) GetQueue(arg0 context.Context) ([]store.WorkflowInfo, error) {
 	m.ctrl.T.Helper()

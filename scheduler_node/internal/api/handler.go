@@ -214,6 +214,7 @@ func (h *Handler) UpdateWorkflowByName(w http.ResponseWriter, r *http.Request) {
 	}
 	// Map the UpdateWorkflowInfo to WorkflowInfo and use the workflowStore
 	// to update the workflow (assuming an UpdateWorkflow method exists)
+	// TODO Update workflow not only at completion but also at assignemnet when wf is picked up from queue of node
 	workflow := store.WorkflowInfo{
 		Name:                updateInfo.Name,
 		ActualExecutionTime: stringToNullString(updateInfo.Duration),

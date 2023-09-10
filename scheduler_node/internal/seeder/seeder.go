@@ -184,7 +184,7 @@ func (ds *dbSeeder) PopulateWorkflows() error {
 	}
 	rand.Seed(time.Now().UnixNano())
 
-	types := []string{"typeA", "typeB"}
+	types := []string{"demo.fastq", "demo_25per.fastq", "demo_50per.fastq", "demo_75per.fastq"}
 	ramList := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"}
 	coreList := []string{"0.5", "1", "1.5", "2", "2.5", "3"}
 	userList := []string{"UserA", "UserB", "UserC", "UserD", "UserE", "UserF", "UserG", "UserH", "UserI", "UserJ"}

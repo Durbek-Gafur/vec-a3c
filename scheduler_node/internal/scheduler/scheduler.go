@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"scheduler-node/internal/store"
 	"time"
@@ -17,20 +18,17 @@ type Scheduler interface {
 	SubmitWorkflow(ctx context.Context, ven store.VENInfo, workflow store.WorkflowInfo) error
 }
 
-
-type SchedulerService struct{
+type SchedulerService struct {
 	queueStore store.QueueStore
+	venStore   store.VENStore
 }
 
-func NewSchedulerService(queueStore store.QueueStore) *SchedulerService {
+func NewSchedulerService(queueStore store.QueueStore, venStore store.VENStore) *SchedulerService {
 	return &SchedulerService{
 		queueStore: queueStore,
+		venStore:   venStore,
 	}
 }
-
-
-
-
 
 type WorkflowToBeSent struct {
 	Name     string `json:"name"`
@@ -41,9 +39,8 @@ type WorkflowToBeSent struct {
 func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo, workflow store.WorkflowInfo) error {
 	// Prepare the workflow to submit
 	submitWorkflow := WorkflowToBeSent{
-		Name:     workflow.Name,
-		Type:     workflow.Type,
-		Duration: 0,
+		Name: workflow.Name,
+		Type: workflow.Type,
 	}
 
 	// If ExpectedExecutionTime is a valid time string, convert it to seconds as duration
@@ -61,7 +58,7 @@ func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo
 	}
 
 	// Send the POST request
-	resp, err := http.Post(ven.URL, "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(ven.URL+"/workflow", "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
@@ -73,10 +70,57 @@ func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo
 	}
 
 	// If the response is OK, enqueue the workflow
-	err = s.queueStore.AssignWorkflow(ctx, workflow.ID,ven.Name)
+	err = s.queueStore.AssignWorkflow(ctx, workflow.ID, ven.Name)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+const scanInterval = 10 * time.Second // adjust as necessary
+
+func (s *SchedulerService) StartScheduling(ctx context.Context) {
+	ticker := time.NewTicker(scanInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			err := s.processUnscheduledWorkflows(ctx)
+			if err != nil {
+				log.Printf("Failed to processUnscheduledWorkflows: %v", err)
+				return
+			}
+		}
+	}
+}
+
+func (s *SchedulerService) processUnscheduledWorkflows(ctx context.Context) error {
+	// Assume you've methods in your store to get unscheduled workflows and available VENs
+	workflows, err := s.queueStore.GetPendingQueue(ctx)
+	if err != nil {
+		log.Printf("Failed to GetPendingQueue: %v", err)
+		return err
+	}
+
+	vens, err := s.venStore.GetAvailableVEN()
+	if err != nil {
+		log.Printf("Failed to GetVENInfos: %v", err)
+		return err
+	}
+
+	for _, wf := range workflows {
+		for _, ven := range vens {
+			if err := s.SubmitWorkflow(ctx, ven, wf); err != nil {
+				// log error and perhaps continue or break based on logic
+			} else {
+				// Successfully scheduled, move to next workflow
+				break
+			}
+		}
+	}
 	return nil
 }

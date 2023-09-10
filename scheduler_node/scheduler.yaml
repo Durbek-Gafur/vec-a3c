@@ -18,7 +18,7 @@
       spec:
         containers:
           - name: backend
-            image: 39dj29dl2d9l2/vec-scheduler:11
+            image: 39dj29dl2d9l2/vec-scheduler:12
             ports:
               - containerPort: 8080
             env:

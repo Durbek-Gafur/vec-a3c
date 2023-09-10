@@ -26,6 +26,7 @@ type WorkflowStore interface {
 // VENStore handles operations on workflows
 type VENStore interface {
 	GetVENInfos() ([]VENInfo, error)
+	GetAvailableVEN() ([]VENInfo, error)
 	UpdateMaxQueueSize(venName string, newValue string) error
 	UpdateCurrentQueueSize(venName string, newValue string) error
 	UpdateTrustScore(venName string, newValue string) error
@@ -37,7 +38,7 @@ type VENStore interface {
 type QueueStore interface {
 	Peek(ctx context.Context) (*WorkflowInfo, error)
 	GetQueue(ctx context.Context) ([]WorkflowInfo, error)
-
+	GetPendingQueue(ctx context.Context) ([]WorkflowInfo, error)
 	AssignWorkflow(ctx context.Context, workflowID int, venName string) error
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error
