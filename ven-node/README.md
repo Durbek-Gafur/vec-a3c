@@ -40,5 +40,34 @@ Update the /cue/ven_template.cue file with the link to the latest database image
 
 
 ## Building images
-docker build -t 39dj29dl2d9l2/vec-ven:11 .
-docker push 39dj29dl2d9l2/vec-ven:11
+docker build -t 39dj29dl2d9l2/vec-ven:12 .
+docker push 39dj29dl2d9l2/vec-ven:12
+
+## Post workflow
+
+```
+curl -X POST http://localhost:8080/workflow -H "Content-Type: application/jso
+n" -d '{
+            "name": "workflow1",
+            "type": "demo_50per.fastq",
+            "received_at": "2023-07-23T12:34:56Z"
+        }'s
+
+
+
+
+curl -X POST --http1.1 https://dgvkh-ven1.nrp-nautilus.io/workflow -H "Content-Type: application/json" -d '{
+    "name": "workflow5",
+    "type": "demo_50per.fastq",
+    "received_at": "2023-07-23T12:34:56Z"
+}'
+
+curl -X POST https://dgvkh-scheduler.nrp-nautilus.io/workflow \
+                                                       -H "Content-Type: application/json" \
+                                                       -d '{
+                                                       "Name": "workflow1",
+                                                       "Duration": "5m30s",
+                                                       "StartedExecutionAt": "2023-07-23T12:34:56Z",
+                                                       "CompletedAt": "2023-07-23T12:40:26Z"
+                                                   }'
+```
