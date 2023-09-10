@@ -63,6 +63,21 @@ func (mr *MockWorkflowStoreMockRecorder) CompleteWorkflow(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).CompleteWorkflow), arg0, arg1)
 }
 
+// CountWorkflows mocks base method.
+func (m *MockWorkflowStore) CountWorkflows() (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountWorkflows")
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountWorkflows indicates an expected call of CountWorkflows.
+func (mr *MockWorkflowStoreMockRecorder) CountWorkflows() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountWorkflows", reflect.TypeOf((*MockWorkflowStore)(nil).CountWorkflows))
+}
+
 // GetWorkflowByID mocks base method.
 func (m *MockWorkflowStore) GetWorkflowByID(arg0 context.Context, arg1 int) (*store.WorkflowInfo, error) {
 	m.ctrl.T.Helper()
@@ -91,6 +106,20 @@ func (m *MockWorkflowStore) GetWorkflows(arg0 context.Context) ([]store.Workflow
 func (mr *MockWorkflowStoreMockRecorder) GetWorkflows(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkflows", reflect.TypeOf((*MockWorkflowStore)(nil).GetWorkflows), arg0)
+}
+
+// InsertWorkflow mocks base method.
+func (m *MockWorkflowStore) InsertWorkflow(arg0 *store.WorkflowInfo) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertWorkflow", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InsertWorkflow indicates an expected call of InsertWorkflow.
+func (mr *MockWorkflowStoreMockRecorder) InsertWorkflow(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).InsertWorkflow), arg0)
 }
 
 // SaveWorkflow mocks base method.
@@ -135,6 +164,20 @@ func (m *MockWorkflowStore) UpdateWorkflow(arg0 context.Context, arg1 *store.Wor
 func (mr *MockWorkflowStoreMockRecorder) UpdateWorkflow(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateWorkflow", reflect.TypeOf((*MockWorkflowStore)(nil).UpdateWorkflow), arg0, arg1)
+}
+
+// UpdateWorkflowByName mocks base method.
+func (m *MockWorkflowStore) UpdateWorkflowByName(arg0 context.Context, arg1 *store.WorkflowInfo) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateWorkflowByName", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateWorkflowByName indicates an expected call of UpdateWorkflowByName.
+func (mr *MockWorkflowStoreMockRecorder) UpdateWorkflowByName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateWorkflowByName", reflect.TypeOf((*MockWorkflowStore)(nil).UpdateWorkflowByName), arg0, arg1)
 }
 
 // MockQueueStore is a mock of QueueStore interface.
@@ -255,6 +298,21 @@ func (m *MockVENStore) EXPECT() *MockVENStoreMockRecorder {
 	return m.recorder
 }
 
+// CountVENInfo mocks base method.
+func (m *MockVENStore) CountVENInfo() (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountVENInfo")
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountVENInfo indicates an expected call of CountVENInfo.
+func (mr *MockVENStoreMockRecorder) CountVENInfo() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountVENInfo", reflect.TypeOf((*MockVENStore)(nil).CountVENInfo))
+}
+
 // GetVENInfos mocks base method.
 func (m *MockVENStore) GetVENInfos() ([]store.VENInfo, error) {
 	m.ctrl.T.Helper()
@@ -268,4 +326,60 @@ func (m *MockVENStore) GetVENInfos() ([]store.VENInfo, error) {
 func (mr *MockVENStoreMockRecorder) GetVENInfos() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVENInfos", reflect.TypeOf((*MockVENStore)(nil).GetVENInfos))
+}
+
+// InsertVENInfo mocks base method.
+func (m *MockVENStore) InsertVENInfo(arg0 store.VENInfo) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertVENInfo", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InsertVENInfo indicates an expected call of InsertVENInfo.
+func (mr *MockVENStoreMockRecorder) InsertVENInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertVENInfo", reflect.TypeOf((*MockVENStore)(nil).InsertVENInfo), arg0)
+}
+
+// UpdateCurrentQueueSize mocks base method.
+func (m *MockVENStore) UpdateCurrentQueueSize(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCurrentQueueSize", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateCurrentQueueSize indicates an expected call of UpdateCurrentQueueSize.
+func (mr *MockVENStoreMockRecorder) UpdateCurrentQueueSize(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCurrentQueueSize", reflect.TypeOf((*MockVENStore)(nil).UpdateCurrentQueueSize), arg0, arg1)
+}
+
+// UpdateMaxQueueSize mocks base method.
+func (m *MockVENStore) UpdateMaxQueueSize(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMaxQueueSize", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateMaxQueueSize indicates an expected call of UpdateMaxQueueSize.
+func (mr *MockVENStoreMockRecorder) UpdateMaxQueueSize(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMaxQueueSize", reflect.TypeOf((*MockVENStore)(nil).UpdateMaxQueueSize), arg0, arg1)
+}
+
+// UpdateTrustScore mocks base method.
+func (m *MockVENStore) UpdateTrustScore(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTrustScore", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTrustScore indicates an expected call of UpdateTrustScore.
+func (mr *MockVENStoreMockRecorder) UpdateTrustScore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTrustScore", reflect.TypeOf((*MockVENStore)(nil).UpdateTrustScore), arg0, arg1)
 }

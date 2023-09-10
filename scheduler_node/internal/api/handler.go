@@ -220,6 +220,7 @@ func (h *Handler) UpdateWorkflowByName(w http.ResponseWriter, r *http.Request) {
 		// Map Duration to the appropriate field in WorkflowInfo if needed
 		ProcessingStartedAt: startedExecutionAt,
 		CompletedAt:         completedAt,
+		Status:              store.WorkflowStatusDone,
 	}
 
 	err = h.workflowStore.UpdateWorkflowByName(r.Context(), &workflow)
