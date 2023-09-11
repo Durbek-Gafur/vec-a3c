@@ -120,8 +120,8 @@ func (s *MySQLStore) UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*Work
 
 func (s *MySQLStore) UpdateWorkflowByName(ctx context.Context, w *WorkflowInfo) error {
 	_, err := s.db.ExecContext(ctx,
-		"UPDATE workflow_info SET  actual_execution_time = ?, processing_started_at = ?, completed_at = ?  WHERE name = ?",
-		w.ActualExecutionTime, w.ProcessingStartedAt, w.CompletedAt, w.Name)
+		"UPDATE workflow_info SET  actual_execution_time = ?, processing_started_at = ?, completed_at = ?, status = ?  WHERE name = ?",
+		w.ActualExecutionTime, w.ProcessingStartedAt, w.CompletedAt, w.Status, w.Name)
 	if err != nil {
 		return err
 	}
