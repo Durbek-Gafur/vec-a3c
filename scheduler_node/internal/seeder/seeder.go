@@ -186,7 +186,7 @@ func (ds *dbSeeder) PopulateWorkflows() error {
 
 	types := []string{"demo.fastq", "demo_25per.fastq", "demo_50per.fastq", "demo_75per.fastq"}
 	ramList := []string{"512Mi", "1Gi", "1.5Gi", "2Gi", "2.5Gi", "3Gi"}
-	coreList := []string{"0.5", "1", "1.5", "2", "2.5", "3"}
+	coreList := []string{"4", "6", "8"}
 	userList := []string{"UserA", "UserB", "UserC", "UserD", "UserE", "UserF", "UserG", "UserH", "UserI", "UserJ"}
 	policies := []string{"policyA", "policyB", "policyC"}
 
@@ -202,7 +202,7 @@ func (ds *dbSeeder) PopulateWorkflows() error {
 	for i := 1; i <= maxWf; i++ {
 		if i-1 < len(arrivalTimes) {
 			wf := &store.WorkflowInfo{
-				Name:        "workflow" + strconv.Itoa(i),
+				Name:        "workflow-" + strconv.Itoa(i) + "-" + randomString(7),
 				Type:        types[rand.Intn(len(types))],
 				RAM:         ramList[rand.Intn(len(ramList))],
 				Core:        coreList[rand.Intn(len(coreList))],
@@ -342,4 +342,14 @@ func (ds *dbSeeder) fetchOrDefineVENs() []store.VENInfo {
 	}
 
 	return venInfos
+}
+
+const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+func randomString(length int) string {
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
 }

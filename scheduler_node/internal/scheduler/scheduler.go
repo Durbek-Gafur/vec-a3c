@@ -70,7 +70,7 @@ func (s *SchedulerService) SubmitWorkflow(ctx context.Context, ven store.VENInfo
 	}
 
 	// If the response is OK, enqueue the workflow
-	err = s.wfStore.AssignWorkflow(ctx, workflow.Name, ven.Name)
+	err = s.wfStore.AssignWorkflow(ctx, workflow.Name, ven.Name, getEstimatedExecutionTime(ven, workflow))
 	if err != nil {
 		log.Printf("Failed to AssignWorkflow: %v", err)
 		return err
@@ -137,4 +137,39 @@ func (s *SchedulerService) processUnscheduledWorkflows(ctx context.Context) erro
 	}
 	log.Printf("Successfully completed schedule cycle")
 	return nil
+}
+
+var executionTimes = map[string]map[string]float64{
+	"demo.fastq": {
+		"4": 92.16,
+		"6": 88.52,
+		"8": 83.53,
+	},
+	"demo_25per.fastq": {
+		"4": 34.61,
+		"6": 33.11,
+		"8": 31.75,
+	},
+	"demo_50per.fastq": {
+		"4": 54.63,
+		"6": 52.32,
+		"8": 50.83,
+	},
+	"demo_75per.fastq": {
+		"4": 74.24,
+		"6": 72.13,
+		"8": 68.85,
+	},
+}
+
+func getEstimatedExecutionTime(ven store.VENInfo, wf store.WorkflowInfo) float64 {
+	// Check if the workflow name exists in our mapping
+	if timeMap, exists := executionTimes[wf.Type]; exists {
+		// Check if the ven.Core exists in our nested mapping for the workflow
+		if estimatedTime, exists := timeMap[ven.Core]; exists {
+			return estimatedTime
+		}
+		return 0
+	}
+	return 0
 }

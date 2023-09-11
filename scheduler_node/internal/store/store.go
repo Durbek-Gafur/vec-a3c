@@ -16,7 +16,7 @@ type WorkflowStore interface {
 	SaveWorkflow(ctx context.Context, WorkflowInfo *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflow(ctx context.Context, w *WorkflowInfo) (*WorkflowInfo, error)
 	UpdateWorkflowByName(ctx context.Context, w *WorkflowInfo) error
-	AssignWorkflow(ctx context.Context, workflowName string, venName string) error
+	AssignWorkflow(ctx context.Context, workflowName string, venName string, expectedTime float64) error
 	StartWorkflow(ctx context.Context, id int) error
 	CompleteWorkflow(ctx context.Context, id int) error
 	CountWorkflows() (int, error)

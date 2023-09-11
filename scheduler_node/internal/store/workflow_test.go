@@ -242,7 +242,7 @@ func TestAssignWorkflow(t *testing.T) {
 	venName := "TestVEN"
 
 	// 2. Assign the workflow using the AssignWorkflow function.
-	err := testStore.AssignWorkflow(ctx, newWorkflow.Name, venName)
+	err := testStore.AssignWorkflow(ctx, newWorkflow.Name, venName, 0)
 	assert.NoError(t, err)
 
 	// 3. Retrieve the workflow from the database and check updates.

@@ -129,14 +129,15 @@ func (s *MySQLStore) UpdateWorkflowByName(ctx context.Context, w *WorkflowInfo) 
 	return nil
 }
 
-func (s *MySQLStore) AssignWorkflow(ctx context.Context, workflowName string, venName string) error {
+func (s *MySQLStore) AssignWorkflow(ctx context.Context, workflowName string, venName string, expectedTime float64) error {
 	query := `UPDATE workflow_info 
 			  SET status = 'assigned', 
 			      assigned_at = NOW(), 
 			      assigned_vm = ?,
-			      last_updated = NOW() 
+			      last_updated = NOW(),
+			      expected_execution_time = ?
 			  WHERE name = ?`
-	_, err := s.db.ExecContext(ctx, query, venName, workflowName)
+	_, err := s.db.ExecContext(ctx, query, venName, expectedTime, workflowName)
 	return err
 }
 

@@ -45,8 +45,8 @@ Update the /cue/ven_template.cue file with the link to the latest database image
 ## Building images
 
 
-docker build -t 39dj29dl2d9l2/vec-scheduler:14 .
-docker push 39dj29dl2d9l2/vec-scheduler:14
+docker build -t 39dj29dl2d9l2/vec-scheduler:15 .
+docker push 39dj29dl2d9l2/vec-scheduler:15
 
 docker build -t 39dj29dl2d9l2/vec-scheduler-db:11 .
 docker push 39dj29dl2d9l2/vec-scheduler-db:11
