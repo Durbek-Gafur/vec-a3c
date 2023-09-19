@@ -33,18 +33,18 @@
               - name: MYSQL_DBNAME
                 value: app_db
               - name: QUEUE_SIZE
-                value: "5"
+                value: "15"
               - name: CPUS
-                value: "4"
+                value: "8"
               - name: RAM
-                value: 8Gi
+                value: 32Gi
             resources:
               limits:
-                cpu: "4"
-                memory: 8Gi
+                cpu: "8"
+                memory: 32Gi
               requests:
-                cpu: "4"
-                memory: 8Gi
+                cpu: "8"
+                memory: 32Gi
 ---
 #EdgeBackendService:
   apiVersion: v1

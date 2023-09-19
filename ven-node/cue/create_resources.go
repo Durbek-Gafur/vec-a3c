@@ -26,6 +26,26 @@ func main() {
 			ram:   "8Gi",
 		},
 		{
+			queue: "5",
+			cpu:   "4",
+			ram:   "8Gi",
+		},
+		{
+			queue: "10",
+			cpu:   "6",
+			ram:   "16Gi",
+		},
+		{
+			queue: "10",
+			cpu:   "6",
+			ram:   "16Gi",
+		},
+		{
+			queue: "10",
+			cpu:   "6",
+			ram:   "16Gi",
+		},
+		{
 			queue: "10",
 			cpu:   "6",
 			ram:   "16Gi",

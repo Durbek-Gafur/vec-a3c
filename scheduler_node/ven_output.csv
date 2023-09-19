@@ -1,0 +1,11 @@
+id,name,ram,core,url,max_queue_size,current_queue_size,preference_list,trust_score,max_queue_size_last_updated,current_queue_size_last_updated,trust_score_last_updated
+11,ven1,8Gi,4,https://dgvkh-ven1.nrp-nautilus.io,5,5,UserF, UserJ, UserD, UserA, UserB, UserH, UserI, UserE,0.57,2023-09-11 02:29:13,2023-09-11 02:38:40,2023-09-11 02:29:13
+12,ven2,16Gi,6,https://dgvkh-ven2.nrp-nautilus.io,10,10,UserJ, UserB, UserG, UserI,0.46,2023-09-11 02:29:14,2023-09-11 02:43:45,2023-09-11 02:29:14
+13,ven3,32Gi,8,https://dgvkh-ven3.nrp-nautilus.io,15,15,UserB, UserH,0.01,2023-09-11 02:29:15,2023-09-11 02:49:40,2023-09-11 02:29:15
+14,ven4,8Gi,4,https://dgvkh-ven4.nrp-nautilus.io,5,5,UserE, UserD, UserJ,0.31,2023-09-11 02:29:15,2023-09-11 02:37:40,2023-09-11 02:29:15
+15,ven5,16Gi,6,https://dgvkh-ven5.nrp-nautilus.io,10,10,UserI, UserE, UserJ, UserH, UserD, UserB, UserF,0.66,2023-09-11 02:29:16,2023-09-11 02:43:55,2023-09-11 02:29:16
+16,ven6,32Gi,8,https://dgvkh-ven6.nrp-nautilus.io,15,15,UserC, UserD,0.59,2023-09-11 02:29:16,2023-09-11 02:49:55,2023-09-11 02:29:16
+17,ven7,8Gi,4,https://dgvkh-ven7.nrp-nautilus.io,5,5,UserH, UserE, UserI, UserD, UserF, UserG, UserA,0.47,2023-09-11 02:29:17,2023-09-11 02:38:00,2023-09-11 02:29:17
+18,ven8,16Gi,6,https://dgvkh-ven8.nrp-nautilus.io,10,10,UserJ,0.47,2023-09-11 02:29:17,2023-09-11 02:43:05,2023-09-11 02:29:17
+19,ven9,32Gi,8,https://dgvkh-ven9.nrp-nautilus.io,15,15,UserJ, UserG,0.63,2023-09-11 02:29:18,2023-09-11 02:29:18,2023-09-11 02:29:18
+20,ven10,8Gi,4,https://dgvkh-ven10.nrp-nautilus.io,5,5,UserB, UserA, UserJ, UserE, UserD, UserH,0.44,2023-09-11 02:29:19,2023-09-11 02:29:19,2023-09-11 02:29:19
